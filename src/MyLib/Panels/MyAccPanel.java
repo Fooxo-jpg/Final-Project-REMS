@@ -1,21 +1,48 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package MyLib.Panels;
 
+import MyLib.Classes.Models.User;
 import MyLib.Classes.Services.AuthService;
 import javax.swing.JOptionPane;
 import static javax.swing.SwingUtilities.getWindowAncestor;
 
-/**
- *
- * @author ymnis
- */
 public class MyAccPanel extends javax.swing.JPanel {
 
     public MyAccPanel() {
         initComponents();
+        cancelBtn.setVisible(false);
+        loadUserData();
+    }
+    
+    // HELPERS
+    private void loadUserData() {
+        User user = MyLib.Classes.Services.AuthService.getCurrentUser();
+        if (user != null) {
+            FNameTxt.setText(user.getFirstName());
+            LNameTxt.setText(user.getLastName());
+            emailTxt.setText(user.getEmail());
+            contactTxt.setText(user.getContactNumber());
+            genderCb.setSelectedItem(user.getGender());
+
+            // Ensure everything is disabled by default
+            toggleEditing(false);
+        }
+    }
+    
+    private void toggleEditing(boolean isEditing) {
+        // Enable/Disable TextFields
+        FNameTxt.setEnabled(isEditing);
+        LNameTxt.setEnabled(isEditing);
+        contactTxt.setEnabled(isEditing);
+        genderCb.setEnabled(isEditing);
+        emailTxt.setEnabled(false);
+
+        // Handle Buttons
+        cancelBtn.setVisible(isEditing);
+        if (isEditing) {
+            editBtn.setText("Save");
+        } else {
+            editBtn.setText("Edit");
+        }
     }
 
     /**
@@ -29,7 +56,7 @@ public class MyAccPanel extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         cancelBtn = new javax.swing.JButton();
-        ChangeBtn = new javax.swing.JButton();
+        editBtn = new javax.swing.JButton();
         logoutBtn = new javax.swing.JButton();
         AccInfoPanel = new javax.swing.JPanel();
         header = new javax.swing.JLabel();
@@ -55,12 +82,15 @@ public class MyAccPanel extends javax.swing.JPanel {
         changePWBtn = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
+        jLabel1 = new javax.swing.JLabel();
 
         cancelBtn.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         cancelBtn.setText("Cancel");
+        cancelBtn.addActionListener(this::cancelBtnActionPerformed);
 
-        ChangeBtn.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        ChangeBtn.setText("Edit");
+        editBtn.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        editBtn.setText("Edit");
+        editBtn.addActionListener(this::editBtnActionPerformed);
 
         logoutBtn.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         logoutBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/logout_black.png"))); // NOI18N
@@ -218,7 +248,7 @@ public class MyAccPanel extends javax.swing.JPanel {
 
         java.awt.GridBagLayout jPanel1Layout = new java.awt.GridBagLayout();
         jPanel1Layout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
-        jPanel1Layout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0};
+        jPanel1Layout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
         jPanel1.setLayout(jPanel1Layout);
 
         SettingsLbl.setFont(new java.awt.Font("Arial", 1, 15)); // NOI18N
@@ -283,13 +313,21 @@ public class MyAccPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         jPanel1.add(jSeparator2, gridBagConstraints);
 
+        jLabel1.setText("UID:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridwidth = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel1.add(jLabel1, gridBagConstraints);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ChangeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 445, Short.MAX_VALUE)
@@ -308,7 +346,7 @@ public class MyAccPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(559, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ChangeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
@@ -318,13 +356,14 @@ public class MyAccPanel extends javax.swing.JPanel {
                     .addComponent(AccInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(125, Short.MAX_VALUE)))
+                    .addContainerGap(99, Short.MAX_VALUE)))
         );
 
         getAccessibleContext().setAccessibleName("");
     }// </editor-fold>//GEN-END:initComponents
 
     private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutBtnActionPerformed
+        AuthService.setCurrentUser(null);
         getWindowAncestor(this).dispose();
         new MyLib.Dialogs.Login().setVisible(true);
     }//GEN-LAST:event_logoutBtnActionPerformed
@@ -346,10 +385,30 @@ public class MyAccPanel extends javax.swing.JPanel {
         new MyLib.Dialogs.ChangePassword(null, true).setVisible(true);
     }//GEN-LAST:event_changePWBtnActionPerformed
 
+    private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
+        if (editBtn.getText().equals("Edit")) {
+            toggleEditing(true);
+        } else {
+            User user = AuthService.getCurrentUser();
+            
+            user.setFirstName(FNameTxt.getText());
+            user.setLastName(LNameTxt.getText());
+            user.setContactNumber(contactTxt.getText());
+            user.setGender(genderCb.getSelectedItem().toString());
+            
+            toggleEditing(false);
+            JOptionPane.showMessageDialog(this, "Profile Updated!");
+        }
+    }//GEN-LAST:event_editBtnActionPerformed
+
+    private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
+        loadUserData();
+        toggleEditing(false);
+    }//GEN-LAST:event_cancelBtnActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel AccInfoPanel;
-    private javax.swing.JButton ChangeBtn;
     private javax.swing.JTextField FNameTxt;
     private javax.swing.JTextField LNameTxt;
     private javax.swing.JLabel SettingsLbl;
@@ -358,12 +417,14 @@ public class MyAccPanel extends javax.swing.JPanel {
     private javax.swing.JLabel contactLbl;
     private javax.swing.JTextField contactTxt;
     private javax.swing.JButton deleteBtn;
+    private javax.swing.JButton editBtn;
     private javax.swing.JLabel emailLbl;
     private javax.swing.JTextField emailTxt;
     private javax.swing.JLabel fNameLbl;
     private javax.swing.JComboBox<String> genderCb;
     private javax.swing.JLabel genderLbl;
     private javax.swing.JLabel header;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;

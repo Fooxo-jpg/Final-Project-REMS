@@ -8,12 +8,12 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author ymnis
  */
-public class clientsPanel extends javax.swing.JPanel {
+public class ClientsPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form clientsPanel
      */
-    public clientsPanel() {
+    public ClientsPanel() {
         initComponents();
     }
 
@@ -51,7 +51,7 @@ public class clientsPanel extends javax.swing.JPanel {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {

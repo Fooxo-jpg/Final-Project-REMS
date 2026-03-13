@@ -1,6 +1,10 @@
 package MyApp;
 
-import MyLib.Panels.*;
+import MyLib.Panels.OverviewPanel;
+import MyLib.Panels.ClientsPanel;
+import MyLib.Panels.AdminDashboardPanel;
+import MyLib.Panels.AnalyticsPanel;
+import MyLib.Panels.MyAccPanel;
 
 import javax.swing.UIManager;
 
@@ -15,19 +19,19 @@ public class AdminDashboard extends javax.swing.JFrame {
     public AdminDashboard() {
         initComponents();
         
-        adminDashboardPanel Dashboard = new adminDashboardPanel();
+        AdminDashboardPanel Dashboard = new AdminDashboardPanel();
         mainContentPanel.add(Dashboard, "adminDashboard_view");
         
-        clientsPanel clients = new clientsPanel();
+        ClientsPanel clients = new ClientsPanel();
         mainContentPanel.add(clients, "clients_view");
         
-        overviewPanel Properties = new overviewPanel();
+        OverviewPanel Properties = new OverviewPanel();
         mainContentPanel.add(Properties, "properties_view");
         
-        analyticsPanel Analytics = new analyticsPanel();
+        AnalyticsPanel Analytics = new AnalyticsPanel();
         mainContentPanel.add(Analytics, "analytics_view");
         
-        myAccPanel myAccount = new myAccPanel();
+        MyAccPanel myAccount = new MyAccPanel();
         mainContentPanel.add(myAccount, "myAcc_view");
     }
     

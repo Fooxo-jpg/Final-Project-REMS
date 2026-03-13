@@ -1,8 +1,8 @@
 package MyLib.Panels;
 
-public class homePanel extends javax.swing.JPanel {
+public class HomePanel extends javax.swing.JPanel {
 
-    public homePanel() {
+    public HomePanel() {
         initComponents();
     }
 

@@ -1,11 +1,11 @@
 package MyLib.Panels;
 
-public class searchPanel extends javax.swing.JPanel {
+public class SearchPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form searchPanel
      */
-    public searchPanel() {
+    public SearchPanel() {
         initComponents();
     }
 

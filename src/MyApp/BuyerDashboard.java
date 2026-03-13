@@ -1,7 +1,11 @@
 package MyApp;
 
 // BUYER PANELS
-import MyLib.Panels.*;
+import MyLib.Panels.SearchPanel;
+import MyLib.Panels.OverviewPanel;
+import MyLib.Panels.FavoritesPanel;
+import MyLib.Panels.MyAccPanel;
+import MyLib.Panels.HomePanel;
 
 import javax.swing.UIManager;
 
@@ -11,19 +15,19 @@ public class BuyerDashboard extends javax.swing.JFrame {
     public BuyerDashboard() {
         initComponents();
         
-        homePanel Home = new homePanel();
+        HomePanel Home = new HomePanel();
         mainContentPanel.add(Home, "home_view");
         
-        myAccPanel myAccount = new myAccPanel();
+        MyAccPanel myAccount = new MyAccPanel();
         mainContentPanel.add(myAccount, "myAcc_view");
         
-        overviewPanel Overview = new overviewPanel();
+        OverviewPanel Overview = new OverviewPanel();
         mainContentPanel.add(Overview, "overview_view");
         
-        searchPanel Search = new searchPanel();
+        SearchPanel Search = new SearchPanel();
         mainContentPanel.add(Search, "search_view");
         
-        favoritesPanel Favorites = new favoritesPanel();
+        FavoritesPanel Favorites = new FavoritesPanel();
         mainContentPanel.add(Favorites, "favorites_view");
         
         

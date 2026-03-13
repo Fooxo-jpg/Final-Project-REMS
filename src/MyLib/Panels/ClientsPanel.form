@@ -81,7 +81,7 @@
                   <Data value="null"/>
                   <Data value="null"/>
                 </Column>
-                <Column editable="false" title="Action" type="java.lang.Object">
+                <Column editable="true" title="Action" type="java.lang.Object">
                   <Data value="..."/>
                   <Data value="null"/>
                   <Data value="null"/>

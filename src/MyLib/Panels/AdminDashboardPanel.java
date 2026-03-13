@@ -1,16 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package MyLib.Panels;
 
 /**
  *
  * @author ymnis
  */
-public class adminDashboardPanel extends javax.swing.JPanel {
+public class AdminDashboardPanel extends javax.swing.JPanel {
 
-    public adminDashboardPanel() {
+    public AdminDashboardPanel() {
         initComponents();
     }
 
@@ -45,6 +41,9 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         jLabel21 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        FloorArea1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -59,21 +58,21 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         propertyTable.setAutoCreateRowSorter(true);
         propertyTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Location", "Status", "Price"
+                "Assigned Agent", "Client Name", "Location", "Status", "Price"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.String.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -100,10 +99,10 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         add(jScrollPane1, gridBagConstraints);
 
         jPanel1.setBackground(new java.awt.Color(248, 235, 210));
-        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "DETAILS", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 12))); // NOI18N
         java.awt.GridBagLayout jPanel1Layout = new java.awt.GridBagLayout();
         jPanel1Layout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0};
-        jPanel1Layout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
+        jPanel1Layout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
         jPanel1.setLayout(jPanel1Layout);
 
         Address.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -141,19 +140,7 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(LotArea, gridBagConstraints);
 
-        FloorArea.setText("Floor Area:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 15;
-        gridBagConstraints.ipady = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.1;
-        gridBagConstraints.weighty = 0.1;
-        jPanel1.add(FloorArea, gridBagConstraints);
-
-        MiscFees.setText("Miscellaneous Fees");
+        FloorArea.setText("Gross Selling Price:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 10;
@@ -163,12 +150,24 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(MiscFees, gridBagConstraints);
+        jPanel1.add(FloorArea, gridBagConstraints);
 
-        Bedrooms.setText("Reservation Fees");
+        MiscFees.setText("Miscellaneous Fees:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 12;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 15;
+        gridBagConstraints.ipady = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.1;
+        gridBagConstraints.weighty = 0.1;
+        jPanel1.add(MiscFees, gridBagConstraints);
+
+        Bedrooms.setText("Reservation Fees:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipadx = 15;
         gridBagConstraints.ipady = 5;
@@ -180,7 +179,7 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         Carports.setText("Down Payment:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridy = 16;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipadx = 15;
         gridBagConstraints.ipady = 5;
@@ -189,7 +188,7 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(Carports, gridBagConstraints);
 
-        jLabel12.setText("******");
+        jLabel12.setText("0 SQM");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 6;
@@ -202,7 +201,7 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(jLabel12, gridBagConstraints);
 
-        jLabel13.setText("******");
+        jLabel13.setText("HOUSE NAME");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 4;
@@ -215,20 +214,7 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(jLabel13, gridBagConstraints);
 
-        jLabel14.setText("******");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 15;
-        gridBagConstraints.ipady = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.1;
-        gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jLabel14, gridBagConstraints);
-
-        jLabel15.setText("******");
+        jLabel14.setText("PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 10;
@@ -239,9 +225,9 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jLabel15, gridBagConstraints);
+        jPanel1.add(jLabel14, gridBagConstraints);
 
-        jLabel16.setText("******");
+        jLabel15.setText("PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 12;
@@ -252,12 +238,25 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jLabel16, gridBagConstraints);
+        jPanel1.add(jLabel15, gridBagConstraints);
 
-        jLabel17.setText("******");
+        jLabel16.setText("PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 15;
+        gridBagConstraints.ipady = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.1;
+        gridBagConstraints.weighty = 0.1;
+        jPanel1.add(jLabel16, gridBagConstraints);
+
+        jLabel17.setText("PHP 0.00");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 16;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipadx = 15;
@@ -270,7 +269,7 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         HouseType.setText("Loanable Amount:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridy = 18;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipadx = 15;
         gridBagConstraints.ipady = 5;
@@ -283,7 +282,7 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         jLabel19.setText("Total Price:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 20;
+        gridBagConstraints.gridy = 22;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipadx = 15;
         gridBagConstraints.ipady = 5;
@@ -292,10 +291,10 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(jLabel19, gridBagConstraints);
 
-        jLabel21.setText("******");
+        jLabel21.setText("PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridy = 18;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipadx = 15;
@@ -305,10 +304,10 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(jLabel21, gridBagConstraints);
 
-        jLabel23.setText("₱*****");
+        jLabel23.setText("PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 20;
+        gridBagConstraints.gridy = 22;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipadx = 15;
@@ -324,13 +323,45 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         jButton1.setText("View Next Property");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 22;
+        gridBagConstraints.gridy = 24;
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(jButton1, gridBagConstraints);
+
+        jLabel1.setText("BLOCK 0 LOT 0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        jPanel1.add(jLabel1, gridBagConstraints);
+
+        jLabel18.setText("0 SQM");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 15;
+        gridBagConstraints.ipady = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.1;
+        gridBagConstraints.weighty = 0.1;
+        jPanel1.add(jLabel18, gridBagConstraints);
+
+        FloorArea1.setText("Floor Area:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 15;
+        gridBagConstraints.ipady = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.1;
+        gridBagConstraints.weighty = 0.1;
+        jPanel1.add(FloorArea1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 8;
@@ -346,11 +377,11 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 263, Short.MAX_VALUE)
+            .addGap(0, 247, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 8, Short.MAX_VALUE)
+            .addGap(0, 40, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -358,6 +389,7 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 6;
         gridBagConstraints.gridheight = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipady = 40;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(jPanel2, gridBagConstraints);
 
@@ -379,8 +411,6 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(jLabel4, gridBagConstraints);
-
-        jTextField1.setText("Search...");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
@@ -390,7 +420,7 @@ public class adminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 0.8;
         add(jTextField1, gridBagConstraints);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Show All" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Show All", "Available", "Reserved", "Sold" }));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 4;
@@ -405,18 +435,21 @@ public class adminDashboardPanel extends javax.swing.JPanel {
     private javax.swing.JLabel Bedrooms;
     private javax.swing.JLabel Carports;
     private javax.swing.JLabel FloorArea;
+    private javax.swing.JLabel FloorArea1;
     private javax.swing.JLabel HouseType;
     private javax.swing.JLabel LotArea;
     private javax.swing.JLabel MiscFees;
     private javax.swing.JLabel PropertyName;
     private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel23;

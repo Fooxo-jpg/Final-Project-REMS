@@ -8,9 +8,9 @@ package MyLib.Panels;
  *
  * @author ymnis
  */
-public class myAccPanel extends javax.swing.JPanel {
+public class MyAccPanel extends javax.swing.JPanel {
 
-    public myAccPanel() {
+    public MyAccPanel() {
         initComponents();
     }
 

@@ -1,16 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package MyLib.Panels;
 
 /**
  *
  * @author ymnis
  */
-public final class overviewPanel extends javax.swing.JPanel {
+public final class OverviewPanel extends javax.swing.JPanel {
 
-    public overviewPanel() {
+    public OverviewPanel() {
         initComponents();
     }
     
@@ -32,6 +28,9 @@ public final class overviewPanel extends javax.swing.JPanel {
         soldLbl = new javax.swing.JLabel();
         totalLbl = new javax.swing.JLabel();
         selectionLabel = new javax.swing.JLabel();
+        totalLbl1 = new javax.swing.JLabel();
+        soldLbl1 = new javax.swing.JLabel();
+        reservedLbl1 = new javax.swing.JLabel();
 
         jButton20.setText("jButton11");
 
@@ -144,7 +143,7 @@ public final class overviewPanel extends javax.swing.JPanel {
 
         availableLbl.setBackground(new java.awt.Color(217, 111, 118));
         availableLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        availableLbl.setText("Available:");
+        availableLbl.setText("Available: 0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -154,10 +153,10 @@ public final class overviewPanel extends javax.swing.JPanel {
         footerPanel.add(availableLbl, gridBagConstraints);
 
         reservedLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        reservedLbl.setText("Reserved:");
+        reservedLbl.setText("House Type:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -165,35 +164,66 @@ public final class overviewPanel extends javax.swing.JPanel {
 
         soldLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         soldLbl.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        soldLbl.setText("Sold:");
+        soldLbl.setText("Lot Size: 0 sqm");
+        soldLbl.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         footerPanel.add(soldLbl, gridBagConstraints);
 
         totalLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        totalLbl.setText("Total:");
+        totalLbl.setText("GSP: PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 8;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         footerPanel.add(totalLbl, gridBagConstraints);
 
         selectionLabel.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        selectionLabel.setText("Current Selection: BLOCK # LOT #");
+        selectionLabel.setText("BLOCK # LOT #");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         footerPanel.add(selectionLabel, gridBagConstraints);
+
+        totalLbl1.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        totalLbl1.setText("Total: 0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        footerPanel.add(totalLbl1, gridBagConstraints);
+
+        soldLbl1.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        soldLbl1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        soldLbl1.setText("Sold: 0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        footerPanel.add(soldLbl1, gridBagConstraints);
+
+        reservedLbl1.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        reservedLbl1.setText("Reserved: 0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        footerPanel.add(reservedLbl1, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -223,8 +253,11 @@ public final class overviewPanel extends javax.swing.JPanel {
     private javax.swing.JButton jButton20;
     private javax.swing.JPanel lotSelectorPanel;
     private javax.swing.JLabel reservedLbl;
+    private javax.swing.JLabel reservedLbl1;
     private javax.swing.JLabel selectionLabel;
     private javax.swing.JLabel soldLbl;
+    private javax.swing.JLabel soldLbl1;
     private javax.swing.JLabel totalLbl;
+    private javax.swing.JLabel totalLbl1;
     // End of variables declaration//GEN-END:variables
 }

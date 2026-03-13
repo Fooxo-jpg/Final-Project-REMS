@@ -91,13 +91,13 @@ public class ClientsPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Export_Black.png"))); // NOI18N
+        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Export_Black.png"))); // NOI18N
         jButton6.setText("Export");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 25)); // NOI18N
         jLabel1.setText("Clients");
 
-        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Filter_Black.png"))); // NOI18N
+        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Filter_Black.png"))); // NOI18N
         jButton7.setText("Filter");
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "10" }));
@@ -132,7 +132,7 @@ public class ClientsPanel extends javax.swing.JPanel {
                             .addComponent(jButton6)
                             .addComponent(jComboBox1)
                             .addComponent(jLabel2))
-                        .addGap(0, 7, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 

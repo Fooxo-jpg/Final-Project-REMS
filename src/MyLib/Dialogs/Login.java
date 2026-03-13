@@ -4,6 +4,7 @@
  */
 package MyLib.Dialogs;
 
+import MyLib.Classes.Services.AuthService;
 import javax.swing.JOptionPane;
 
 /**
@@ -22,6 +23,12 @@ public class Login extends javax.swing.JDialog {
     public Login(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+    }
+    
+    public Login() {
+        super((java.awt.Frame) null, true);
+        initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -56,21 +63,28 @@ public class Login extends javax.swing.JDialog {
 
         emailLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         emailLbl.setLabelFor(emailTxt);
-        emailLbl.setText("Username:");
+        emailLbl.setText("Email:");
 
         passLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         passLbl.setLabelFor(passTxt);
         passLbl.setText("Password:");
 
         showPassCb.setText("Show Password");
+        showPassCb.addActionListener(this::showPassCbActionPerformed);
 
         loginBtn.setBackground(new java.awt.Color(36, 5, 2));
         loginBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         loginBtn.setForeground(new java.awt.Color(255, 255, 255));
         loginBtn.setText("LOGIN");
+        loginBtn.addActionListener(this::loginBtnActionPerformed);
 
         signup.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         signup.setText("<html>No Account Yet? <b>Signup now!</b>");
+        signup.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                signupMouseClicked(evt);
+            }
+        });
 
         guestLoginBtn.setBackground(new java.awt.Color(36, 5, 2));
         guestLoginBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -128,6 +142,39 @@ public class Login extends javax.swing.JDialog {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
+        String email = emailTxt.getText();
+        String pass = new String(passTxt.getPassword());
+        
+        MyLib.Classes.Models.User loggedInUser = MyLib.Classes.Services.AuthService.authenticateUser(email, pass);
+        
+        if (loggedInUser != null){
+            AuthService.setCurrentUser(loggedInUser);
+            this.dispose();
+            
+            if (loggedInUser.getRole().equalsIgnoreCase("Admin")){
+                new MyApp.AdminDashboard().setVisible(true);
+            } else {
+                new MyApp.BuyerDashboard().setVisible(true);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Invalid Credentials!");
+        }
+    }//GEN-LAST:event_loginBtnActionPerformed
+
+    private void showPassCbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPassCbActionPerformed
+        if (showPassCb.isSelected()) {
+            passTxt.setEchoChar((char) 0);
+        } else {
+            passTxt.setEchoChar('\u2022');
+        }
+    }//GEN-LAST:event_showPassCbActionPerformed
+
+    private void signupMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signupMouseClicked
+        this.dispose();
+        new MyLib.Dialogs.Register(null, true).setVisible(true);
+    }//GEN-LAST:event_signupMouseClicked
 
     /**
      * @param args the command line arguments

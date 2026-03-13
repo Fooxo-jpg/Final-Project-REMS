@@ -74,7 +74,7 @@ public class AdminDashboard extends javax.swing.JFrame {
 
         dashboardBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         dashboardBtn.setForeground(new java.awt.Color(255, 255, 255));
-        dashboardBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Dashboard.png"))); // NOI18N
+        dashboardBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Dashboard.png"))); // NOI18N
         dashboardBtn.setText("Dashboard");
         dashboardBtn.setContentAreaFilled(false);
         dashboardBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -83,7 +83,7 @@ public class AdminDashboard extends javax.swing.JFrame {
 
         propertiesBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         propertiesBtn.setForeground(new java.awt.Color(255, 255, 255));
-        propertiesBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Overview.png"))); // NOI18N
+        propertiesBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Overview.png"))); // NOI18N
         propertiesBtn.setText("Properties");
         propertiesBtn.setContentAreaFilled(false);
         propertiesBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -92,7 +92,7 @@ public class AdminDashboard extends javax.swing.JFrame {
 
         analyticsBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         analyticsBtn.setForeground(new java.awt.Color(255, 255, 255));
-        analyticsBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Reports.png"))); // NOI18N
+        analyticsBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Reports.png"))); // NOI18N
         analyticsBtn.setText("Analytics");
         analyticsBtn.setContentAreaFilled(false);
         analyticsBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -101,7 +101,7 @@ public class AdminDashboard extends javax.swing.JFrame {
 
         myAccBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         myAccBtn.setForeground(new java.awt.Color(255, 255, 255));
-        myAccBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Account.png"))); // NOI18N
+        myAccBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Account.png"))); // NOI18N
         myAccBtn.setText("My Account");
         myAccBtn.setContentAreaFilled(false);
         myAccBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -110,7 +110,7 @@ public class AdminDashboard extends javax.swing.JFrame {
 
         clientsBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         clientsBtn.setForeground(new java.awt.Color(255, 255, 255));
-        clientsBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Clients.png"))); // NOI18N
+        clientsBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Clients.png"))); // NOI18N
         clientsBtn.setText("Clients");
         clientsBtn.setContentAreaFilled(false);
         clientsBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -137,7 +137,7 @@ public class AdminDashboard extends javax.swing.JFrame {
         sidePanelLayout.setVerticalGroup(
             sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sidePanelLayout.createSequentialGroup()
-                .addComponent(logo)
+                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -150,7 +150,7 @@ public class AdminDashboard extends javax.swing.JFrame {
                 .addComponent(analyticsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 117, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
                 .addComponent(myAccBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );

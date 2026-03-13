@@ -4,6 +4,9 @@
  */
 package MyLib.Dialogs;
 
+import MyLib.Classes.Models.Admin;
+import MyLib.Classes.Models.Buyer;
+import MyLib.Classes.Services.AuthService;
 import javax.swing.JOptionPane;
 
 /**
@@ -14,9 +17,6 @@ public class Register extends javax.swing.JDialog {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Register.class.getName());
 
-    /**
-     * Creates new form Register
-     */
     public Register(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -153,6 +153,7 @@ public class Register extends javax.swing.JDialog {
         signupBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         signupBtn.setForeground(new java.awt.Color(255, 255, 255));
         signupBtn.setText("SIGNUP");
+        signupBtn.addActionListener(this::signupBtnActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 22;
@@ -196,6 +197,11 @@ public class Register extends javax.swing.JDialog {
 
         signin.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         signin.setText("<html> Already have an account? <b>Sign in </b>");
+        signin.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                signinMouseClicked(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 24;
@@ -233,6 +239,7 @@ public class Register extends javax.swing.JDialog {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void showPassCb2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPassCb2ActionPerformed
@@ -250,6 +257,46 @@ public class Register extends javax.swing.JDialog {
             passTxt.setEchoChar('\u2022');
         }
     }//GEN-LAST:event_showPassCb1ActionPerformed
+
+    private void signinMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signinMouseClicked
+        this.dispose();
+        new MyLib.Dialogs.Login(null, true).setVisible(true);
+    }//GEN-LAST:event_signinMouseClicked
+
+    private void signupBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signupBtnActionPerformed
+        String email = emailTxt.getText().trim();
+        String pass = new String(passTxt.getPassword());
+        String confirmPass = new String(confirmPassTxt.getPassword());
+        
+        if (!MyLib.Classes.Services.AuthService.isValidEmail(email)){
+            JOptionPane.showMessageDialog(this, "Please enter valid email!");
+            return;
+        }
+        
+        if (MyLib.Classes.Services.AuthService.emailExists(email)){
+            JOptionPane.showMessageDialog(this, "Email already exists!");
+            return;
+        }
+        
+        if (!pass.equals(confirmPass)){
+            JOptionPane.showMessageDialog(this, "Passwords do not match!");
+            return;
+        }
+        
+        String role = email.toLowerCase().endsWith("@realestate.com") ? "Admin" : "Buyer";
+        
+        if (role.equals("Admin")) {
+            Admin newAdmin = new Admin(email, pass, email);
+            AuthService.addUser(newAdmin);
+        } else {
+            Buyer newBuyer = new Buyer(email, pass, email, 0.0); // Default income 0
+            AuthService.addUser(newBuyer);
+        }
+        
+        JOptionPane.showMessageDialog(this, "Registration Successful!");
+        this.dispose();
+        new MyLib.Dialogs.Login(null, true).setVisible(true);
+    }//GEN-LAST:event_signupBtnActionPerformed
 
     /**
      * @param args the command line arguments

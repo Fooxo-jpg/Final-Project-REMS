@@ -4,6 +4,10 @@
  */
 package MyLib.Panels;
 
+import MyLib.Classes.Services.AuthService;
+import javax.swing.JOptionPane;
+import static javax.swing.SwingUtilities.getWindowAncestor;
+
 /**
  *
  * @author ymnis
@@ -59,7 +63,9 @@ public class MyAccPanel extends javax.swing.JPanel {
         ChangeBtn.setText("Edit");
 
         logoutBtn.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        logoutBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/logout_black.png"))); // NOI18N
         logoutBtn.setText("Logout");
+        logoutBtn.addActionListener(this::logoutBtnActionPerformed);
 
         java.awt.GridBagLayout AccInfoPanelLayout = new java.awt.GridBagLayout();
         AccInfoPanelLayout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
@@ -238,7 +244,9 @@ public class MyAccPanel extends javax.swing.JPanel {
 
         deleteBtn.setBackground(new java.awt.Color(255, 204, 204));
         deleteBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        deleteBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Delete_Black.png"))); // NOI18N
         deleteBtn.setText("Delete Account");
+        deleteBtn.addActionListener(this::deleteBtnActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 6;
@@ -247,7 +255,9 @@ public class MyAccPanel extends javax.swing.JPanel {
         jPanel1.add(deleteBtn, gridBagConstraints);
 
         changePWBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        changePWBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Edit_black.png"))); // NOI18N
         changePWBtn.setText("Change Password");
+        changePWBtn.addActionListener(this::changePWBtnActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 6;
@@ -313,6 +323,28 @@ public class MyAccPanel extends javax.swing.JPanel {
 
         getAccessibleContext().setAccessibleName("");
     }// </editor-fold>//GEN-END:initComponents
+
+    private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutBtnActionPerformed
+        getWindowAncestor(this).dispose();
+        new MyLib.Dialogs.Login().setVisible(true);
+    }//GEN-LAST:event_logoutBtnActionPerformed
+
+    private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
+                "Are you sure you want to delete your account? This cannot be undone.",
+                "Confirm Deletion", javax.swing.JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            AuthService.deleteUser(AuthService.getCurrentUser());
+            
+            getWindowAncestor(this).dispose();
+            new MyLib.Dialogs.Login().setVisible(true);
+        }
+    }//GEN-LAST:event_deleteBtnActionPerformed
+
+    private void changePWBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changePWBtnActionPerformed
+        new MyLib.Dialogs.ChangePassword(null, true).setVisible(true);
+    }//GEN-LAST:event_changePWBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -1,5 +1,6 @@
 package MyApp;
 
+import MyLib.Dialogs.Login;
 import javax.swing.UIManager;
 
 /**
@@ -16,5 +17,9 @@ public class Main {
             
         } catch (Exception ex) {
         }
+        
+        java.awt.EventQueue.invokeLater(() -> {
+            new Login().setVisible(true);
+        });
     }
 }

@@ -78,7 +78,6 @@ public class HomePanel extends javax.swing.JPanel {
         jButton1.setBackground(new java.awt.Color(36, 5, 2));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Arrow_Forward.png"))); // NOI18N
         jButton1.setText("Search your new Home");
         jButton1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);

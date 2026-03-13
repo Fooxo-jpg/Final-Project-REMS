@@ -114,7 +114,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/MyLib/Images/Dashboard.png"/>
+              <Image iconType="3" name="/MyLib/Icons/Dashboard.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Home"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
@@ -134,7 +134,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/MyLib/Images/Overview.png"/>
+              <Image iconType="3" name="/MyLib/Icons/Overview.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Overview"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
@@ -154,7 +154,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/MyLib/Images/Search.png"/>
+              <Image iconType="3" name="/MyLib/Icons/Search.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Search"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
@@ -174,7 +174,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/MyLib/Images/Account.png"/>
+              <Image iconType="3" name="/MyLib/Icons/Account.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="My Account"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
@@ -196,7 +196,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/MyLib/Images/Favorites.png"/>
+              <Image iconType="3" name="/MyLib/Icons/Favorites.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Favorites"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>

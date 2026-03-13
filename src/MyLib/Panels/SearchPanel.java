@@ -31,13 +31,13 @@ public class SearchPanel extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 25)); // NOI18N
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Home.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Home.png"))); // NOI18N
         jLabel1.setText("Search Properties");
         jLabel1.setIconTextGap(10);
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Single-Attached.png"))); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Single-Attached.png"))); // NOI18N
         jButton1.setText("Single-Attached");
         jButton1.setContentAreaFilled(false);
         jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -51,7 +51,7 @@ public class SearchPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(jButton1, gridBagConstraints);
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Single-Detached.png"))); // NOI18N
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Single-Detached.png"))); // NOI18N
         jButton2.setText("Single-Detached");
         jButton2.setContentAreaFilled(false);
         jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -65,7 +65,7 @@ public class SearchPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(jButton2, gridBagConstraints);
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Townhouse.png"))); // NOI18N
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Townhouse.png"))); // NOI18N
         jButton3.setText("Townhouse");
         jButton3.setContentAreaFilled(false);
         jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -79,7 +79,7 @@ public class SearchPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(jButton3, gridBagConstraints);
 
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Duplex.png"))); // NOI18N
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Duplex.png"))); // NOI18N
         jButton4.setText("Duplex");
         jButton4.setContentAreaFilled(false);
         jButton4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -93,7 +93,7 @@ public class SearchPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(jButton4, gridBagConstraints);
 
-        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Bungalow.png"))); // NOI18N
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Bungalow.png"))); // NOI18N
         jButton5.setText("Bungalow");
         jButton5.setContentAreaFilled(false);
         jButton5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -110,7 +110,7 @@ public class SearchPanel extends javax.swing.JPanel {
         jButton6.setBackground(new java.awt.Color(36, 5, 2));
         jButton6.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         jButton6.setForeground(new java.awt.Color(255, 255, 255));
-        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Filter.png"))); // NOI18N
+        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Filter.png"))); // NOI18N
         jButton6.setText("Filter");
         jButton6.setToolTipText("");
         jButton6.setIconTextGap(10);
@@ -130,7 +130,7 @@ public class SearchPanel extends javax.swing.JPanel {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 444, Short.MAX_VALUE)
+            .addGap(0, 413, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

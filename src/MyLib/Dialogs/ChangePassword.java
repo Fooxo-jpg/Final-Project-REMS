@@ -4,6 +4,10 @@
  */
 package MyLib.Dialogs;
 
+import MyLib.Classes.Models.User;
+import MyLib.Classes.Services.AuthService;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author ymnis
@@ -32,14 +36,14 @@ public class ChangePassword extends javax.swing.JDialog {
         jSeparator1 = new javax.swing.JSeparator();
         changeBtn = new javax.swing.JButton();
         newPassLbl = new javax.swing.JLabel();
-        newPassTxt = new javax.swing.JPasswordField();
         oldPassLbl = new javax.swing.JLabel();
         showPassCb = new javax.swing.JCheckBox();
-        oldPassTxt = new javax.swing.JTextField();
         Logo = new javax.swing.JLabel();
-        confirmPassTxt = new javax.swing.JPasswordField();
         confirmPassLbl = new javax.swing.JLabel();
         changeBtn1 = new javax.swing.JButton();
+        confirmPassTxt = new javax.swing.JPasswordField();
+        oldPassTxt = new javax.swing.JPasswordField();
+        newPassTxt = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -47,6 +51,7 @@ public class ChangePassword extends javax.swing.JDialog {
         changeBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         changeBtn.setForeground(new java.awt.Color(255, 255, 255));
         changeBtn.setText("CONFIRM");
+        changeBtn.addActionListener(this::changeBtnActionPerformed);
 
         newPassLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         newPassLbl.setText("New Password:");
@@ -70,25 +75,29 @@ public class ChangePassword extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(newPassTxt, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(newPassLbl, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(oldPassLbl, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(Logo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(oldPassTxt)
-                    .addGroup(layout.createSequentialGroup()
+                    .addComponent(confirmPassTxt)
+                    .addComponent(newPassLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(oldPassLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSeparator1)
+                    .addComponent(Logo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(showPassCb)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(confirmPassTxt, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(confirmPassLbl, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(confirmPassLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(changeBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(changeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(newPassTxt)
+                    .addContainerGap()))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -99,27 +108,62 @@ public class ChangePassword extends javax.swing.JDialog {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(oldPassLbl)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(oldPassTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
                 .addComponent(newPassLbl)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(newPassTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(65, 65, 65)
                 .addComponent(confirmPassLbl)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(confirmPassTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(showPassCb)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(changeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(changeBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addContainerGap(269, Short.MAX_VALUE)
+                    .addComponent(newPassTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(185, 185, 185)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void changeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeBtnActionPerformed
+        String oldPass = new String(oldPassTxt.getPassword());
+        String newPass = new String(newPassTxt.getPassword());
+        String confirmPass = new String(confirmPassTxt.getPassword());
+        
+        User user = AuthService.getCurrentUser();
+        
+        if (!user.getPassword().equals(oldPass)){
+            JOptionPane.showMessageDialog(this, "Old Password Incorrect");
+            return;
+        }
+        
+        if (!newPass.equals(confirmPass)) {
+            JOptionPane.showMessageDialog(this, "New passwords do not match!");
+            return;
+        }
+        
+        if (newPass.equals(oldPass) || oldPass.equals(confirmPass)){
+            JOptionPane.showMessageDialog(this, "New Pass is the same as old Password");
+            return;
+        }
+        
+        int choice = JOptionPane.showConfirmDialog(this,
+                "Update Password?", "Confirm", JOptionPane.YES_NO_OPTION);
+        
+        if (choice == JOptionPane.YES_OPTION) {
+            user.setPassword(newPass);
+            JOptionPane.showMessageDialog(this, "Password Updated Succesfully!");
+            this.dispose();
+        }
+    }//GEN-LAST:event_changeBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -168,7 +212,7 @@ public class ChangePassword extends javax.swing.JDialog {
     private javax.swing.JLabel newPassLbl;
     private javax.swing.JPasswordField newPassTxt;
     private javax.swing.JLabel oldPassLbl;
-    private javax.swing.JTextField oldPassTxt;
+    private javax.swing.JPasswordField oldPassTxt;
     private javax.swing.JCheckBox showPassCb;
     // End of variables declaration//GEN-END:variables
 }

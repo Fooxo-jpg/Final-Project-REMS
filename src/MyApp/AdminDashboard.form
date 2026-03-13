@@ -74,7 +74,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="logo" min="-2" max="-2" attributes="0"/>
+                  <Component id="logo" min="-2" pref="144" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jSeparator1" min="-2" pref="15" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -87,7 +87,7 @@
                   <Component id="analyticsBtn" min="-2" pref="45" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jSeparator2" min="-2" pref="15" max="-2" attributes="0"/>
-                  <EmptySpace pref="117" max="32767" attributes="0"/>
+                  <EmptySpace pref="123" max="32767" attributes="0"/>
                   <Component id="myAccBtn" min="-2" pref="45" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -114,7 +114,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/MyLib/Images/Dashboard.png"/>
+              <Image iconType="3" name="/MyLib/Icons/Dashboard.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Dashboard"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
@@ -134,7 +134,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/MyLib/Images/Overview.png"/>
+              <Image iconType="3" name="/MyLib/Icons/Overview.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Properties"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
@@ -154,7 +154,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/MyLib/Images/Reports.png"/>
+              <Image iconType="3" name="/MyLib/Icons/Reports.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Analytics"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
@@ -174,7 +174,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/MyLib/Images/Account.png"/>
+              <Image iconType="3" name="/MyLib/Icons/Account.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="My Account"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
@@ -196,7 +196,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/MyLib/Images/Clients.png"/>
+              <Image iconType="3" name="/MyLib/Icons/Clients.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Clients"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>

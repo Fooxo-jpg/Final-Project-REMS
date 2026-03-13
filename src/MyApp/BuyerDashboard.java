@@ -73,7 +73,7 @@ public class BuyerDashboard extends javax.swing.JFrame {
 
         homeBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         homeBtn.setForeground(new java.awt.Color(255, 255, 255));
-        homeBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Dashboard.png"))); // NOI18N
+        homeBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Dashboard.png"))); // NOI18N
         homeBtn.setText("Home");
         homeBtn.setContentAreaFilled(false);
         homeBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -82,7 +82,7 @@ public class BuyerDashboard extends javax.swing.JFrame {
 
         overviewBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         overviewBtn.setForeground(new java.awt.Color(255, 255, 255));
-        overviewBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Overview.png"))); // NOI18N
+        overviewBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Overview.png"))); // NOI18N
         overviewBtn.setText("Overview");
         overviewBtn.setContentAreaFilled(false);
         overviewBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -91,7 +91,7 @@ public class BuyerDashboard extends javax.swing.JFrame {
 
         searchBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         searchBtn.setForeground(new java.awt.Color(255, 255, 255));
-        searchBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Search.png"))); // NOI18N
+        searchBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Search.png"))); // NOI18N
         searchBtn.setText("Search");
         searchBtn.setContentAreaFilled(false);
         searchBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -100,7 +100,7 @@ public class BuyerDashboard extends javax.swing.JFrame {
 
         myAccBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         myAccBtn.setForeground(new java.awt.Color(255, 255, 255));
-        myAccBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Account.png"))); // NOI18N
+        myAccBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Account.png"))); // NOI18N
         myAccBtn.setText("My Account");
         myAccBtn.setContentAreaFilled(false);
         myAccBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -109,7 +109,7 @@ public class BuyerDashboard extends javax.swing.JFrame {
 
         favBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         favBtn.setForeground(new java.awt.Color(255, 255, 255));
-        favBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Favorites.png"))); // NOI18N
+        favBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Favorites.png"))); // NOI18N
         favBtn.setText("Favorites");
         favBtn.setContentAreaFilled(false);
         favBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);

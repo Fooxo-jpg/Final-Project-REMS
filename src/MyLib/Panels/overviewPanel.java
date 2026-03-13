@@ -35,6 +35,7 @@ public final class overviewPanel extends javax.swing.JPanel {
 
         jButton20.setText("jButton11");
 
+        lotSelectorPanel.setBackground(new java.awt.Color(255, 255, 255));
         java.awt.GridBagLayout jPanel2Layout = new java.awt.GridBagLayout();
         jPanel2Layout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
         jPanel2Layout.rowHeights = new int[] {0, 10, 0, 10, 0};
@@ -135,65 +136,63 @@ public final class overviewPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.1;
         lotSelectorPanel.add(blockOnePanel, gridBagConstraints);
 
-        footerPanel.setBackground(new java.awt.Color(204, 204, 204));
+        footerPanel.setBackground(new java.awt.Color(248, 235, 210));
         java.awt.GridBagLayout footerPanelLayout = new java.awt.GridBagLayout();
         footerPanelLayout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
-        footerPanelLayout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0};
+        footerPanelLayout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0};
         footerPanel.setLayout(footerPanelLayout);
 
         availableLbl.setBackground(new java.awt.Color(217, 111, 118));
         availableLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        availableLbl.setText("<html><p style=\"color: #7BC27B;\">■</p>Available:");
+        availableLbl.setText("Available:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridheight = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weighty = 1.0;
         footerPanel.add(availableLbl, gridBagConstraints);
 
         reservedLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        reservedLbl.setText("<html><p style=\"color: #FFFF99;\">■</p>Reserved:");
+        reservedLbl.setText("Reserved:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridheight = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weighty = 1.0;
         footerPanel.add(reservedLbl, gridBagConstraints);
 
         soldLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         soldLbl.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        soldLbl.setText("<html><p style=\"color: #D96F76;\">■</p>Sold:");
+        soldLbl.setText("Sold:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridheight = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weighty = 1.0;
         footerPanel.add(soldLbl, gridBagConstraints);
 
         totalLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        totalLbl.setText("<html><p style=\"color: #FFFFFF;\">■</p>Total: 100");
+        totalLbl.setText("Total:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridheight = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.2;
+        gridBagConstraints.weighty = 1.0;
         footerPanel.add(totalLbl, gridBagConstraints);
 
         selectionLabel.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         selectionLabel.setText("Current Selection: BLOCK # LOT #");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
         footerPanel.add(selectionLabel, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

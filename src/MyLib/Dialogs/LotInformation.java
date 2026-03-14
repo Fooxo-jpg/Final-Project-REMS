@@ -1,10 +1,13 @@
 package MyLib.Dialogs;
 
+import MyLib.Classes.Models.Buyer;
+import MyLib.Classes.Models.User;
+import MyLib.Classes.Services.AuthService;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 public class LotInformation extends javax.swing.JDialog {
-
     private final MyLib.Classes.Models.Property currentProperty;
     private String userRole;
     
@@ -16,10 +19,9 @@ public class LotInformation extends javax.swing.JDialog {
         this.userRole = role;
         
         locationLbl.setText(prop.getPropertyID());
-        // ADD LATER YUNG MGA STATUS KINEMERUT 
-        // statusLbl.setText(prop.getStatus());
+        agentLbl.setText(prop.getAssignedAgent());
         
-        if (role.equalsIgnoreCase("Admin")) {
+        if (role.equalsIgnoreCase("Admin")) { // ADMIN VIEW
             if (prop.isListed()) {
                 btn1.setText("Unlist Property");
                 btn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/listBlack.png")));
@@ -30,7 +32,34 @@ public class LotInformation extends javax.swing.JDialog {
             
             btn2.setText("Edit Property");
             btn2.setIcon(new ImageIcon(getClass().getResource("/MyLib/Icons/Edit_black.png")));
-        } else {
+        
+            String currentLogin = AuthService.getCurrentUser().getFirstName();
+            if (currentLogin == null || currentLogin.isEmpty()) {
+                currentLogin = AuthService.getCurrentUser().getEmail();
+            }
+            
+            if (!prop.getAssignedAgent().equals("No Agent Assigned") && !prop.getAssignedAgent().equals(currentLogin)){
+                btn1.setEnabled(false);
+                btn2.setEnabled(false);
+                btn1.setToolTipText("Only the Admin who listed this (" + prop.getAssignedAgent() + ") can edit it.");
+                btn2.setToolTipText("Only the Admin who listed this (" + prop.getAssignedAgent() + ") can edit it.");
+            } else {
+                btn1.setEnabled(true);
+                btn2.setEnabled(true);
+                btn1.setToolTipText(null);
+                btn2.setToolTipText(null);
+            }
+        
+        } else if (role.equalsIgnoreCase("Guest")) {
+            btn1.setText("Contact");
+            btn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Contact.png")));
+            btn1.setToolTipText("Register to contact Agents");
+            
+            btn2.setText("Add to Favorites");
+            btn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Fave_Black.png")));
+            btn1.setToolTipText("Register to add to Favorites");
+        
+        } else { // BUYER VIEW
             btn1.setText("Contact");
             btn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Contact.png")));
 
@@ -39,6 +68,21 @@ public class LotInformation extends javax.swing.JDialog {
         }
     }
     
+    public void showGuestRestriction(){
+        Object[] options = {"Cancel", "Register"};
+        int selection = javax.swing.JOptionPane.showOptionDialog(this,
+                "Please login to perform this action.",
+                "Access Restricted",
+                javax.swing.JOptionPane.YES_NO_OPTION,
+                javax.swing.JOptionPane.WARNING_MESSAGE,
+                null, options, options[1]);
+
+        if (selection == 1) {
+            this.dispose();
+            javax.swing.SwingUtilities.getWindowAncestor(this).dispose(); // Close Dashboard
+            new MyLib.Dialogs.Register(null, true).setVisible(true);
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -367,19 +411,54 @@ public class LotInformation extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    // ADMIN [EDIT PROPERTY]
+    // BUYER [ADD TO FAVORITES]
     private void btn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn2ActionPerformed
-
+        if (userRole.equalsIgnoreCase("Admin")) {
+            
+        } else if (userRole.equalsIgnoreCase("Buyer")) {
+            User currentUser = AuthService.getCurrentUser();
+            
+            if (currentUser instanceof Buyer buyer){ // Downcasting
+                buyer.addFavorite(currentProperty);
+                JOptionPane.showMessageDialog(this,
+                        currentProperty.getPropertyID() + " added to Favorites!");
+                this.dispose();
+                
+            }
+        } else if (userRole.equalsIgnoreCase("Guest")) {
+            showGuestRestriction();
+            return;
+        }
     }//GEN-LAST:event_btn2ActionPerformed
 
+    // ADMIN [LIST]
+    // BUYER [CONTACT]
     private void btn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn1ActionPerformed
         if (userRole.equalsIgnoreCase("Admin")) {
             boolean currentStatus = currentProperty.isListed();
-            currentProperty.setListed(!currentStatus);
             
-            String msg = currentProperty.isListed() ? "Property Listed!" : "Property Unlisted!";
-            javax.swing.JOptionPane.showMessageDialog(this, msg);
-
+            if (!currentStatus) {
+                String listerName = AuthService.getCurrentUser().getFirstName();
+                if (listerName == null || listerName.isEmpty()) {
+                    listerName = AuthService.getCurrentUser().getEmail();
+                }
+                
+                currentProperty.setAssignedAgent(listerName);
+                currentProperty.setListed(true);
+                javax.swing.JOptionPane.showMessageDialog(this, "Property Listed by " + listerName);
+            } else {
+                currentProperty.setListed(false);
+                currentProperty.setAssignedAgent("No Agent Assigned");
+                javax.swing.JOptionPane.showMessageDialog(this, "Property Unlisted.");
+            }
+            
             this.dispose();
+        } else if (userRole.equalsIgnoreCase("Guest")) {
+            showGuestRestriction();
+            return;
+        } else {
+            // BUYER LOGIC
         }
     }//GEN-LAST:event_btn1ActionPerformed
 

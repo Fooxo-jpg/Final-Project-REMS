@@ -90,6 +90,7 @@ public class Login extends javax.swing.JDialog {
         guestLoginBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         guestLoginBtn.setForeground(new java.awt.Color(255, 255, 255));
         guestLoginBtn.setText("LOGIN AS GUEST");
+        guestLoginBtn.addActionListener(this::guestLoginBtnActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -175,6 +176,13 @@ public class Login extends javax.swing.JDialog {
         this.dispose();
         new MyLib.Dialogs.Register(null, true).setVisible(true);
     }//GEN-LAST:event_signupMouseClicked
+
+    private void guestLoginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guestLoginBtnActionPerformed
+        AuthService.loginAsGuest();
+        this.dispose();
+        
+        new MyApp.BuyerDashboard().setVisible(true);
+    }//GEN-LAST:event_guestLoginBtnActionPerformed
 
     /**
      * @param args the command line arguments

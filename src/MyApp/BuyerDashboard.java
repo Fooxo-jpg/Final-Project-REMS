@@ -1,7 +1,10 @@
 package MyApp;
 
 // BUYER PANELS
+import MyLib.Classes.Services.AuthService;
+import MyLib.Dialogs.*;
 import MyLib.Panels.*;
+import javax.swing.JOptionPane;
 
 import javax.swing.UIManager;
 
@@ -10,6 +13,7 @@ public class BuyerDashboard extends javax.swing.JFrame {
 
     public BuyerDashboard() {
         initComponents();
+        checkGuestAccess();
         
         HomePanel Home = new HomePanel();
         mainContentPanel.add(Home, "home_view");
@@ -37,6 +41,13 @@ public class BuyerDashboard extends javax.swing.JFrame {
         mainContentPanel.revalidate();
         mainContentPanel.repaint();
     }
+    
+    private void checkGuestAccess(){
+        String role = AuthService.getCurrentUser().getRole();
+        if (role.equalsIgnoreCase("Guest")) {
+            myAccBtn.setText("Login / Register");
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -57,7 +68,7 @@ public class BuyerDashboard extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JSeparator();
         favBtn = new javax.swing.JButton();
         transacBtn = new javax.swing.JButton();
-        transacBtn1 = new javax.swing.JButton();
+        notifBtn = new javax.swing.JButton();
         mainContentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -124,14 +135,14 @@ public class BuyerDashboard extends javax.swing.JFrame {
         transacBtn.setIconTextGap(10);
         transacBtn.addActionListener(this::transacBtnActionPerformed);
 
-        transacBtn1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        transacBtn1.setForeground(new java.awt.Color(255, 255, 255));
-        transacBtn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/notif_white.png"))); // NOI18N
-        transacBtn1.setText("Notification");
-        transacBtn1.setContentAreaFilled(false);
-        transacBtn1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        transacBtn1.setIconTextGap(10);
-        transacBtn1.addActionListener(this::transacBtn1ActionPerformed);
+        notifBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        notifBtn.setForeground(new java.awt.Color(255, 255, 255));
+        notifBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/notif_white.png"))); // NOI18N
+        notifBtn.setText("Notification");
+        notifBtn.setContentAreaFilled(false);
+        notifBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        notifBtn.setIconTextGap(10);
+        notifBtn.addActionListener(this::notifBtnActionPerformed);
 
         javax.swing.GroupLayout sidePanelLayout = new javax.swing.GroupLayout(sidePanel);
         sidePanel.setLayout(sidePanelLayout);
@@ -149,7 +160,7 @@ public class BuyerDashboard extends javax.swing.JFrame {
                     .addComponent(myAccBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
                     .addComponent(jSeparator2)
                     .addComponent(transacBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(transacBtn1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(notifBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         sidePanelLayout.setVerticalGroup(
@@ -157,22 +168,22 @@ public class BuyerDashboard extends javax.swing.JFrame {
             .addGroup(sidePanelLayout.createSequentialGroup()
                 .addComponent(logo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(homeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(overviewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(favBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(transacBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(transacBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(notifBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
                 .addComponent(myAccBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -191,7 +202,7 @@ public class BuyerDashboard extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(sidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 621, Short.MAX_VALUE)
+            .addComponent(sidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
             .addComponent(mainContentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -204,7 +215,27 @@ public class BuyerDashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_homeBtnActionPerformed
 
     private void myAccBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myAccBtnActionPerformed
-        showCard("myAcc_view");
+        String role = AuthService.getCurrentUser().getRole();
+        
+        if (role.equalsIgnoreCase("Guest")) {
+            Object[] options = {"Login", "Register", "Cancel"};
+            int choice = JOptionPane.showOptionDialog(this,
+                    "Login or Register to Access Account Features?",
+                    "Guest Access",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null, options, options[0]);
+
+            if (choice == 0) { // Login clicked
+                this.dispose();
+                new Login().setVisible(true);
+            } else if (choice == 1) { // Register clicked
+                this.dispose();
+                new Register(null, true).setVisible(true);
+            }
+        } else {
+            showCard("myAcc_view");
+        }
     }//GEN-LAST:event_myAccBtnActionPerformed
 
     private void overviewBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_overviewBtnActionPerformed
@@ -223,9 +254,9 @@ public class BuyerDashboard extends javax.swing.JFrame {
         showCard("transaction_view");
     }//GEN-LAST:event_transacBtnActionPerformed
 
-    private void transacBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transacBtn1ActionPerformed
+    private void notifBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_notifBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_transacBtn1ActionPerformed
+    }//GEN-LAST:event_notifBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -251,10 +282,10 @@ public class BuyerDashboard extends javax.swing.JFrame {
     private javax.swing.JLabel logo;
     private javax.swing.JPanel mainContentPanel;
     private javax.swing.JButton myAccBtn;
+    private javax.swing.JButton notifBtn;
     private javax.swing.JButton overviewBtn;
     private javax.swing.JButton searchBtn;
     private javax.swing.JPanel sidePanel;
     private javax.swing.JButton transacBtn;
-    private javax.swing.JButton transacBtn1;
     // End of variables declaration//GEN-END:variables
 }

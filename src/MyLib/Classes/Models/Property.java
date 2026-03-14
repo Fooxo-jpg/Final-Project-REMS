@@ -4,6 +4,7 @@ public class Property {
     protected String propertyID;
     protected String address;
     protected String status;
+    protected String assignedAgent = "No Agent Assigned";
     protected boolean isListed = false;
     protected double lotArea;
     protected double floorArea;
@@ -22,6 +23,7 @@ public class Property {
     public String getPropertyID() { return propertyID; }
     public String getAddress() { return address; }
     public String getStatus() { return status; }
+    public String getAssignedAgent() { return assignedAgent; }
     public double getLotArea() { return lotArea; }
     public double getFloorArea() { return floorArea; }
     public double getNetSellingPrice() { return netSellingPrice; }
@@ -29,10 +31,12 @@ public class Property {
     public int getNumBathrooms() { return numBathrooms; }
     public boolean isListed() { return isListed; }
     
+    
     // SETTERS
     public void setPropertyID(String propertyID) { this.propertyID = propertyID; }
     public void setAddress(String address) { this.address = address; }
     public void setStatus(String status) { this.status = status; }
+    public void setAssignedAgent(String assignedAgent) { this.assignedAgent = assignedAgent; }
     public void setLotArea(double lotArea) { this.lotArea = lotArea; }
     public void setFloorArea(double floorArea) { this.floorArea = floorArea; }
     public void setNetSellingPrice(double netSellingPrice) { this.netSellingPrice = netSellingPrice; }

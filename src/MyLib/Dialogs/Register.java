@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package MyLib.Dialogs;
 
 import MyLib.Classes.Models.Admin;
@@ -9,10 +5,6 @@ import MyLib.Classes.Models.Buyer;
 import MyLib.Classes.Services.AuthService;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author ymnis
- */
 public class Register extends javax.swing.JDialog {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Register.class.getName());
@@ -289,7 +281,7 @@ public class Register extends javax.swing.JDialog {
             Admin newAdmin = new Admin(email, pass, email);
             AuthService.addUser(newAdmin);
         } else {
-            Buyer newBuyer = new Buyer(email, pass, email, 0.0); // Default income 0
+            Buyer newBuyer = new Buyer(email, pass, email, 0.0);
             AuthService.addUser(newBuyer);
         }
         

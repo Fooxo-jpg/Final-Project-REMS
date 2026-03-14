@@ -60,6 +60,7 @@ public class ChangePassword extends javax.swing.JDialog {
         oldPassLbl.setText("Old Password:");
 
         showPassCb.setText("Show Password");
+        showPassCb.addActionListener(this::showPassCbActionPerformed);
 
         Logo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         Logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Logo.png"))); // NOI18N
@@ -164,6 +165,18 @@ public class ChangePassword extends javax.swing.JDialog {
             this.dispose();
         }
     }//GEN-LAST:event_changeBtnActionPerformed
+
+    private void showPassCbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPassCbActionPerformed
+        if (showPassCb.isSelected()) {
+            oldPassTxt.setEchoChar((char) 0);
+            newPassTxt.setEchoChar((char) 0);
+            confirmPassTxt.setEchoChar((char) 0);
+        } else {
+            oldPassTxt.setEchoChar('\u2022');
+            newPassTxt.setEchoChar('\u2022');
+            confirmPassTxt.setEchoChar('\u2022');
+        }
+    }//GEN-LAST:event_showPassCbActionPerformed
 
     /**
      * @param args the command line arguments

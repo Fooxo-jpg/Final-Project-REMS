@@ -67,6 +67,10 @@ public final class OverviewPanel extends javax.swing.JPanel {
                 lotBtn.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(java.awt.event.MouseEvent e){
+                        if (!lotBtn.isEnabled()) {
+                            return;
+                        }
+                        
                         if (e.getClickCount() == 2) {
                             java.awt.Frame parentFrame = (java.awt.Frame) SwingUtilities.getWindowAncestor(OverviewPanel.this);
                             String userRole = AuthService.getCurrentUser().getRole();

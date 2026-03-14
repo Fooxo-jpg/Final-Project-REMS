@@ -37,6 +37,11 @@ public class AuthService {
         return Pattern.compile(emailRegex).matcher(email).matches();
     }
     
+    public static void loginAsGuest() {
+        User guest = new User("GuestUser", "", "guest@system.com", "Guest");
+        setCurrentUser(guest);
+    }
+    
     public static void addUser(User user){
         userList.add(user);
         

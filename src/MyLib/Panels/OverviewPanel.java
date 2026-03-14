@@ -1,5 +1,15 @@
 package MyLib.Panels;
 
+import MyLib.Classes.Models.Property;
+import MyLib.Classes.Services.AuthService;
+import MyLib.Classes.Services.PropertyService;
+import java.awt.Color;
+import java.awt.Frame;
+import java.awt.event.MouseAdapter;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
 /**
  *
  * @author ymnis
@@ -8,6 +18,70 @@ public final class OverviewPanel extends javax.swing.JPanel {
 
     public OverviewPanel() {
         initComponents();
+        populateLots();
+    }
+    
+    // HELPERS
+    public void populateLots(){
+        JPanel[] blocks = {BlockOnePanel, BlockTwoPanel, BlockThreePanel, BlockFourPanel, BlockFivePanel};
+        
+        for (int block = 0; block < blocks.length; block++) {
+            blocks[block].removeAll();
+            int blockNum = block + 1;
+            
+            for (int lot = 1; lot <= 20; lot++) {
+                int lotNum = lot;
+                Property prop = PropertyService.getProperty(blockNum, lotNum);
+                
+                JButton lotBtn = new JButton("L" + lotNum);
+                lotBtn.setToolTipText(prop.getPropertyID());
+                lotBtn.setBackground(new Color(164, 214, 139)); // GREEN
+                lotBtn.setForeground(Color.WHITE);
+                lotBtn.setFocusPainted(false);
+                
+                switch (prop.getStatus().toUpperCase()) {
+                    case "AVAILABLE" -> lotBtn.setBackground(new java.awt.Color(144, 238, 144));
+                    case "RESERVED" -> lotBtn.setBackground(java.awt.Color.YELLOW);
+                    case "SOLD" -> lotBtn.setBackground(new java.awt.Color(255, 102, 102));
+                }
+                
+                lotBtn.addActionListener(e -> {
+                    System.out.println("Property ID: " + prop.getPropertyID() + " | Status: " + prop.getStatus());
+                    selectionLabel.setText("Block " + blockNum + " Lot " + lotNum);
+                });
+                
+                lotBtn.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(java.awt.event.MouseEvent e){
+                        if (e.getClickCount() == 2) {
+                            java.awt.Frame parentFrame = (java.awt.Frame) SwingUtilities.getWindowAncestor(OverviewPanel.this);
+                            String userRole = AuthService.getCurrentUser().getRole();
+                            MyLib.Dialogs.LotInformation dialog = new MyLib.Dialogs.LotInformation(parentFrame, true, prop, userRole);
+                            dialog.setVisible(true);
+                            populateLots();
+                        }
+                    }
+                });
+                
+                blocks[block].add(lotBtn);
+            }
+            blocks[block].revalidate();
+            blocks[block].repaint();
+        }
+        
+        updateStatistics();
+    }
+    
+    private void updateStatistics() {
+        int total = PropertyService.getTotalProperties();
+        int available = PropertyService.getCountByStatus("Available");
+        int reserved = PropertyService.getCountByStatus("Reserved");
+        int sold = PropertyService.getCountByStatus("Sold");
+        
+        totalLbl.setText("Total: " + String.valueOf(total));
+        availableLbl.setText("Available: " + String.valueOf(available));
+        reservedLbl.setText("Reserved: " + String.valueOf(reserved));
+        soldLbl.setText("Sold: " + String.valueOf(sold));
     }
     
     @SuppressWarnings("unchecked")
@@ -17,125 +91,87 @@ public final class OverviewPanel extends javax.swing.JPanel {
 
         jButton20 = new javax.swing.JButton();
         lotSelectorPanel = new javax.swing.JPanel();
-        blockFourPanel = new javax.swing.JPanel();
-        blockThreePanel = new javax.swing.JPanel();
-        blockFivePanel = new javax.swing.JPanel();
-        blockTwoPanel = new javax.swing.JPanel();
-        blockOnePanel = new javax.swing.JPanel();
+        BlockFourPanel = new javax.swing.JPanel();
+        BlockThreePanel = new javax.swing.JPanel();
+        BlockFivePanel = new javax.swing.JPanel();
+        BlockTwoPanel = new javax.swing.JPanel();
+        BlockOnePanel = new javax.swing.JPanel();
         footerPanel = new javax.swing.JPanel();
         availableLbl = new javax.swing.JLabel();
-        reservedLbl = new javax.swing.JLabel();
-        soldLbl = new javax.swing.JLabel();
-        totalLbl = new javax.swing.JLabel();
+        houseTypeLbl = new javax.swing.JLabel();
+        lotSizeLbl = new javax.swing.JLabel();
+        GSPLbl = new javax.swing.JLabel();
         selectionLabel = new javax.swing.JLabel();
-        totalLbl1 = new javax.swing.JLabel();
-        soldLbl1 = new javax.swing.JLabel();
-        reservedLbl1 = new javax.swing.JLabel();
+        totalLbl = new javax.swing.JLabel();
+        soldLbl = new javax.swing.JLabel();
+        reservedLbl = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
 
         jButton20.setText("jButton11");
 
         lotSelectorPanel.setBackground(new java.awt.Color(255, 255, 255));
         java.awt.GridBagLayout jPanel2Layout = new java.awt.GridBagLayout();
-        jPanel2Layout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
+        jPanel2Layout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
         jPanel2Layout.rowHeights = new int[] {0, 10, 0, 10, 0};
         lotSelectorPanel.setLayout(jPanel2Layout);
 
-        javax.swing.GroupLayout blockFourPanelLayout = new javax.swing.GroupLayout(blockFourPanel);
-        blockFourPanel.setLayout(blockFourPanelLayout);
-        blockFourPanelLayout.setHorizontalGroup(
-            blockFourPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 190, Short.MAX_VALUE)
-        );
-        blockFourPanelLayout.setVerticalGroup(
-            blockFourPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 585, Short.MAX_VALUE)
-        );
-
+        BlockFourPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "BLOCK 4", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15))); // NOI18N
+        BlockFourPanel.setOpaque(false);
+        BlockFourPanel.setLayout(new java.awt.GridLayout(10, 2, 3, 3));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 1.1;
-        lotSelectorPanel.add(blockFourPanel, gridBagConstraints);
+        lotSelectorPanel.add(BlockFourPanel, gridBagConstraints);
 
-        javax.swing.GroupLayout blockThreePanelLayout = new javax.swing.GroupLayout(blockThreePanel);
-        blockThreePanel.setLayout(blockThreePanelLayout);
-        blockThreePanelLayout.setHorizontalGroup(
-            blockThreePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 190, Short.MAX_VALUE)
-        );
-        blockThreePanelLayout.setVerticalGroup(
-            blockThreePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 585, Short.MAX_VALUE)
-        );
-
+        BlockThreePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "BLOCK 3", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15))); // NOI18N
+        BlockThreePanel.setOpaque(false);
+        BlockThreePanel.setLayout(new java.awt.GridLayout(10, 2, 3, 3));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 1.1;
-        lotSelectorPanel.add(blockThreePanel, gridBagConstraints);
+        lotSelectorPanel.add(BlockThreePanel, gridBagConstraints);
 
-        javax.swing.GroupLayout blockFivePanelLayout = new javax.swing.GroupLayout(blockFivePanel);
-        blockFivePanel.setLayout(blockFivePanelLayout);
-        blockFivePanelLayout.setHorizontalGroup(
-            blockFivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 190, Short.MAX_VALUE)
-        );
-        blockFivePanelLayout.setVerticalGroup(
-            blockFivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 585, Short.MAX_VALUE)
-        );
-
+        BlockFivePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "BLOCK 5", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15))); // NOI18N
+        BlockFivePanel.setOpaque(false);
+        BlockFivePanel.setLayout(new java.awt.GridLayout(10, 2, 3, 3));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 10;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 1.1;
-        lotSelectorPanel.add(blockFivePanel, gridBagConstraints);
+        lotSelectorPanel.add(BlockFivePanel, gridBagConstraints);
 
-        javax.swing.GroupLayout blockTwoPanelLayout = new javax.swing.GroupLayout(blockTwoPanel);
-        blockTwoPanel.setLayout(blockTwoPanelLayout);
-        blockTwoPanelLayout.setHorizontalGroup(
-            blockTwoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 190, Short.MAX_VALUE)
-        );
-        blockTwoPanelLayout.setVerticalGroup(
-            blockTwoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 585, Short.MAX_VALUE)
-        );
-
+        BlockTwoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "BLOCK 2", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15))); // NOI18N
+        BlockTwoPanel.setOpaque(false);
+        BlockTwoPanel.setLayout(new java.awt.GridLayout(10, 2, 3, 3));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 1.1;
-        lotSelectorPanel.add(blockTwoPanel, gridBagConstraints);
+        lotSelectorPanel.add(BlockTwoPanel, gridBagConstraints);
 
-        javax.swing.GroupLayout blockOnePanelLayout = new javax.swing.GroupLayout(blockOnePanel);
-        blockOnePanel.setLayout(blockOnePanelLayout);
-        blockOnePanelLayout.setHorizontalGroup(
-            blockOnePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 190, Short.MAX_VALUE)
-        );
-        blockOnePanelLayout.setVerticalGroup(
-            blockOnePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 585, Short.MAX_VALUE)
-        );
-
+        BlockOnePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "BLOCK 1", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15))); // NOI18N
+        BlockOnePanel.setOpaque(false);
+        BlockOnePanel.setLayout(new java.awt.GridLayout(10, 2, 3, 3));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 1.1;
-        lotSelectorPanel.add(blockOnePanel, gridBagConstraints);
+        lotSelectorPanel.add(BlockOnePanel, gridBagConstraints);
 
-        footerPanel.setBackground(new java.awt.Color(248, 235, 210));
+        footerPanel.setBackground(new java.awt.Color(255, 255, 255));
         java.awt.GridBagLayout footerPanelLayout = new java.awt.GridBagLayout();
         footerPanelLayout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
         footerPanelLayout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0};
@@ -152,40 +188,40 @@ public final class OverviewPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         footerPanel.add(availableLbl, gridBagConstraints);
 
-        reservedLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        reservedLbl.setText("House Type:");
+        houseTypeLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        houseTypeLbl.setText("House Type:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        footerPanel.add(reservedLbl, gridBagConstraints);
+        footerPanel.add(houseTypeLbl, gridBagConstraints);
 
-        soldLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        soldLbl.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        soldLbl.setText("Lot Size: 0 sqm");
-        soldLbl.setToolTipText("");
+        lotSizeLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        lotSizeLbl.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lotSizeLbl.setText("Lot Size: 0 sqm");
+        lotSizeLbl.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        footerPanel.add(soldLbl, gridBagConstraints);
+        footerPanel.add(lotSizeLbl, gridBagConstraints);
 
-        totalLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        totalLbl.setText("GSP: PHP 0.00");
+        GSPLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        GSPLbl.setText("GSP: PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        footerPanel.add(totalLbl, gridBagConstraints);
+        footerPanel.add(GSPLbl, gridBagConstraints);
 
         selectionLabel.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        selectionLabel.setText("BLOCK # LOT #");
+        selectionLabel.setText("Block 0 Lot 0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
@@ -194,70 +230,97 @@ public final class OverviewPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         footerPanel.add(selectionLabel, gridBagConstraints);
 
-        totalLbl1.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        totalLbl1.setText("Total: 0");
+        totalLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        totalLbl.setText("Total: 0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        footerPanel.add(totalLbl1, gridBagConstraints);
+        footerPanel.add(totalLbl, gridBagConstraints);
 
-        soldLbl1.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        soldLbl1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        soldLbl1.setText("Sold: 0");
+        soldLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        soldLbl.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        soldLbl.setText("Sold: 0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        footerPanel.add(soldLbl1, gridBagConstraints);
+        footerPanel.add(soldLbl, gridBagConstraints);
 
-        reservedLbl1.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        reservedLbl1.setText("Reserved: 0");
+        reservedLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        reservedLbl.setText("Reserved: 0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        footerPanel.add(reservedLbl1, gridBagConstraints);
+        footerPanel.add(reservedLbl, gridBagConstraints);
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 25)); // NOI18N
+        jLabel1.setText("CORNERSTONE ESTATE SUBDIVISION");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lotSelectorPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(footerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(footerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+            .addComponent(lotSelectorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(lotSelectorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
-                .addComponent(footerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(lotSelectorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(footerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected javax.swing.JPanel BlockFivePanel;
+    protected javax.swing.JPanel BlockFourPanel;
+    protected javax.swing.JPanel BlockOnePanel;
+    protected javax.swing.JPanel BlockThreePanel;
+    protected javax.swing.JPanel BlockTwoPanel;
+    private javax.swing.JLabel GSPLbl;
     private javax.swing.JLabel availableLbl;
-    private javax.swing.JPanel blockFivePanel;
-    private javax.swing.JPanel blockFourPanel;
-    private javax.swing.JPanel blockOnePanel;
-    private javax.swing.JPanel blockThreePanel;
-    private javax.swing.JPanel blockTwoPanel;
     private javax.swing.JPanel footerPanel;
+    private javax.swing.JLabel houseTypeLbl;
     private javax.swing.JButton jButton20;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel lotSelectorPanel;
+    private javax.swing.JLabel lotSizeLbl;
     private javax.swing.JLabel reservedLbl;
-    private javax.swing.JLabel reservedLbl1;
     private javax.swing.JLabel selectionLabel;
     private javax.swing.JLabel soldLbl;
-    private javax.swing.JLabel soldLbl1;
     private javax.swing.JLabel totalLbl;
-    private javax.swing.JLabel totalLbl1;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,11 +1,7 @@
 package MyApp;
 
 // BUYER PANELS
-import MyLib.Panels.SearchPanel;
-import MyLib.Panels.OverviewPanel;
-import MyLib.Panels.FavoritesPanel;
-import MyLib.Panels.MyAccPanel;
-import MyLib.Panels.HomePanel;
+import MyLib.Panels.*;
 
 import javax.swing.UIManager;
 
@@ -30,7 +26,8 @@ public class BuyerDashboard extends javax.swing.JFrame {
         FavoritesPanel Favorites = new FavoritesPanel();
         mainContentPanel.add(Favorites, "favorites_view");
         
-        
+        TransactionPanel Transaction = new TransactionPanel();
+        mainContentPanel.add(Transaction, "transaction_view");
     }
     
     public void showCard(String cardName){
@@ -59,6 +56,8 @@ public class BuyerDashboard extends javax.swing.JFrame {
         myAccBtn = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
         favBtn = new javax.swing.JButton();
+        transacBtn = new javax.swing.JButton();
+        transacBtn1 = new javax.swing.JButton();
         mainContentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -116,6 +115,24 @@ public class BuyerDashboard extends javax.swing.JFrame {
         favBtn.setIconTextGap(10);
         favBtn.addActionListener(this::favBtnActionPerformed);
 
+        transacBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        transacBtn.setForeground(new java.awt.Color(255, 255, 255));
+        transacBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/History_White.png"))); // NOI18N
+        transacBtn.setText("Transaction");
+        transacBtn.setContentAreaFilled(false);
+        transacBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        transacBtn.setIconTextGap(10);
+        transacBtn.addActionListener(this::transacBtnActionPerformed);
+
+        transacBtn1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        transacBtn1.setForeground(new java.awt.Color(255, 255, 255));
+        transacBtn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/notif_white.png"))); // NOI18N
+        transacBtn1.setText("Notification");
+        transacBtn1.setContentAreaFilled(false);
+        transacBtn1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        transacBtn1.setIconTextGap(10);
+        transacBtn1.addActionListener(this::transacBtn1ActionPerformed);
+
         javax.swing.GroupLayout sidePanelLayout = new javax.swing.GroupLayout(sidePanel);
         sidePanel.setLayout(sidePanelLayout);
         sidePanelLayout.setHorizontalGroup(
@@ -130,7 +147,9 @@ public class BuyerDashboard extends javax.swing.JFrame {
                     .addComponent(searchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(favBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(myAccBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
-                    .addComponent(jSeparator2))
+                    .addComponent(jSeparator2)
+                    .addComponent(transacBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(transacBtn1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         sidePanelLayout.setVerticalGroup(
@@ -148,8 +167,12 @@ public class BuyerDashboard extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(favBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(transacBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(transacBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 111, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(myAccBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -168,7 +191,7 @@ public class BuyerDashboard extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(sidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+            .addComponent(sidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 621, Short.MAX_VALUE)
             .addComponent(mainContentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -195,6 +218,14 @@ public class BuyerDashboard extends javax.swing.JFrame {
     private void favBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_favBtnActionPerformed
         showCard("favorites_view");
     }//GEN-LAST:event_favBtnActionPerformed
+
+    private void transacBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transacBtnActionPerformed
+        showCard("transaction_view");
+    }//GEN-LAST:event_transacBtnActionPerformed
+
+    private void transacBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transacBtn1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_transacBtn1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -223,5 +254,7 @@ public class BuyerDashboard extends javax.swing.JFrame {
     private javax.swing.JButton overviewBtn;
     private javax.swing.JButton searchBtn;
     private javax.swing.JPanel sidePanel;
+    private javax.swing.JButton transacBtn;
+    private javax.swing.JButton transacBtn1;
     // End of variables declaration//GEN-END:variables
 }

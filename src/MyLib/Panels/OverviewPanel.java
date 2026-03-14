@@ -4,7 +4,6 @@ import MyLib.Classes.Models.Property;
 import MyLib.Classes.Services.AuthService;
 import MyLib.Classes.Services.PropertyService;
 import java.awt.Color;
-import java.awt.Frame;
 import java.awt.event.MouseAdapter;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -24,25 +23,40 @@ public final class OverviewPanel extends javax.swing.JPanel {
     // HELPERS
     public void populateLots(){
         JPanel[] blocks = {BlockOnePanel, BlockTwoPanel, BlockThreePanel, BlockFourPanel, BlockFivePanel};
+        String role = AuthService.getCurrentUser().getRole();
         
         for (int block = 0; block < blocks.length; block++) {
             blocks[block].removeAll();
             int blockNum = block + 1;
             
             for (int lot = 1; lot <= 20; lot++) {
-                int lotNum = lot;
-                Property prop = PropertyService.getProperty(blockNum, lotNum);
+                final int lotNum = lot;
+                Property prop = PropertyService.getProperty(blockNum, lot);
+                JButton lotBtn = new JButton("L" + lot);
                 
-                JButton lotBtn = new JButton("L" + lotNum);
-                lotBtn.setToolTipText(prop.getPropertyID());
-                lotBtn.setBackground(new Color(164, 214, 139)); // GREEN
-                lotBtn.setForeground(Color.WHITE);
-                lotBtn.setFocusPainted(false);
-                
-                switch (prop.getStatus().toUpperCase()) {
-                    case "AVAILABLE" -> lotBtn.setBackground(new java.awt.Color(144, 238, 144));
-                    case "RESERVED" -> lotBtn.setBackground(java.awt.Color.YELLOW);
-                    case "SOLD" -> lotBtn.setBackground(new java.awt.Color(255, 102, 102));
+                if (role.equalsIgnoreCase("Admin")) {
+                    lotBtn.setEnabled(true);
+                    if (prop.isListed()) {
+                        lotBtn.setBackground(new java.awt.Color(144, 238, 144)); // Listed (Green)
+                    } else {
+                        lotBtn.setBackground(Color.LIGHT_GRAY);
+                    }
+                } else {
+                    if (prop.isListed()) {
+                        lotBtn.setEnabled(true);
+                        switch (prop.getStatus().toUpperCase()) {
+                            case "AVAILABLE" ->
+                                lotBtn.setBackground(new java.awt.Color(144, 238, 144));
+                            case "RESERVED" ->
+                                lotBtn.setBackground(java.awt.Color.YELLOW);
+                            case "SOLD" ->
+                                lotBtn.setBackground(new java.awt.Color(255, 102, 102));
+                        }
+                    } else {
+                        lotBtn.setEnabled(false);
+                        lotBtn.setBackground(Color.LIGHT_GRAY);
+                        lotBtn.setText("");
+                    }
                 }
                 
                 lotBtn.addActionListener(e -> {
@@ -56,6 +70,7 @@ public final class OverviewPanel extends javax.swing.JPanel {
                         if (e.getClickCount() == 2) {
                             java.awt.Frame parentFrame = (java.awt.Frame) SwingUtilities.getWindowAncestor(OverviewPanel.this);
                             String userRole = AuthService.getCurrentUser().getRole();
+                            
                             MyLib.Dialogs.LotInformation dialog = new MyLib.Dialogs.LotInformation(parentFrame, true, prop, userRole);
                             dialog.setVisible(true);
                             populateLots();

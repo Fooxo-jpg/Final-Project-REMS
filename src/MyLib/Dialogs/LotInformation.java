@@ -1,25 +1,32 @@
 package MyLib.Dialogs;
 
-import MyLib.Classes.Models.Property;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 
 public class LotInformation extends javax.swing.JDialog {
 
     private final MyLib.Classes.Models.Property currentProperty;
+    private String userRole;
     
     public LotInformation(java.awt.Frame parent, boolean modal, MyLib.Classes.Models.Property prop, String role) {
         super(parent, modal);
         initComponents();
+        
         this.currentProperty = prop;
+        this.userRole = role;
         
         locationLbl.setText(prop.getPropertyID());
         // ADD LATER YUNG MGA STATUS KINEMERUT 
         // statusLbl.setText(prop.getStatus());
         
         if (role.equalsIgnoreCase("Admin")) {
-            btn1.setText("List");
-            btn1.setIcon(new ImageIcon(getClass().getResource("/MyLib/Icons/listAddBlack.png")));
+            if (prop.isListed()) {
+                btn1.setText("Unlist Property");
+                btn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/listBlack.png")));
+            } else {
+                btn1.setText("List Property");
+                btn1.setIcon(new ImageIcon(getClass().getResource("/MyLib/Icons/listAddBlack.png")));
+            }
             
             btn2.setText("Edit Property");
             btn2.setIcon(new ImageIcon(getClass().getResource("/MyLib/Icons/Edit_black.png")));
@@ -195,6 +202,7 @@ public class LotInformation extends javax.swing.JDialog {
 
         btn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Contact.png"))); // NOI18N
         btn1.setText("Contact");
+        btn1.addActionListener(this::btn1ActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 26;
@@ -362,6 +370,18 @@ public class LotInformation extends javax.swing.JDialog {
     private void btn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn2ActionPerformed
 
     }//GEN-LAST:event_btn2ActionPerformed
+
+    private void btn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn1ActionPerformed
+        if (userRole.equalsIgnoreCase("Admin")) {
+            boolean currentStatus = currentProperty.isListed();
+            currentProperty.setListed(!currentStatus);
+            
+            String msg = currentProperty.isListed() ? "Property Listed!" : "Property Unlisted!";
+            javax.swing.JOptionPane.showMessageDialog(this, msg);
+
+            this.dispose();
+        }
+    }//GEN-LAST:event_btn1ActionPerformed
 
     /**
      * @param args the command line arguments

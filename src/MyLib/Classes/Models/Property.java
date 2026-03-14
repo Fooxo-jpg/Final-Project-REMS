@@ -4,6 +4,7 @@ public class Property {
     protected String propertyID;
     protected String address;
     protected String status;
+    protected boolean isListed = false;
     protected double lotArea;
     protected double floorArea;
     protected double netSellingPrice;
@@ -26,6 +27,7 @@ public class Property {
     public double getNetSellingPrice() { return netSellingPrice; }
     public int getNumBedrooms() { return numBedrooms; }
     public int getNumBathrooms() { return numBathrooms; }
+    public boolean isListed() { return isListed; }
     
     // SETTERS
     public void setPropertyID(String propertyID) { this.propertyID = propertyID; }
@@ -36,6 +38,7 @@ public class Property {
     public void setNetSellingPrice(double netSellingPrice) { this.netSellingPrice = netSellingPrice; }
     public void setNumBedrooms(int numBedrooms) { this.numBedrooms = numBedrooms; }
     public void setNumBathrooms(int numBathrooms) { this.numBathrooms = numBathrooms; }
+    public void setListed(boolean isListed) { this.isListed = isListed; }
     
     // METHODS
     public int calculatePricePerSqFt(int lotArea) {

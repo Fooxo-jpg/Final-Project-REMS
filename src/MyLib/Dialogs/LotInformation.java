@@ -417,15 +417,7 @@ public class LotInformation extends javax.swing.JDialog {
         if (userRole.equalsIgnoreCase("Admin")) {
             
         } else if (userRole.equalsIgnoreCase("Buyer")) {
-            User currentUser = AuthService.getCurrentUser();
             
-            if (currentUser instanceof Buyer buyer){ // Downcasting
-                buyer.addFavorite(currentProperty);
-                JOptionPane.showMessageDialog(this,
-                        currentProperty.getPropertyID() + " added to Favorites!");
-                this.dispose();
-                
-            }
         } else if (userRole.equalsIgnoreCase("Guest")) {
             showGuestRestriction();
             return;

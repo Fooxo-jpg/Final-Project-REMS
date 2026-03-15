@@ -1,14 +1,51 @@
 package MyLib.Panels;
 
+import MyLib.Classes.Models.Property;
+import MyLib.Classes.Services.PropertyService;
+import java.awt.Dimension;
+import static javax.swing.Box.createRigidArea;
+import static javax.swing.Box.createVerticalGlue;
+import javax.swing.UIManager;
+
 public class SearchPanel extends javax.swing.JPanel {
 
-    /**
-     * Creates new form searchPanel
-     */
     public SearchPanel() {
         initComponents();
+        generateFullReport();
+        
+        
+        filterSidePanel.setVisible(false);
+        hotbar.putClientProperty("FlatLaf.style", "arc: 20");
+        filterSidePanel.putClientProperty("FlatLaf.style", "arc: 20");
+    }
+    
+    public void generateFullReport() {
+        reportContainer.removeAll();
+        
+        for (int block = 1; block <= 5; block++) {
+            for (int lot = 1; lot <= 20; lot++ ) {
+                Property p = PropertyService.getProperty(block, lot);
+                
+                LotReportTemplate row = new LotReportTemplate(p);
+                reportContainer.add(row);
+                
+                reportContainer.add(createRigidArea(new Dimension(0, 5)));
+                reportContainer.add(createVerticalGlue());
+            }
+        }
+        
+        reportContainer.revalidate();
+        reportContainer.repaint();
     }
 
+    private void toggleFilterPanel() {
+        boolean isVisible = filterSidePanel.isVisible();
+        
+        filterSidePanel.setVisible(!isVisible);
+        
+        this.revalidate();
+        this.repaint();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -19,166 +56,39 @@ public class SearchPanel extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        template = new javax.swing.JPanel();
-        Image = new javax.swing.JPanel();
-        houseModel = new javax.swing.JLabel();
-        houseType = new javax.swing.JLabel();
-        address = new javax.swing.JLabel();
-        floorArea = new javax.swing.JLabel();
-        priceMin = new javax.swing.JLabel();
-        dash = new javax.swing.JLabel();
-        priceMax = new javax.swing.JLabel();
-        priceRange = new javax.swing.JLabel();
-        viewDetails = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
-        jPanel1 = new javax.swing.JPanel();
+        hotbar = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        filterBtn = new javax.swing.JButton();
+        searchPropertyTxt = new javax.swing.JTextField();
+        mainContent = new javax.swing.JPanel();
+        filterSidePanel = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jButton9 = new javax.swing.JButton();
+        jButton10 = new javax.swing.JButton();
+        jButton11 = new javax.swing.JButton();
+        jButton12 = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jPanel2 = new javax.swing.JPanel();
-        template1 = new javax.swing.JPanel();
-        Image1 = new javax.swing.JPanel();
-        houseModel1 = new javax.swing.JLabel();
-        houseType1 = new javax.swing.JLabel();
-        address1 = new javax.swing.JLabel();
-        floorArea1 = new javax.swing.JLabel();
-        priceMin1 = new javax.swing.JLabel();
-        dash1 = new javax.swing.JLabel();
-        priceMax1 = new javax.swing.JLabel();
-        priceRange1 = new javax.swing.JLabel();
-        viewDetails1 = new javax.swing.JButton();
+        reportContainer = new javax.swing.JPanel();
 
-        template.setLayout(new java.awt.GridBagLayout());
-
-        Image.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        javax.swing.GroupLayout ImageLayout = new javax.swing.GroupLayout(Image);
-        Image.setLayout(ImageLayout);
-        ImageLayout.setHorizontalGroup(
-            ImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 336, Short.MAX_VALUE)
-        );
-        ImageLayout.setVerticalGroup(
-            ImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.insets = new java.awt.Insets(7, 3, 7, 4);
-        template.add(Image, gridBagConstraints);
-
-        houseModel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        houseModel.setText("House Model Name");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template.add(houseModel, gridBagConstraints);
-
-        houseType.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        houseType.setText("House Type");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template.add(houseType, gridBagConstraints);
-
-        address.setText("Block 0 Lot 0");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template.add(address, gridBagConstraints);
-
-        floorArea.setText("Floor area; 0 SQM");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template.add(floorArea, gridBagConstraints);
-
-        priceMin.setText("PHP 0");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template.add(priceMin, gridBagConstraints);
-
-        dash.setText("-");
-        dash.setAlignmentX(0.5F);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template.add(dash, gridBagConstraints);
-
-        priceMax.setText("PHP 0");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template.add(priceMax, gridBagConstraints);
-
-        priceRange.setText("Price Range :");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template.add(priceRange, gridBagConstraints);
-
-        viewDetails.setFont(new java.awt.Font("Segoe UI Black", 0, 12)); // NOI18N
-        viewDetails.setText("View Details ");
-        viewDetails.addActionListener(this::viewDetailsActionPerformed);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template.add(viewDetails, gridBagConstraints);
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 25)); // NOI18N
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Home.png"))); // NOI18N
-        jLabel1.setText("Search Properties");
-        jLabel1.setIconTextGap(10);
-
-        jPanel1.setLayout(new java.awt.GridBagLayout());
+        hotbar.setBackground(new java.awt.Color(255, 255, 255));
+        java.awt.GridBagLayout jPanel1Layout = new java.awt.GridBagLayout();
+        jPanel1Layout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
+        jPanel1Layout.rowHeights = new int[] {0, 10, 0, 10, 0};
+        hotbar.setLayout(jPanel1Layout);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Single-Attached.png"))); // NOI18N
         jButton1.setText("Single-Attached");
@@ -186,13 +96,13 @@ public class SearchPanel extends javax.swing.JPanel {
         jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jButton1, gridBagConstraints);
+        hotbar.add(jButton1, gridBagConstraints);
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Single-Detached.png"))); // NOI18N
         jButton2.setText("Single-Detached");
@@ -200,13 +110,13 @@ public class SearchPanel extends javax.swing.JPanel {
         jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jButton2, gridBagConstraints);
+        hotbar.add(jButton2, gridBagConstraints);
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Townhouse.png"))); // NOI18N
         jButton3.setText("Townhouse");
@@ -214,168 +124,210 @@ public class SearchPanel extends javax.swing.JPanel {
         jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jButton3, gridBagConstraints);
+        hotbar.add(jButton3, gridBagConstraints);
 
-        jButton6.setBackground(new java.awt.Color(36, 5, 2));
-        jButton6.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        jButton6.setForeground(new java.awt.Color(255, 255, 255));
-        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Filter.png"))); // NOI18N
-        jButton6.setText("Filter");
-        jButton6.setToolTipText("");
-        jButton6.setIconTextGap(10);
+        filterBtn.setBackground(new java.awt.Color(36, 5, 2));
+        filterBtn.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        filterBtn.setForeground(new java.awt.Color(255, 255, 255));
+        filterBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Filter.png"))); // NOI18N
+        filterBtn.setText("Filter");
+        filterBtn.setToolTipText("");
+        filterBtn.setIconTextGap(10);
+        filterBtn.addActionListener(this::filterBtnActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 10;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.3;
+        hotbar.add(filterBtn, gridBagConstraints);
+
+        searchPropertyTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                searchPropertyTxtKeyReleased(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 140;
+        gridBagConstraints.ipady = 10;
+        hotbar.add(searchPropertyTxt, gridBagConstraints);
+
+        mainContent.setLayout(new java.awt.BorderLayout());
+
+        filterSidePanel.setBackground(new java.awt.Color(36, 5, 2));
+        filterSidePanel.setPreferredSize(new java.awt.Dimension(240, 442));
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Property Filter");
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Size:");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Bedrooms:");
+
+        jPanel1.setOpaque(false);
+        java.awt.GridBagLayout jPanel1Layout1 = new java.awt.GridBagLayout();
+        jPanel1Layout1.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0};
+        jPanel1Layout1.rowHeights = new int[] {0};
+        jPanel1.setLayout(jPanel1Layout1);
+
+        jButton4.setText("2");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 200, 0, 0);
-        jPanel1.add(jButton6, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jButton4, gridBagConstraints);
 
-        template1.setLayout(new java.awt.GridBagLayout());
-
-        Image1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        javax.swing.GroupLayout Image1Layout = new javax.swing.GroupLayout(Image1);
-        Image1.setLayout(Image1Layout);
-        Image1Layout.setHorizontalGroup(
-            Image1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 416, Short.MAX_VALUE)
-        );
-        Image1Layout.setVerticalGroup(
-            Image1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
+        jButton5.setText("1");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 0.5;
-        template1.add(Image1, gridBagConstraints);
-
-        houseModel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        houseModel1.setText("House Model Name");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template1.add(houseModel1, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jButton5, gridBagConstraints);
 
-        houseType1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        houseType1.setText("House Type");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template1.add(houseType1, gridBagConstraints);
-
-        address1.setText("Block 0 Lot 0");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template1.add(address1, gridBagConstraints);
-
-        floorArea1.setText("Floor area; 0 SQM");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template1.add(floorArea1, gridBagConstraints);
-
-        priceMin1.setText("PHP 0");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template1.add(priceMin1, gridBagConstraints);
-
-        dash1.setText("-");
-        dash1.setAlignmentX(0.5F);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template1.add(dash1, gridBagConstraints);
-
-        priceMax1.setText("PHP 0");
+        jButton7.setText("3");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template1.add(priceMax1, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jButton7, gridBagConstraints);
 
-        priceRange1.setText("Price Range :");
+        jButton8.setText("4");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template1.add(priceRange1, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jButton8, gridBagConstraints);
 
-        viewDetails1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        viewDetails1.setText("View Details ");
-        viewDetails1.addActionListener(this::viewDetails1ActionPerformed);
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Bathrooms:");
+
+        jPanel3.setOpaque(false);
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jButton9.setText("2");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        template1.add(viewDetails1, gridBagConstraints);
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jButton9, gridBagConstraints);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        jButton10.setText("1");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jButton10, gridBagConstraints);
+
+        jButton11.setText("3");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jButton11, gridBagConstraints);
+
+        jButton12.setText("4");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jButton12, gridBagConstraints);
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Status:");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Show All", "Available", "Reserved", "Sold" }));
+
+        javax.swing.GroupLayout filterSidePanelLayout = new javax.swing.GroupLayout(filterSidePanel);
+        filterSidePanel.setLayout(filterSidePanelLayout);
+        filterSidePanelLayout.setHorizontalGroup(
+            filterSidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(filterSidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(template1, javax.swing.GroupLayout.DEFAULT_SIZE, 779, Short.MAX_VALUE)
+                .addGroup(filterSidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTextField1)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        filterSidePanelLayout.setVerticalGroup(
+            filterSidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(filterSidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(template1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(250, Short.MAX_VALUE))
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(136, Short.MAX_VALUE))
         );
 
-        jScrollPane1.setViewportView(jPanel2);
+        mainContent.add(filterSidePanel, java.awt.BorderLayout.EAST);
+
+        jScrollPane1.setBorder(null);
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        reportContainer.setLayout(new javax.swing.BoxLayout(reportContainer, javax.swing.BoxLayout.Y_AXIS));
+        jScrollPane1.setViewportView(reportContainer);
+
+        mainContent.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -383,68 +335,73 @@ public class SearchPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSeparator1)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(mainContent, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(hotbar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(hotbar, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1)
+                .addComponent(mainContent, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void viewDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewDetailsActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_viewDetailsActionPerformed
+    private void searchPropertyTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchPropertyTxtKeyReleased
+        String query = searchPropertyTxt.getText().toLowerCase();
+        reportContainer.removeAll();
 
-    private void viewDetails1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewDetails1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_viewDetails1ActionPerformed
+        for (int block = 1; block <= 5; block++) {
+            for (int lot = 1; lot <= 20; lot++) {
+                Property p = PropertyService.getProperty(block, lot);
+
+                if (p.getPropertyID().toLowerCase().contains(query)) {
+                    reportContainer.add(new LotReportTemplate(p));
+                    reportContainer.add(javax.swing.Box.createRigidArea(new Dimension(0, 5)));
+                }
+            }
+        }
+
+        reportContainer.revalidate();
+        reportContainer.repaint();
+    }//GEN-LAST:event_searchPropertyTxtKeyReleased
+
+    private void filterBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterBtnActionPerformed
+        toggleFilterPanel();
+    }//GEN-LAST:event_filterBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel Image;
-    private javax.swing.JPanel Image1;
-    private javax.swing.JLabel address;
-    private javax.swing.JLabel address1;
-    private javax.swing.JLabel dash;
-    private javax.swing.JLabel dash1;
-    private javax.swing.JLabel floorArea;
-    private javax.swing.JLabel floorArea1;
-    private javax.swing.JLabel houseModel;
-    private javax.swing.JLabel houseModel1;
-    private javax.swing.JLabel houseType;
-    private javax.swing.JLabel houseType1;
+    private javax.swing.JButton filterBtn;
+    private javax.swing.JPanel filterSidePanel;
+    private javax.swing.JPanel hotbar;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton11;
+    private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
+    private javax.swing.JButton jButton9;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JLabel priceMax;
-    private javax.swing.JLabel priceMax1;
-    private javax.swing.JLabel priceMin;
-    private javax.swing.JLabel priceMin1;
-    private javax.swing.JLabel priceRange;
-    private javax.swing.JLabel priceRange1;
-    private javax.swing.JPanel template;
-    private javax.swing.JPanel template1;
-    private javax.swing.JButton viewDetails;
-    private javax.swing.JButton viewDetails1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JPanel mainContent;
+    private javax.swing.JPanel reportContainer;
+    private javax.swing.JTextField searchPropertyTxt;
     // End of variables declaration//GEN-END:variables
 }

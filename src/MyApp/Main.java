@@ -13,7 +13,8 @@ public class Main {
             com.formdev.flatlaf.FlatLightLaf.setup();
             
             UIManager.put("Button.arc", 15);
-            UIManager.put("Component.arc", 15);
+            UIManager.put("TextComponent.arc", 20);
+            UIManager.put("Component.arc", 20);
             
         } catch (Exception ex) {
         }

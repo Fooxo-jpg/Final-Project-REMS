@@ -1,9 +1,6 @@
 package MyLib.Classes.Services;
 
-import MyLib.Classes.Models.Duplex;
 import MyLib.Classes.Models.Property;
-import MyLib.Classes.Models.SingleAttached;
-import MyLib.Classes.Models.Townhouse;
 import java.util.HashMap;
 
 public class PropertyService {

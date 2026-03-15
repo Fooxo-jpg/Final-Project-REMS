@@ -12,24 +12,33 @@ import javax.swing.UIManager;
 
 public class LotInformation extends javax.swing.JDialog {
     private MyLib.Classes.Models.Property currentProperty;
-    private String userRole;
-    private boolean isEditing = false;
-    
     private final DecimalFormat df = new DecimalFormat("#,##0.00");
+    
+    private boolean isEditing = false;
+    private int currentImgIndex = 1;
+    private final int MAX_IMAGES = 5;
+    private final String userRole;
+        
     
     // CONSTRUCTOR
     public LotInformation(java.awt.Frame parent, boolean modal, MyLib.Classes.Models.Property prop, String role) {
         super(parent, modal);
         initComponents();
         toggleEditMode(false);
-        updateGallery(prop.getHouseType());
+        updateGallery();
         
         this.currentProperty = prop;
         this.userRole = role;
         
-        if (prop instanceof Duplex) {
-            houseTypeCb.setSelectedItem("Duplex");
-        } else if (prop instanceof SingleAttached) {
+        // MAX is 5 sinong tanga gagawa ng limang bathrooms
+        // dedma sa basher pag mahilig ka tumae
+        setFilteredField(bathTxt, "\\d*", 5);
+
+        setFilteredField(bedTxt, "\\d*", 5);
+
+        setFilteredField(sizeTxt, "\\d*\\.?\\d*", 6);
+        
+        if (prop instanceof SingleAttached) {
             houseTypeCb.setSelectedItem("Single-Attached");
         } else if (prop instanceof SingleDetached) {
             houseTypeCb.setSelectedItem("Single-Detached");
@@ -39,7 +48,7 @@ public class LotInformation extends javax.swing.JDialog {
             houseTypeCb.setSelectedItem("Select Type");
         }
         
-        updateGallery(houseTypeCb.getSelectedItem().toString());
+        updateGallery();
         
         locationLbl.setText(prop.getPropertyID());
         agentLbl.setText(prop.getAssignedAgent());
@@ -136,9 +145,16 @@ public class LotInformation extends javax.swing.JDialog {
         houseTypeCb.setEnabled(active);
     }
 
-    private void updateGallery(String type) {
+    private void updateGallery() {
+        String type = houseTypeCb.getSelectedItem().toString();
+        
+        if (type.equals("Select House Type")) {
+            imageLbl.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Logo.png")));
+            return;
+        }
+        
         String folderName = type.replace(" ", "");
-        String path = "/MyLib/Images/" + folderName + "/1.jpg";
+        String path = "/MyLib/Images/" + folderName + "/" + currentImgIndex + ".jpg";
         java.net.URL imgURL = getClass().getResource(path);
 
         if (imgURL != null) {
@@ -146,21 +162,41 @@ public class LotInformation extends javax.swing.JDialog {
             java.awt.Image img = icon.getImage();
 
             int targetWidth = 250;
-            int originalWidth = img.getWidth(null);
-            int originalHeight = img.getHeight(null);
-
-            int newHeight = (originalHeight * targetWidth) / originalWidth;
-
-            java.awt.Image scaledImg = img.getScaledInstance(targetWidth, newHeight, java.awt.Image.SCALE_SMOOTH);
-
-            imageLbl.setIcon(new javax.swing.ImageIcon(scaledImg));
+            int imgWidth = img.getWidth(null);
+            int imgHeight = img.getHeight(null);
+            
+            if (imgWidth > 0) {
+                int newHeight = (imgHeight * targetWidth) / imgWidth;
+                java.awt.Image scaledImg = img.getScaledInstance(targetWidth, newHeight, java.awt.Image.SCALE_SMOOTH);
+                imageLbl.setIcon(new javax.swing.ImageIcon(scaledImg));
+                imageLbl.setText("");
+            }
         } else {
-            System.out.println("Could not find image at: " + path);
-            imageLbl.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Logo.png")));
+            if (currentImgIndex > 1) {
+                currentImgIndex = 1;
+                updateGallery();
+            } else {
+                imageLbl.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Logo.png")));
+            }
         }
+    }
+    
+    private void setFilteredField(javax.swing.JTextField field, String regex, int maxLength) {
+        ((javax.swing.text.AbstractDocument) field.getDocument()).setDocumentFilter(new javax.swing.text.DocumentFilter() {
+            @Override
+            public void replace(FilterBypass fb, int offset, int length, String text, javax.swing.text.AttributeSet attrs)
+                    throws javax.swing.text.BadLocationException {
 
-        imageLbl.revalidate();
-        imageLbl.repaint();
+                // Get what the text WOULD look like after the change
+                String currentText = fb.getDocument().getText(0, fb.getDocument().getLength());
+                String futureText = currentText.substring(0, offset) + text + currentText.substring(offset + length);
+
+                // Check if it matches the pattern AND doesn't exceed length
+                if (futureText.matches(regex) && futureText.length() <= maxLength) {
+                    super.replace(fb, offset, length, text, attrs);
+                }
+            }
+        });
     }
     
     @SuppressWarnings("unchecked")
@@ -191,10 +227,14 @@ public class LotInformation extends javax.swing.JDialog {
         totalValueTxt = new javax.swing.JLabel();
         houseTypeCb = new javax.swing.JComboBox<>();
         imageLbl = new javax.swing.JLabel();
+        Buttons = new javax.swing.JPanel();
+        prevBtn = new javax.swing.JButton();
+        nextBtn = new javax.swing.JButton();
         logo = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         java.awt.GridBagLayout jPanel2Layout = new java.awt.GridBagLayout();
         jPanel2Layout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0};
@@ -409,7 +449,7 @@ public class LotInformation extends javax.swing.JDialog {
         gridBagConstraints.weighty = 0.5;
         buyerView.add(totalValueTxt, gridBagConstraints);
 
-        houseTypeCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select House Type", "Single-Attached", "Single-Detached", "Townhouse", "Duplex" }));
+        houseTypeCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select House Type", "Single-Attached", "Single-Detached", "Townhouse" }));
         houseTypeCb.setEnabled(false);
         houseTypeCb.addItemListener(this::houseTypeCbItemStateChanged);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -425,9 +465,44 @@ public class LotInformation extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridheight = 25;
+        gridBagConstraints.gridheight = 23;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         buyerView.add(imageLbl, gridBagConstraints);
+
+        java.awt.GridBagLayout ButtonsLayout = new java.awt.GridBagLayout();
+        ButtonsLayout.columnWidths = new int[] {0, 10, 0, 10, 0};
+        ButtonsLayout.rowHeights = new int[] {0};
+        Buttons.setLayout(ButtonsLayout);
+
+        prevBtn.setText("Previous");
+        prevBtn.addActionListener(this::prevBtnActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 40;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        Buttons.add(prevBtn, gridBagConstraints);
+
+        nextBtn.setText("Next");
+        nextBtn.addActionListener(this::nextBtnActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 40;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        Buttons.add(nextBtn, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 26;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        buyerView.add(Buttons, gridBagConstraints);
 
         logo.setBackground(new java.awt.Color(36, 5, 2));
 
@@ -439,7 +514,7 @@ public class LotInformation extends javax.swing.JDialog {
         logo.setLayout(logoLayout);
         logoLayout.setHorizontalGroup(
             logoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
         );
         logoLayout.setVerticalGroup(
             logoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -453,7 +528,7 @@ public class LotInformation extends javax.swing.JDialog {
             .addComponent(logo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(buyerView, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
+                .addComponent(buyerView, javax.swing.GroupLayout.DEFAULT_SIZE, 738, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -475,6 +550,18 @@ public class LotInformation extends javax.swing.JDialog {
             if (!isEditing) {
                 toggleEditMode(true);
             } else {
+                String selectedType = houseTypeCb.getSelectedItem().toString();
+                
+                // CONDITION: MUST HAVE HOUSE TYPE, DI KA NAMAN PWEDE MAGBENTA NG BAHAY KUNG WALANG BAHAY DIBA
+                // MULTO YARN?
+                if (selectedType.equals("Selecte House Type")) {
+                    JOptionPane.showMessageDialog(this,
+                            "Please select a valid House Type before listing/saving.",
+                            "Validation Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
                 Object[] options = {"Save Changes", "Cancel Changes"};
                 int n = JOptionPane.showOptionDialog(this,
                         "Ready to list " + currentProperty.getPropertyID() + " with these details?",
@@ -488,15 +575,24 @@ public class LotInformation extends javax.swing.JDialog {
                         double newLotArea = Double.parseDouble(sizeTxt.getText());
                         int newBaths = Integer.parseInt(bathTxt.getText());
                         int newBeds = Integer.parseInt(bedTxt.getText());
-                        String selectedType = houseTypeCb.getSelectedItem().toString();
+                        
+                        if (sizeTxt.getText().isEmpty() || Double.parseDouble(sizeTxt.getText()) <= 0) {
+                            JOptionPane.showMessageDialog(this, "Lot Size must be greater than zero.");
+                            return;
+                        }
+
+                        if (bathTxt.getText().isEmpty() || bedTxt.getText().isEmpty()) {
+                            JOptionPane.showMessageDialog(this, "Please specify the number of rooms.");
+                            return;
+                        }
                         
                         Property newProp;
                         switch (selectedType) {
-                            case "Duplex" -> newProp = new Duplex(currentProperty.getPropertyID(), currentProperty.getStatus());
                             case "Single-Attached" -> newProp = new SingleAttached(currentProperty.getPropertyID(), currentProperty.getStatus());
                             case "Single-Detached" -> newProp = new SingleDetached(currentProperty.getPropertyID(), currentProperty.getStatus());
                             case "Townhouse" -> newProp = new Townhouse(currentProperty.getPropertyID(), currentProperty.getStatus());
-                            default -> { newProp = new Property(currentProperty.getPropertyID(), "Available");
+                            default -> {
+                                newProp = new Property(currentProperty.getPropertyID(), "Available");
                             }
                         }
                         
@@ -508,6 +604,7 @@ public class LotInformation extends javax.swing.JDialog {
                         if (listerName == null || listerName.isEmpty()) {
                             listerName = AuthService.getCurrentUser().getEmail();
                         }
+                        
                         newProp.setAssignedAgent(listerName);
                         newProp.setListed(true);
                         
@@ -567,11 +664,28 @@ public class LotInformation extends javax.swing.JDialog {
 
     private void houseTypeCbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_houseTypeCbItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            String selectedType = houseTypeCb.getSelectedItem().toString();
-            
-            updateGallery(selectedType);
+            currentImgIndex = 1;
+            updateGallery();
         }
     }//GEN-LAST:event_houseTypeCbItemStateChanged
+
+    private void prevBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevBtnActionPerformed
+        if (currentImgIndex > 1) {
+            currentImgIndex--;
+        } else {
+            currentImgIndex = MAX_IMAGES; // Loop back to the last image (5)
+        }
+        updateGallery();
+    }//GEN-LAST:event_prevBtnActionPerformed
+
+    private void nextBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBtnActionPerformed
+        if (currentImgIndex < MAX_IMAGES) {
+            currentImgIndex++;
+        } else {
+            currentImgIndex = 1; // Loop back to the first image (1)
+        }
+        updateGallery();
+    }//GEN-LAST:event_nextBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -598,6 +712,7 @@ public class LotInformation extends javax.swing.JDialog {
     private javax.swing.JLabel Agent;
     private javax.swing.JLabel Bathrooms;
     private javax.swing.JLabel Bedrooms;
+    private javax.swing.JPanel Buttons;
     private javax.swing.JLabel Header1;
     private javax.swing.JLabel Header2;
     private javax.swing.JLabel HouseType;
@@ -617,6 +732,8 @@ public class LotInformation extends javax.swing.JDialog {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel locationLbl;
     private javax.swing.JPanel logo;
+    private javax.swing.JButton nextBtn;
+    private javax.swing.JButton prevBtn;
     private javax.swing.JLabel pricePerSQMLbl;
     private javax.swing.JTextField sizeTxt;
     private javax.swing.JLabel totalValueTxt;

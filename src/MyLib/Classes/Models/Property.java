@@ -2,10 +2,12 @@ package MyLib.Classes.Models;
 
 public class Property {
     protected String propertyID;
+    protected String houseType = "Generic";
     protected String address;
     protected String status;
     protected String assignedAgent = "No Agent Assigned";
     protected boolean isListed = false;
+    protected double pricePerSQM = 4000.00;
     protected double lotArea;
     protected double floorArea;
     protected double netSellingPrice;
@@ -18,7 +20,6 @@ public class Property {
         this.status = status;
     }
     
-    
     // GETTERS
     public String getPropertyID() { return propertyID; }
     public String getAddress() { return address; }
@@ -30,7 +31,8 @@ public class Property {
     public int getNumBedrooms() { return numBedrooms; }
     public int getNumBathrooms() { return numBathrooms; }
     public boolean isListed() { return isListed; }
-    
+    public double getPricePerSQM() { return pricePerSQM; }
+    public String getHouseType() { return houseType; }
     
     // SETTERS
     public void setPropertyID(String propertyID) { this.propertyID = propertyID; }
@@ -43,10 +45,12 @@ public class Property {
     public void setNumBedrooms(int numBedrooms) { this.numBedrooms = numBedrooms; }
     public void setNumBathrooms(int numBathrooms) { this.numBathrooms = numBathrooms; }
     public void setListed(boolean isListed) { this.isListed = isListed; }
+    public void setPricePerSQM(double pricePerSQM) { this.pricePerSQM = pricePerSQM; }
+    public void setHouseType(String houseType) { this.houseType = houseType; }
     
     // METHODS
-    public int calculatePricePerSqFt(int lotArea) {
-        return lotArea * 4000;
+    public double calculatePricePerSqFt() {
+        return this.lotArea * this.pricePerSQM;
     }
     
     public void updateStatus(){

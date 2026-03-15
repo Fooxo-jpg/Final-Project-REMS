@@ -1,17 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package MyLib.Classes.Services;
 
+import MyLib.Classes.Models.Duplex;
 import MyLib.Classes.Models.Property;
-import java.util.Collection;
+import MyLib.Classes.Models.SingleAttached;
+import MyLib.Classes.Models.Townhouse;
 import java.util.HashMap;
 
-/**
- *
- * @author ymnis
- */
 public class PropertyService {
     private static HashMap<String, Property> inventory = new HashMap<>();
     
@@ -40,5 +34,10 @@ public class PropertyService {
 
     public static int getTotalProperties() {
         return inventory.size();
+    }
+    
+    public static void updateProperty(Property updatedProp) {
+        inventory.put(updatedProp.getPropertyID(), updatedProp);
+        System.out.println("Property " + updatedProp.getPropertyID() + " updated to " + updatedProp.getClass().getSimpleName());
     }
 }

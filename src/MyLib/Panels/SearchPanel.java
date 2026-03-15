@@ -5,7 +5,6 @@ import MyLib.Classes.Services.PropertyService;
 import java.awt.Dimension;
 import static javax.swing.Box.createRigidArea;
 import static javax.swing.Box.createVerticalGlue;
-import javax.swing.UIManager;
 
 public class SearchPanel extends javax.swing.JPanel {
 
@@ -16,6 +15,7 @@ public class SearchPanel extends javax.swing.JPanel {
         
         filterSidePanel.setVisible(false);
         hotbar.putClientProperty("FlatLaf.style", "arc: 20");
+        mainContent.putClientProperty("FlatLaf.style", "arc: 20");
         filterSidePanel.putClientProperty("FlatLaf.style", "arc: 20");
     }
     
@@ -160,6 +160,8 @@ public class SearchPanel extends javax.swing.JPanel {
         gridBagConstraints.ipady = 10;
         hotbar.add(searchPropertyTxt, gridBagConstraints);
 
+        mainContent.setBackground(new java.awt.Color(255, 255, 255));
+        mainContent.setOpaque(false);
         mainContent.setLayout(new java.awt.BorderLayout());
 
         filterSidePanel.setBackground(new java.awt.Color(36, 5, 2));

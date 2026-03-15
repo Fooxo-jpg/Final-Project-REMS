@@ -5,6 +5,7 @@ import MyLib.Classes.Services.AuthService;
 import MyLib.Classes.Services.PropertyService;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
+import java.text.DecimalFormat;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -14,6 +15,8 @@ import javax.swing.SwingUtilities;
  * @author ymnis
  */
 public final class OverviewPanel extends javax.swing.JPanel {
+    
+    private final DecimalFormat df = new DecimalFormat("#,##0.00");
 
     public OverviewPanel() {
         initComponents();
@@ -62,6 +65,8 @@ public final class OverviewPanel extends javax.swing.JPanel {
                 lotBtn.addActionListener(e -> {
                     System.out.println("Property ID: " + prop.getPropertyID() + " | Status: " + prop.getStatus());
                     selectionLabel.setText("Block " + blockNum + " Lot " + lotNum);
+                    lotSizeLbl.setText("Lot Size: " + prop.getLotArea() + "sqm");
+                    TotalValueLbl.setText("Gross Price: PHP " + df.format(prop.calculatePricePerSqFt()));
                 });
                 
                 lotBtn.addMouseListener(new MouseAdapter() {
@@ -119,7 +124,7 @@ public final class OverviewPanel extends javax.swing.JPanel {
         availableLbl = new javax.swing.JLabel();
         houseTypeLbl = new javax.swing.JLabel();
         lotSizeLbl = new javax.swing.JLabel();
-        GSPLbl = new javax.swing.JLabel();
+        TotalValueLbl = new javax.swing.JLabel();
         selectionLabel = new javax.swing.JLabel();
         totalLbl = new javax.swing.JLabel();
         soldLbl = new javax.swing.JLabel();
@@ -229,15 +234,15 @@ public final class OverviewPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         footerPanel.add(lotSizeLbl, gridBagConstraints);
 
-        GSPLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        GSPLbl.setText("GSP: PHP 0.00");
+        TotalValueLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        TotalValueLbl.setText("Gross Price: PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        footerPanel.add(GSPLbl, gridBagConstraints);
+        footerPanel.add(TotalValueLbl, gridBagConstraints);
 
         selectionLabel.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         selectionLabel.setText("Block 0 Lot 0");
@@ -328,7 +333,7 @@ public final class OverviewPanel extends javax.swing.JPanel {
     protected javax.swing.JPanel BlockOnePanel;
     protected javax.swing.JPanel BlockThreePanel;
     protected javax.swing.JPanel BlockTwoPanel;
-    private javax.swing.JLabel GSPLbl;
+    private javax.swing.JLabel TotalValueLbl;
     private javax.swing.JLabel availableLbl;
     private javax.swing.JPanel footerPanel;
     private javax.swing.JLabel houseTypeLbl;

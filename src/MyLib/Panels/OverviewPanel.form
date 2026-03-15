@@ -772,12 +772,12 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="javax.swing.JLabel" name="GSPLbl">
+        <Component class="javax.swing.JLabel" name="TotalValueLbl">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="15" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="GSP: PHP 0.00"/>
+            <Property name="text" type="java.lang.String" value="Gross Price: PHP 0.00"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1268,11 +1268,11 @@
             <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
           </StatementProvider>
           <Parameters>
-            <CodeExpression id="71_GSPLbl">
-              <CodeVariable name="GSPLbl" type="8194" declaredType="javax.swing.JLabel"/>
+            <CodeExpression id="71_TotalValueLbl">
+              <CodeVariable name="TotalValueLbl" type="8194" declaredType="javax.swing.JLabel"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
-                  <ComponentRef name="GSPLbl"/>
+                  <ComponentRef name="TotalValueLbl"/>
                 </ExpressionProvider>
               </ExpressionOrigin>
             </CodeExpression>

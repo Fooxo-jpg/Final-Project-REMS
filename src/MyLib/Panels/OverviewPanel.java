@@ -10,10 +10,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-/**
- *
- * @author ymnis
- */
 public final class OverviewPanel extends javax.swing.JPanel {
     
     private final DecimalFormat df = new DecimalFormat("#,##0.00");
@@ -66,6 +62,7 @@ public final class OverviewPanel extends javax.swing.JPanel {
                     System.out.println("Property ID: " + prop.getPropertyID() + " | Status: " + prop.getStatus());
                     selectionLabel.setText("Block " + blockNum + " Lot " + lotNum);
                     lotSizeLbl.setText("Lot Size: " + prop.getLotArea() + "sqm");
+                    houseTypeLbl.setText("House Type: " + prop.getHouseType());
                     TotalValueLbl.setText("Gross Price: PHP " + df.format(prop.calculatePricePerSqFt()));
                 });
                 
@@ -288,6 +285,7 @@ public final class OverviewPanel extends javax.swing.JPanel {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 25)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("CORNERSTONE ESTATE SUBDIVISION");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -296,8 +294,8 @@ public final class OverviewPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

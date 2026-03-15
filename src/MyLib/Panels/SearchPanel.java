@@ -81,14 +81,17 @@ public class SearchPanel extends javax.swing.JPanel {
             for (int lot = 1; lot <= 20; lot++ ) {
                 Property p = PropertyService.getProperty(block, lot);
                 
-                LotReportTemplate row = new LotReportTemplate(p);
-                reportContainer.add(row);
-                
-                reportContainer.add(createRigidArea(new Dimension(0, 5)));
-                reportContainer.add(createVerticalGlue());
+                if (p.isListed()) {
+                    LotReportTemplate row = new LotReportTemplate(p);
+                    reportContainer.add(row);
+
+                    reportContainer.add(createRigidArea(new Dimension(0, 5)));
+                    
+                }
             }
         }
         
+        reportContainer.add(createVerticalGlue());
         reportContainer.revalidate();
         reportContainer.repaint();
     }
@@ -116,6 +119,8 @@ public class SearchPanel extends javax.swing.JPanel {
             for (int lot = 1; lot <= 20; lot++) {
                 Property p = PropertyService.getProperty(block, lot);
 
+                if (!p.isListed()) continue;
+                
                 boolean matchesSearch = p.getPropertyID().toLowerCase().contains(query);
                 boolean matchesPrice = p.calculatePricePerSqFt() <= maxPrice;
                 boolean matchesStatus = selectedStatus.equals("Show All") || p.getStatus().equalsIgnoreCase(selectedStatus);
@@ -136,9 +141,21 @@ public class SearchPanel extends javax.swing.JPanel {
         });
 
         reportContainer.removeAll();
-        for (Property p : filteredList) {
-            reportContainer.add(new LotReportTemplate(p));
-            reportContainer.add(javax.swing.Box.createRigidArea(new Dimension(0, 5)));
+        
+        if (filteredList.isEmpty()) {
+            JLabel noResultsLbl = new JLabel("No properties match your criteria.");
+            noResultsLbl.setFont(new java.awt.Font("Segoe UI", 1, 16));
+            noResultsLbl.setForeground(java.awt.Color.GRAY);
+            noResultsLbl.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+
+            reportContainer.add(javax.swing.Box.createVerticalGlue());
+            reportContainer.add(noResultsLbl);
+            reportContainer.add(javax.swing.Box.createVerticalGlue());
+        } else {
+            for (Property p : filteredList) {
+                reportContainer.add(new LotReportTemplate(p));
+                reportContainer.add(javax.swing.Box.createRigidArea(new Dimension(0, 5)));
+            }
         }
 
         reportContainer.revalidate();

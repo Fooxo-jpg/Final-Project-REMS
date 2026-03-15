@@ -48,7 +48,6 @@ public class PropertyService {
         }
         
         p.setLotArea(Math.round(p.getLotArea() * 100.0) / 100.0);
-        p.setPricePerSQM(4000.0);
         p.setListed(false);
         
         return p;

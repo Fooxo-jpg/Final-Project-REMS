@@ -7,7 +7,7 @@ public class Property {
     protected String status;
     protected String assignedAgent = "No Agent Assigned";
     protected boolean isListed = false;
-    protected double pricePerSQM = 4000.00;
+    protected double pricePerSQM = 38200.00;
     protected double lotArea;
     protected double floorArea;
     protected double netSellingPrice;

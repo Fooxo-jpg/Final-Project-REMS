@@ -1,5 +1,14 @@
 package MyLib.Panels;
 
+import MyLib.Classes.Models.Property;
+import MyLib.Classes.Services.PropertyService;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
 /**
  *
  * @author ymnis
@@ -8,8 +17,94 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
 
     public AdminDashboardPanel() {
         initComponents();
-    }
+        updateTable();
+        
+        DefaultTableModel model = (DefaultTableModel) propertyTable.getModel();
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        propertyTable.setRowSorter(sorter);
+        
+        searchTxt.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                applyFilters(sorter);
+            }
 
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                applyFilters(sorter);
+            }
+
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                applyFilters(sorter);
+            }
+        });
+        
+        filterCb.addActionListener(e -> applyFilters(sorter));
+    }
+    
+    // HELPER
+    public void updateTable() {
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+        String[] columns = {"Location", "House Type", "Assigned Agent", "Client Name", "Status", "Price"};
+        
+        DefaultTableModel model = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
+        for (int block = 1; block <= 5; block++) {
+            for (int lot = 1; lot <= 20; lot++) {
+                Property p = PropertyService.getProperty(block, lot);
+                
+                String agent = p.getAssignedAgent();
+                if (agent.isEmpty() || agent.equals("No Agent Assigned")) {
+                    agent = "No Agent Assigned";
+                }
+                
+                /*
+                    LOCATION
+                    HOUSE TYPE
+                    AGENT NAME/EMAIL
+                    CLIENT NAME
+                    STATUS
+                    PRICE
+                */
+                
+                Object[] rowData = {
+                    p.getPropertyID(),
+                    p.getClass().getSimpleName(),
+                    agent,
+                    "N/A",
+                    p.getStatus(),
+                    "PHP " + df.format(p.calculatePricePerSqFt())
+                };
+                
+                model.addRow(rowData);
+            }
+        }
+        propertyTable.setModel(model);
+    }
+    
+    private void applyFilters(TableRowSorter<DefaultTableModel> sorter) {
+        String text = searchTxt.getText();
+        String status = filterCb.getSelectedItem().toString();
+
+        List<RowFilter<Object, Object>> filters = new ArrayList<>();
+
+        if (text.trim().length() > 0) {
+            filters.add(RowFilter.regexFilter("(?i)" + text));
+        }
+
+        if (!status.equals("Show All") && !status.equals("Select Status")) {
+            filters.add(RowFilter.regexFilter("^" + status + "$", 4));
+        }
+
+        if (filters.isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            sorter.setRowFilter(RowFilter.andFilter(filters));
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -26,13 +121,11 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         Address = new javax.swing.JLabel();
         PropertyName = new javax.swing.JLabel();
         LotArea = new javax.swing.JLabel();
-        FloorArea = new javax.swing.JLabel();
         MiscFees = new javax.swing.JLabel();
         Bedrooms = new javax.swing.JLabel();
         Carports = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
@@ -47,8 +140,8 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        searchTxt = new javax.swing.JTextField();
+        filterCb = new javax.swing.JComboBox<>();
 
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
@@ -58,33 +151,42 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         propertyTable.setAutoCreateRowSorter(true);
         propertyTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Assigned Agent", "Client Name", "Location", "Status", "Price"
+                "Location", "House Type", "Assigned Agent", "Client Name", "Status", "Price"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
         propertyTable.setFocusable(false);
         propertyTable.setGridColor(new java.awt.Color(248, 235, 210));
         propertyTable.setName(""); // NOI18N
-        propertyTable.setRowHeight(25);
+        propertyTable.setRowHeight(30);
         propertyTable.setSelectionBackground(new java.awt.Color(248, 235, 210));
         propertyTable.setSelectionForeground(new java.awt.Color(239, 215, 176));
+        propertyTable.setShowGrid(false);
+        propertyTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(propertyTable);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -140,19 +242,7 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(LotArea, gridBagConstraints);
 
-        FloorArea.setText("Gross Selling Price:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 10;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 15;
-        gridBagConstraints.ipady = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.1;
-        gridBagConstraints.weighty = 0.1;
-        jPanel1.add(FloorArea, gridBagConstraints);
-
-        MiscFees.setText("Miscellaneous Fees:");
+        MiscFees.setText("Total Selling Price:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 12;
@@ -214,19 +304,6 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(jLabel13, gridBagConstraints);
 
-        jLabel14.setText("PHP 0.00");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 10;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 15;
-        gridBagConstraints.ipady = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.1;
-        gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jLabel14, gridBagConstraints);
-
         jLabel15.setText("PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
@@ -279,7 +356,7 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         jPanel1.add(HouseType, gridBagConstraints);
 
         jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel19.setText("Total Price:");
+        jLabel19.setText("Total Contract Price:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 22;
@@ -320,7 +397,7 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         jButton1.setBackground(new java.awt.Color(36, 5, 2));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("View Next Property");
+        jButton1.setText("View Computation Sheet");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 24;
@@ -377,7 +454,7 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 247, Short.MAX_VALUE)
+            .addGap(0, 256, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -418,15 +495,15 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.8;
-        add(jTextField1, gridBagConstraints);
+        add(searchTxt, gridBagConstraints);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Show All", "Available", "Reserved", "Sold" }));
+        filterCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Show All", "Available", "Reserved", "Sold" }));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.2;
-        add(jComboBox1, gridBagConstraints);
+        add(filterCb, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -434,18 +511,16 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
     private javax.swing.JLabel Address;
     private javax.swing.JLabel Bedrooms;
     private javax.swing.JLabel Carports;
-    private javax.swing.JLabel FloorArea;
     private javax.swing.JLabel FloorArea1;
     private javax.swing.JLabel HouseType;
     private javax.swing.JLabel LotArea;
     private javax.swing.JLabel MiscFees;
     private javax.swing.JLabel PropertyName;
+    private javax.swing.JComboBox<String> filterCb;
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
@@ -458,7 +533,7 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTable propertyTable;
+    private javax.swing.JTextField searchTxt;
     // End of variables declaration//GEN-END:variables
 }

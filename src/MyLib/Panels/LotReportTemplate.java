@@ -4,9 +4,12 @@ import MyLib.Classes.Models.Property;
 import MyLib.Classes.Services.AuthService;
 import MyLib.Dialogs.LotInformation;
 import java.awt.Frame;
+import java.text.DecimalFormat;
 import javax.swing.SwingUtilities;
 
 public class LotReportTemplate extends javax.swing.JPanel {
+    
+    private final DecimalFormat df = new DecimalFormat("#,##0.00");
     private Property property;
     
     public LotReportTemplate(Property p) {
@@ -15,6 +18,8 @@ public class LotReportTemplate extends javax.swing.JPanel {
         
         IDLbl.setText(p.getPropertyID());
         StatusLbl.setText(p.getStatus());
+        lotAreaLbl.setText("Lot Area: " + df.format(p.getLotArea()) + " sqm");
+        priceLbl.setText("PHP " + df.format(p.calculatePricePerSqFt()));
         AgentLbl.setText(p.getAssignedAgent());
         
         if (p.getStatus().equals("Sold")) StatusLbl.setForeground(java.awt.Color.RED);
@@ -37,7 +42,7 @@ public class LotReportTemplate extends javax.swing.JPanel {
         IDLbl = new javax.swing.JLabel();
         floorAreaLbl = new javax.swing.JLabel();
         StatusLbl = new javax.swing.JLabel();
-        priceRangeLbl = new javax.swing.JLabel();
+        priceLbl = new javax.swing.JLabel();
         DetailsBtn = new javax.swing.JButton();
         lotAreaLbl = new javax.swing.JLabel();
 
@@ -121,8 +126,8 @@ public class LotReportTemplate extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel1.add(StatusLbl, gridBagConstraints);
 
-        priceRangeLbl.setText("PHP 0.00 - PHP 0.00");
-        priceRangeLbl.setToolTipText("");
+        priceLbl.setText("PHP 0.00");
+        priceLbl.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
@@ -132,7 +137,7 @@ public class LotReportTemplate extends javax.swing.JPanel {
         gridBagConstraints.ipady = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
-        jPanel1.add(priceRangeLbl, gridBagConstraints);
+        jPanel1.add(priceLbl, gridBagConstraints);
 
         DetailsBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         DetailsBtn.setText("View Details ");
@@ -196,6 +201,6 @@ public class LotReportTemplate extends javax.swing.JPanel {
     private javax.swing.JLabel houseTypeLbl;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lotAreaLbl;
-    private javax.swing.JLabel priceRangeLbl;
+    private javax.swing.JLabel priceLbl;
     // End of variables declaration//GEN-END:variables
 }

@@ -30,12 +30,10 @@ public class LotInformation extends javax.swing.JDialog {
         this.currentProperty = prop;
         this.userRole = role;
         
-        // MAX is 5 sinong tanga gagawa ng limang bathrooms
+        // MAX is 6 sinong tanga gagawa ng limang bathrooms
         // dedma sa basher pag mahilig ka tumae
         setFilteredField(bathTxt, "\\d*", 5);
-
         setFilteredField(bedTxt, "\\d*", 5);
-
         setFilteredField(sizeTxt, "\\d*\\.?\\d*", 6);
         
         if (prop instanceof SingleAttached) {
@@ -644,9 +642,21 @@ public class LotInformation extends javax.swing.JDialog {
             boolean currentStatus = currentProperty.isListed();
             
             if (!currentStatus) { // LISTING THE PROPERTY
-                toggleEditMode(true); // AGENT SHOULD EDIT THE PROPERTY
-                JOptionPane.showMessageDialog(this, "Edit Mode Enabled. Please fill in the property details and click 'Save Changes' to officially list this property.");
+                String listerName = AuthService.getCurrentUser().getFirstName();
+                if (listerName == null || listerName.isEmpty()) {
+                    listerName = AuthService.getCurrentUser().getEmail();
+                }
                 
+                currentProperty.setListed(true);
+                currentProperty.setAssignedAgent(listerName);
+                
+                agentLbl.setText(listerName);
+                btn1.setText("Unlist Property");
+                btn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/listBlack.png")));
+
+                JOptionPane.showMessageDialog(this, "Property " + currentProperty.getPropertyID() + " is now listed!");
+
+                this.dispose();
             } else {
                 int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to unlist this property?", "Unlist Property", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {

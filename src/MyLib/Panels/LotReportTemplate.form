@@ -127,9 +127,9 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="javax.swing.JLabel" name="priceRangeLbl">
+        <Component class="javax.swing.JLabel" name="priceLbl">
           <Properties>
-            <Property name="text" type="java.lang.String" value="PHP 0.00 - PHP 0.00"/>
+            <Property name="text" type="java.lang.String" value="PHP 0.00"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
           </Properties>
           <Constraints>
@@ -979,11 +979,11 @@
             <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
           </StatementProvider>
           <Parameters>
-            <CodeExpression id="61_priceRangeLbl">
-              <CodeVariable name="priceRangeLbl" type="8194" declaredType="javax.swing.JLabel"/>
+            <CodeExpression id="61_priceLbl">
+              <CodeVariable name="priceLbl" type="8194" declaredType="javax.swing.JLabel"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
-                  <ComponentRef name="priceRangeLbl"/>
+                  <ComponentRef name="priceLbl"/>
                 </ExpressionProvider>
               </ExpressionOrigin>
             </CodeExpression>

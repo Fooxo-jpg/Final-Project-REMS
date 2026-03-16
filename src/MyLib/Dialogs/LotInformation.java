@@ -36,7 +36,7 @@ public class LotInformation extends javax.swing.JDialog {
         // dedma sa basher pag mahilig ka tumae
         setFilteredField(bathTxt, "\\d*", 5);
         setFilteredField(bedTxt, "\\d*", 5);
-        setFilteredField(sizeTxt, "\\d*\\.?\\d*", 6);
+        setFilteredField(floorSizeTxt, "\\d*\\.?\\d*", 6);
         
         String typeString = "";
         if (prop instanceof SingleAttached)
@@ -53,6 +53,9 @@ public class LotInformation extends javax.swing.JDialog {
         
         sizeTxt.setText(String.valueOf(prop.getLotArea()));
         sizeLbl.setText(String.valueOf(prop.getLotArea() + " sqm"));
+        
+        floorSizeTxt.setText(String.valueOf(prop.getFloorArea()));
+        floorSizeLbl.setText(df.format(prop.getFloorArea()) + " sqm");
         
         bedTxt.setText(String.valueOf(prop.getNumBedrooms()));
         bedLbl.setText(String.valueOf(prop.getNumBedrooms()));
@@ -150,9 +153,9 @@ public class LotInformation extends javax.swing.JDialog {
     private void toggleEditMode(boolean active) {
         this.isEditing = active;
 
-        JComponent[] inputs = {houseTypeCb, sizeTxt, bedTxt, bathTxt};
-        JLabel[] labels = {houseTypeLbl, sizeLbl, bedLbl, bathLbl};
-
+        JComponent[] inputs = {houseTypeCb, sizeTxt, floorSizeTxt, bedTxt, bathTxt};
+        JLabel[] labels = {houseTypeLbl, sizeLbl, floorSizeLbl, bedLbl, bathLbl};
+        
         for (int i = 0; i < inputs.length; i++) {
             inputs[i].setVisible(active);
             labels[i].setVisible(!active);
@@ -161,11 +164,12 @@ public class LotInformation extends javax.swing.JDialog {
         btn2.setText(active ? "Save Changes" : "Edit Property");
 
         if (active) {
-            sizeTxt.requestFocus();
+            floorSizeTxt.requestFocus();
         }
 
         houseTypeLbl.setText(houseTypeCb.getSelectedItem().toString());
         sizeLbl.setText(sizeTxt.getText() + " sqm");
+        floorSizeLbl.setText(floorSizeTxt.getText() + " sqm");
         bedLbl.setText(bedTxt.getText());
         bathLbl.setText(bathTxt.getText());
     }
@@ -234,7 +238,7 @@ public class LotInformation extends javax.swing.JDialog {
         HouseType = new javax.swing.JLabel();
         PricePerSQM = new javax.swing.JLabel();
         Agent = new javax.swing.JLabel();
-        Size = new javax.swing.JLabel();
+        FloorSize = new javax.swing.JLabel();
         agentLbl = new javax.swing.JLabel();
         pricePerSQMLbl = new javax.swing.JLabel();
         Header1 = new javax.swing.JLabel();
@@ -245,7 +249,7 @@ public class LotInformation extends javax.swing.JDialog {
         TotalValue = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         Header2 = new javax.swing.JLabel();
-        sizeTxt = new javax.swing.JTextField();
+        floorSizeTxt = new javax.swing.JTextField();
         bathTxt = new javax.swing.JTextField();
         bedTxt = new javax.swing.JTextField();
         locationLbl = new javax.swing.JLabel();
@@ -256,9 +260,12 @@ public class LotInformation extends javax.swing.JDialog {
         prevBtn = new javax.swing.JButton();
         nextBtn = new javax.swing.JButton();
         houseTypeLbl = new javax.swing.JLabel();
-        sizeLbl = new javax.swing.JLabel();
+        floorSizeLbl = new javax.swing.JLabel();
         bathLbl = new javax.swing.JLabel();
         bedLbl = new javax.swing.JLabel();
+        LotSize = new javax.swing.JLabel();
+        sizeTxt = new javax.swing.JTextField();
+        sizeLbl = new javax.swing.JLabel();
         logo = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
 
@@ -267,7 +274,7 @@ public class LotInformation extends javax.swing.JDialog {
 
         java.awt.GridBagLayout jPanel2Layout = new java.awt.GridBagLayout();
         jPanel2Layout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0};
-        jPanel2Layout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
+        jPanel2Layout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
         buyerView.setLayout(jPanel2Layout);
 
         Location.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -296,7 +303,7 @@ public class LotInformation extends javax.swing.JDialog {
         PricePerSQM.setText("Price/sqm:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 12;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.5;
@@ -307,29 +314,29 @@ public class LotInformation extends javax.swing.JDialog {
         Agent.setText("Agent:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 24;
+        gridBagConstraints.gridy = 26;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 0.5;
         buyerView.add(Agent, gridBagConstraints);
 
-        Size.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        Size.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        Size.setText("Lot Size:");
+        FloorSize.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        FloorSize.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        FloorSize.setText("Floor Size:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 0.5;
-        buyerView.add(Size, gridBagConstraints);
+        buyerView.add(FloorSize, gridBagConstraints);
 
         agentLbl.setText("None");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 24;
+        gridBagConstraints.gridy = 26;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
@@ -339,7 +346,7 @@ public class LotInformation extends javax.swing.JDialog {
         pricePerSQMLbl.setText("PHP 4000.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 12;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
@@ -364,7 +371,7 @@ public class LotInformation extends javax.swing.JDialog {
         btn1.addActionListener(this::btn1ActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 26;
+        gridBagConstraints.gridy = 28;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipadx = 47;
         gridBagConstraints.weightx = 0.5;
@@ -376,7 +383,7 @@ public class LotInformation extends javax.swing.JDialog {
         btn2.addActionListener(this::btn2ActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 26;
+        gridBagConstraints.gridy = 28;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.5;
         buyerView.add(btn2, gridBagConstraints);
@@ -385,7 +392,7 @@ public class LotInformation extends javax.swing.JDialog {
         Bathrooms.setText("Bathrooms:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 20;
+        gridBagConstraints.gridy = 22;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.5;
@@ -396,7 +403,7 @@ public class LotInformation extends javax.swing.JDialog {
         Bedrooms.setText("Bedrooms:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 22;
+        gridBagConstraints.gridy = 24;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.5;
@@ -407,7 +414,7 @@ public class LotInformation extends javax.swing.JDialog {
         TotalValue.setText("Total Value:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.5;
@@ -415,7 +422,7 @@ public class LotInformation extends javax.swing.JDialog {
         buyerView.add(TotalValue, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridy = 18;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;
@@ -425,7 +432,7 @@ public class LotInformation extends javax.swing.JDialog {
         Header2.setText("EXTRA DETAILS");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 18;
+        gridBagConstraints.gridy = 20;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -433,18 +440,19 @@ public class LotInformation extends javax.swing.JDialog {
         gridBagConstraints.weighty = 0.5;
         buyerView.add(Header2, gridBagConstraints);
 
-        sizeTxt.setText("0 sqm");
+        floorSizeTxt.setText("0 sqm");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        buyerView.add(sizeTxt, gridBagConstraints);
+        gridBagConstraints.weightx = 0.5;
+        buyerView.add(floorSizeTxt, gridBagConstraints);
 
         bathTxt.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 20;
+        gridBagConstraints.gridy = 22;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         buyerView.add(bathTxt, gridBagConstraints);
@@ -452,7 +460,7 @@ public class LotInformation extends javax.swing.JDialog {
         bedTxt.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 22;
+        gridBagConstraints.gridy = 24;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         buyerView.add(bedTxt, gridBagConstraints);
@@ -470,7 +478,7 @@ public class LotInformation extends javax.swing.JDialog {
         totalValueTxt.setText("PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
@@ -483,6 +491,7 @@ public class LotInformation extends javax.swing.JDialog {
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
         buyerView.add(houseTypeCb, gridBagConstraints);
 
         imageLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -492,7 +501,7 @@ public class LotInformation extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridheight = 23;
+        gridBagConstraints.gridheight = 25;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         buyerView.add(imageLbl, gridBagConstraints);
 
@@ -527,7 +536,7 @@ public class LotInformation extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 26;
+        gridBagConstraints.gridy = 28;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         buyerView.add(Buttons, gridBagConstraints);
 
@@ -538,26 +547,54 @@ public class LotInformation extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         buyerView.add(houseTypeLbl, gridBagConstraints);
 
-        sizeLbl.setText("jLabel1");
+        floorSizeLbl.setText("jLabel1");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        buyerView.add(sizeLbl, gridBagConstraints);
+        buyerView.add(floorSizeLbl, gridBagConstraints);
 
         bathLbl.setText("jLabel2");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 20;
+        gridBagConstraints.gridy = 22;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         buyerView.add(bathLbl, gridBagConstraints);
 
         bedLbl.setText("jLabel3");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 22;
+        gridBagConstraints.gridy = 24;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         buyerView.add(bedLbl, gridBagConstraints);
+
+        LotSize.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        LotSize.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        LotSize.setText("Lot Size:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.5;
+        buyerView.add(LotSize, gridBagConstraints);
+
+        sizeTxt.setText("0 sqm");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 0.5;
+        buyerView.add(sizeTxt, gridBagConstraints);
+
+        sizeLbl.setText("jLabel1");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        buyerView.add(sizeLbl, gridBagConstraints);
 
         logo.setBackground(new java.awt.Color(36, 5, 2));
 
@@ -591,7 +628,7 @@ public class LotInformation extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buyerView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(buyerView, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -628,10 +665,16 @@ public class LotInformation extends javax.swing.JDialog {
                 if (n == 0) { // SAVE CHANGES
                     try {
                         double newLotArea = Double.parseDouble(sizeTxt.getText());
+                        double newFloorArea = Double.parseDouble(floorSizeTxt.getText());
                         int newBaths = Integer.parseInt(bathTxt.getText());
                         int newBeds = Integer.parseInt(bedTxt.getText());
                         
-                        if (sizeTxt.getText().isEmpty() || Double.parseDouble(sizeTxt.getText()) <= 0) {
+                        if (newFloorArea > newLotArea) {
+                            JOptionPane.showMessageDialog(this, "Floor size cannot be larger than the Lot size.");
+                            return;
+                        }
+                        
+                        if (sizeLbl.getText().isEmpty() || Double.parseDouble(sizeLbl.getText()) <= 0) {
                             JOptionPane.showMessageDialog(this, "Lot Size must be greater than zero.");
                             return;
                         }
@@ -652,6 +695,7 @@ public class LotInformation extends javax.swing.JDialog {
                         }
                         
                         newProp.setLotArea(newLotArea);
+                        newProp.setFloorArea(newFloorArea);
                         newProp.setNumBathrooms(newBaths);
                         newProp.setNumBedrooms(newBeds);
                         
@@ -671,7 +715,7 @@ public class LotInformation extends javax.swing.JDialog {
                         agentLbl.setText(listerName);
                         
                         houseTypeLbl.setText(selectedType);
-                        sizeLbl.setText(newLotArea + " sqm");
+                        floorSizeLbl.setText(newLotArea + " sqm");
                         bedLbl.setText(String.valueOf(newBeds));
                         bathLbl.setText(String.valueOf(newBaths));
                         
@@ -683,7 +727,7 @@ public class LotInformation extends javax.swing.JDialog {
                         JOptionPane.showMessageDialog(this, "ERROR: Enter Valid Numbers.");
                     }
                 } else { // CANCEL CHANGES
-                    sizeTxt.setText(String.valueOf(currentProperty.getLotArea()));
+                    floorSizeTxt.setText(String.valueOf(currentProperty.getLotArea()));
                     bathTxt.setText(String.valueOf(currentProperty.getNumBathrooms()));
                     bedTxt.setText(String.valueOf(currentProperty.getNumBedrooms()));
                     
@@ -700,10 +744,20 @@ public class LotInformation extends javax.swing.JDialog {
                     currentUser.getFavorites().remove(currentProperty);
                     btn2.setText("Add to Favorites");
                     btn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Fave_Black.png")));
+                    
+                    System.out.println("REMOVED: " + currentProperty.getPropertyID());
+                    System.out.println("USER NOW HAS: " + currentUser.getFavorites().size());
+                    
+                    
                 } else {
                     currentUser.getFavorites().add(currentProperty);
                     btn2.setText("Favorited");
                     btn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Fave_BlackFill.png")));
+                    
+                    System.out.println("ADDED: " + currentProperty.getPropertyID());
+                    System.out.println("USER NOW HAS: " + currentUser.getFavorites().size());
+                    buyerDashboard.refreshCurrentPanel();
+                    
                 }
             }
         } else if (userRole.equalsIgnoreCase("Guest")) {
@@ -744,8 +798,10 @@ public class LotInformation extends javax.swing.JDialog {
             showGuestRestriction();
         } else { // BUYER LOGIC HERE
             if (buyerDashboard != null) {
-                buyerDashboard.showFinancialPanel(currentProperty);
+                this.setVisible(false);
                 this.dispose();
+
+                buyerDashboard.showFinancialPanel(currentProperty);
             }
         }
     }//GEN-LAST:event_btn1ActionPerformed
@@ -801,12 +857,13 @@ public class LotInformation extends javax.swing.JDialog {
     private javax.swing.JLabel Bathrooms;
     private javax.swing.JLabel Bedrooms;
     private javax.swing.JPanel Buttons;
+    private javax.swing.JLabel FloorSize;
     private javax.swing.JLabel Header1;
     private javax.swing.JLabel Header2;
     private javax.swing.JLabel HouseType;
     private javax.swing.JLabel Location;
+    private javax.swing.JLabel LotSize;
     private javax.swing.JLabel PricePerSQM;
-    private javax.swing.JLabel Size;
     private javax.swing.JLabel TotalValue;
     private javax.swing.JLabel agentLbl;
     private javax.swing.JLabel bathLbl;
@@ -816,6 +873,8 @@ public class LotInformation extends javax.swing.JDialog {
     private javax.swing.JButton btn1;
     private javax.swing.JButton btn2;
     private javax.swing.JPanel buyerView;
+    private javax.swing.JLabel floorSizeLbl;
+    private javax.swing.JTextField floorSizeTxt;
     private javax.swing.JComboBox<String> houseTypeCb;
     private javax.swing.JLabel houseTypeLbl;
     private javax.swing.JLabel imageLbl;

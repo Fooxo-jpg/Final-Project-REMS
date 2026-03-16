@@ -46,6 +46,7 @@ public class ChangePassword extends javax.swing.JDialog {
         newPassTxt = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         changeBtn.setBackground(new java.awt.Color(36, 5, 2));
         changeBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -132,6 +133,7 @@ public class ChangePassword extends javax.swing.JDialog {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void changeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeBtnActionPerformed

@@ -48,6 +48,11 @@ public class PropertyService {
         }
         
         p.setLotArea(Math.round(p.getLotArea() * 100.0) / 100.0);
+        
+        double multiplier = 0.6 + (0.3 * random.nextDouble());
+        double floorArea = p.getLotArea() * multiplier;
+        
+        p.setFloorArea(Math.round(floorArea * 100.0) / 100.0);
         p.setListed(false);
         
         return p;

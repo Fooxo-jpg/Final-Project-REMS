@@ -54,7 +54,6 @@ public class AdminDashboard extends javax.swing.JFrame {
         myAccBtn = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
         clientsBtn = new javax.swing.JButton();
-        analyticsBtn1 = new javax.swing.JButton();
         mainContentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -111,15 +110,6 @@ public class AdminDashboard extends javax.swing.JFrame {
         clientsBtn.setIconTextGap(10);
         clientsBtn.addActionListener(this::clientsBtnActionPerformed);
 
-        analyticsBtn1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        analyticsBtn1.setForeground(new java.awt.Color(255, 255, 255));
-        analyticsBtn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/notif_white.png"))); // NOI18N
-        analyticsBtn1.setText("Notification");
-        analyticsBtn1.setContentAreaFilled(false);
-        analyticsBtn1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        analyticsBtn1.setIconTextGap(10);
-        analyticsBtn1.addActionListener(this::analyticsBtn1ActionPerformed);
-
         javax.swing.GroupLayout sidePanelLayout = new javax.swing.GroupLayout(sidePanel);
         sidePanel.setLayout(sidePanelLayout);
         sidePanelLayout.setHorizontalGroup(
@@ -134,8 +124,7 @@ public class AdminDashboard extends javax.swing.JFrame {
                     .addComponent(analyticsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(myAccBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
                     .addComponent(jSeparator2)
-                    .addComponent(clientsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(analyticsBtn1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(clientsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         sidePanelLayout.setVerticalGroup(
@@ -153,10 +142,8 @@ public class AdminDashboard extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(analyticsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(analyticsBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 129, Short.MAX_VALUE)
                 .addComponent(myAccBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -203,10 +190,6 @@ public class AdminDashboard extends javax.swing.JFrame {
         showCard("clients_view");
     }//GEN-LAST:event_clientsBtnActionPerformed
 
-    private void analyticsBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_analyticsBtn1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_analyticsBtn1ActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -226,7 +209,6 @@ public class AdminDashboard extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton analyticsBtn;
-    private javax.swing.JButton analyticsBtn1;
     private javax.swing.JButton clientsBtn;
     private javax.swing.JButton dashboardBtn;
     private javax.swing.JSeparator jSeparator1;

@@ -45,6 +45,7 @@ public class Register extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cornerstone Estates | Register");
+        setResizable(false);
 
         logoPanel.setBackground(new java.awt.Color(36, 5, 2));
         logoPanel.setLayout(new java.awt.GridBagLayout());

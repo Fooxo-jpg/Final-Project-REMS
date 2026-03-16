@@ -28,6 +28,21 @@ public class SearchPanel extends javax.swing.JPanel {
             }
         });
         
+        this.addAncestorListener(new javax.swing.event.AncestorListener() {
+            @Override
+            public void ancestorAdded(javax.swing.event.AncestorEvent event) {
+                applyFilters();
+            }
+
+            @Override
+            public void ancestorRemoved(javax.swing.event.AncestorEvent event) {
+            }
+
+            @Override
+            public void ancestorMoved(javax.swing.event.AncestorEvent event) {
+            }
+        });
+        
         statusCb.addActionListener(e -> applyFilters());
         
         maxPriceSlider.addChangeListener(e -> {

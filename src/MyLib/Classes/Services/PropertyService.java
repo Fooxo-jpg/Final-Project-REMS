@@ -5,12 +5,22 @@ import java.util.*;
 
 public class PropertyService {
     private static HashMap<String, Property> inventory = new HashMap<>();
+    private static List<Transaction> transactionHistory = new ArrayList<>();
+    
     private static final Random random = new Random(1);
+    
+    private static final String PRESET_ADMIN = "admin@realestate.com";
     
     static {
         for (int block = 1; block <= 5; block++) {
             for (int lot = 1; lot <= 20; lot++) {
                 Property p = generateEstates(block, lot);
+                
+                if (block == 1 && lot <= 5) {
+                    p.setAssignedAgent(PRESET_ADMIN);
+                    p.setListed(true);
+                }
+                
                 inventory.put(p.getPropertyID(), p);
             }
         }
@@ -75,5 +85,13 @@ public class PropertyService {
     public static void updateProperty(Property updatedProp) {
         inventory.put(updatedProp.getPropertyID(), updatedProp);
         System.out.println("Property " + updatedProp.getPropertyID() + " updated to " + updatedProp.getClass().getSimpleName());
+    }
+    
+    public static void finalizeSale(Transaction trx) {
+        Property p = trx.getProperty();
+        p.setStatus("Sold");
+        inventory.put(p.getPropertyID(), p);
+        transactionHistory.add(trx);
+        System.out.println("Sale Finalized: " + trx.getTransactionID());
     }
 }

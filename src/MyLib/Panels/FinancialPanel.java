@@ -3,17 +3,20 @@ package MyLib.Panels;
 import MyLib.Classes.Models.*;
 import MyLib.Classes.Services.*;
 import java.text.DecimalFormat;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.table.*;
 
 public class FinancialPanel extends javax.swing.JPanel {
-    private Property property;
+    private final Property property;
     private final DecimalFormat df = new DecimalFormat("#,##0.00");
     
     public FinancialPanel(Property p) {
         this.property = p;
         initComponents();
+        
         setupInfoTable();
-        methodCb.setSelectedIndex(0);
+        AmortizationCb.setSelectedIndex(0);
     }
     
     // HELPERS
@@ -28,44 +31,25 @@ public class FinancialPanel extends javax.swing.JPanel {
     }
     
     private void updateCalculations() {
-        String method = methodCb.getSelectedItem().toString();
+        String financingMethod = AmortizationCb.getSelectedItem().toString();
+        String dpMethod = DPMethodCb.getSelectedItem().toString();
+
         DefaultTableModel compModel = (DefaultTableModel) compTable.getModel();
-        DefaultTableModel loanModel = (DefaultTableModel) loanTable.getModel();
-
         compModel.setRowCount(0);
-        loanModel.setRowCount(0);
 
-        if (method.equals("Select Method")) {
+        if (financingMethod.equals("Select Method")) {
             return;
         }
 
-        double rawBasePrice = property.calculatePricePerSqFt();
-        double markupAmount = rawBasePrice * FinancialCalculator.PROFIT_MARKUP;
+        // 1. Core Financial Data
         double nsp = FinancialCalculator.calculateNSP(property);
-        double vatAmount = nsp * FinancialCalculator.VAT_RATE;
-        double lmfAmount = nsp * FinancialCalculator.LMF_RATE;
         double tcp = FinancialCalculator.calculateTCP(property);
-
-        compModel.addRow(new Object[]{"Base Property Cost", "PHP " + df.format(rawBasePrice)});
-        compModel.addRow(new Object[]{"Developer Markup (15%)", "PHP " + df.format(markupAmount)});
-        compModel.addRow(new Object[]{"NET SELLING PRICE (NSP)", "PHP " + df.format(nsp)});
-        compModel.addRow(new Object[]{"----------------------", "----------------------"});
-        compModel.addRow(new Object[]{"VAT (12%)", "PHP " + df.format(vatAmount)});
-        compModel.addRow(new Object[]{"Legal & Misc Fees (10%)", "PHP " + df.format(lmfAmount)});
-        compModel.addRow(new Object[]{"TOTAL CONTRACT PRICE", "PHP " + df.format(tcp)});
-        compModel.addRow(new Object[]{"----------------------", "----------------------"});
-
-        if (method.equals("Spot Cash")) {
-            compModel.addRow(new Object[]{"Payment Method", "Spot Cash"});
-            setupSpotCash(tcp, loanModel);
-            return;
-        }
 
         double interestRate = 0;
         double dpPercent = 0;
         int maxYears = 20;
 
-        switch (method) {
+        switch (financingMethod) {
             case "Bank - BDO" -> {
                 interestRate = FinancialCalculator.BDO_INTEREST;
                 dpPercent = FinancialCalculator.BDO_DP_PERCENT;
@@ -84,29 +68,34 @@ public class FinancialPanel extends javax.swing.JPanel {
         double totalDP = tcp * dpPercent;
         double loanAmount = tcp - totalDP;
 
-        compModel.addRow(new Object[]{"Downpayment (" + (int) (dpPercent * 100) + "%)", "PHP " + df.format(totalDP)});
-        compModel.addRow(new Object[]{"Loanable Amount", "PHP " + df.format(loanAmount)});
-        compModel.addRow(new Object[]{"Annual Interest Rate", (interestRate * 100) + "%"});
+        // 2. Populate Property & Tax Info
+        compModel.addRow(new Object[]{"--- PROPERTY PRICING ---", ""});
+        compModel.addRow(new Object[]{"Net Selling Price", "PHP " + df.format(nsp)});
+        compModel.addRow(new Object[]{"Total Contract Price", "PHP " + df.format(tcp)});
+        compModel.addRow(new Object[]{"Reservation Fee (Fixed)", "PHP " + df.format(FinancialCalculator.RESERVATION_FEE)});
 
-        int[] years = {20, 15, 10, 5};
-        for (int y : years) {
+        // 3. Populate Downpayment Info
+        compModel.addRow(new Object[]{"--- DOWNPAYMENT PLAN ---", dpMethod});
+        compModel.addRow(new Object[]{"Total DP (" + (int) (dpPercent * 100) + "%)", "PHP " + df.format(totalDP)});
+        if (dpMethod.equals("Spot Cash")) {
+            compModel.addRow(new Object[]{"DP Payment", "Full Payment / Check"});
+        } else {
+            compModel.addRow(new Object[]{"Monthly DP (18 mos)", "PHP " + df.format(totalDP / 18)});
+        }
+
+        // 4. Populate Amortization Options (Years) directly into compTable
+        compModel.addRow(new Object[]{"--- AMORTIZATION OPTIONS ---", financingMethod});
+        compModel.addRow(new Object[]{"Loanable Amount", "PHP " + df.format(loanAmount)});
+        compModel.addRow(new Object[]{"Interest Rate", (interestRate * 100) + "%"});
+
+        int[] terms = {20, 15, 10, 5};
+        for (int y : terms) {
             if (y > maxYears) {
                 continue;
             }
             double monthly = calculateCustomAmortization(loanAmount, interestRate, y);
-            loanModel.addRow(new Object[]{y + " Years", "PHP " + df.format(monthly)});
+            compModel.addRow(new Object[]{y + " Years Term", "PHP " + df.format(monthly)});
         }
-    }
-
-    private void setupSpotCash(double tcp, DefaultTableModel loanModel) {
-        double discountRate = 0.10; // 10% Discount
-        double discountAmount = tcp * discountRate;
-        double finalPrice = tcp - discountAmount;
-
-        loanModel.addRow(new Object[]{"Total Contract Price", "PHP " + df.format(tcp)});
-        loanModel.addRow(new Object[]{"Cash Discount (10%)", "- PHP " + df.format(discountAmount)});
-        loanModel.addRow(new Object[]{"----------------------", "----------------------"});
-        loanModel.addRow(new Object[]{"NET AMOUNT DUE", "PHP " + df.format(finalPrice)});
     }
 
     private double calculateCustomAmortization(double principal, double annualRate, int years) {
@@ -134,15 +123,15 @@ public class FinancialPanel extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         infoTable = new javax.swing.JTable();
-        methodCb = new javax.swing.JComboBox<>();
+        AmortizationCb = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         compTable = new javax.swing.JTable();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        loanTable = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        buyBtn = new javax.swing.JButton();
+        reserveBtn = new javax.swing.JButton();
+        dpMethodCb = new javax.swing.JComboBox<>();
+        DPMethodCb = new javax.swing.JComboBox<>();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
         jLabel1.setText("PAYMENT");
@@ -165,7 +154,7 @@ public class FinancialPanel extends javax.swing.JPanel {
         );
 
         java.awt.GridBagLayout jPanel1Layout = new java.awt.GridBagLayout();
-        jPanel1Layout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
+        jPanel1Layout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
         jPanel1Layout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0};
         jPanel1.setLayout(jPanel1Layout);
 
@@ -180,7 +169,15 @@ public class FinancialPanel extends javax.swing.JPanel {
             new String [] {
                 "Property Information", "Details"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         infoTable.setRowHeight(35);
         infoTable.setRowSelectionAllowed(false);
         jScrollPane1.setViewportView(infoTable);
@@ -188,30 +185,29 @@ public class FinancialPanel extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         jPanel1.add(jScrollPane1, gridBagConstraints);
 
-        methodCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Method", "Spot Cash", "Bank - BDO", "Bank - RCBC", "In-House Financing" }));
-        methodCb.addActionListener(this::methodCbActionPerformed);
+        AmortizationCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Method", "Bank - BDO", "Bank - RCBC", "In-House Financing" }));
+        AmortizationCb.addActionListener(this::AmortizationCbActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipady = 15;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        jPanel1.add(methodCb, gridBagConstraints);
+        jPanel1.add(AmortizationCb, gridBagConstraints);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         jLabel2.setText("Financial Method");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipady = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -224,13 +220,21 @@ public class FinancialPanel extends javax.swing.JPanel {
             new String [] {
                 "Description", "Amount"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         compTable.setRowHeight(35);
         compTable.setShowHorizontalLines(true);
         jScrollPane2.setViewportView(compTable);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 9;
         gridBagConstraints.gridheight = 9;
@@ -240,42 +244,13 @@ public class FinancialPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         jPanel1.add(jScrollPane2, gridBagConstraints);
 
-        loanTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Terms", "Monthly Payment"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, true
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        loanTable.setRowHeight(35);
-        loanTable.setShowHorizontalLines(true);
-        jScrollPane3.setViewportView(loanTable);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanel1.add(jScrollPane3, gridBagConstraints);
-
         java.awt.GridBagLayout jPanel3Layout = new java.awt.GridBagLayout();
         jPanel3Layout.columnWidths = new int[] {0, 10, 0};
         jPanel3Layout.rowHeights = new int[] {0};
         jPanel3.setLayout(jPanel3Layout);
 
-        jButton1.setText("Buy");
+        buyBtn.setText("Buy");
+        buyBtn.addActionListener(this::buyBtnActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -283,9 +258,9 @@ public class FinancialPanel extends javax.swing.JPanel {
         gridBagConstraints.ipadx = 50;
         gridBagConstraints.ipady = 10;
         gridBagConstraints.weightx = 1.0;
-        jPanel3.add(jButton1, gridBagConstraints);
+        jPanel3.add(buyBtn, gridBagConstraints);
 
-        jButton2.setText("Reserve");
+        reserveBtn.setText("Reserve");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -293,15 +268,31 @@ public class FinancialPanel extends javax.swing.JPanel {
         gridBagConstraints.ipadx = 50;
         gridBagConstraints.ipady = 10;
         gridBagConstraints.weightx = 1.0;
-        jPanel3.add(jButton2, gridBagConstraints);
+        jPanel3.add(reserveBtn, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 8;
-        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         jPanel1.add(jPanel3, gridBagConstraints);
+
+        dpMethodCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "DP Installment (18 mos)", "Spot Downpayment" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipady = 15;
+        jPanel1.add(dpMethodCb, gridBagConstraints);
+
+        DPMethodCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Cash", "Check" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipady = 15;
+        jPanel1.add(DPMethodCb, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -311,7 +302,7 @@ public class FinancialPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -320,21 +311,86 @@ public class FinancialPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void methodCbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_methodCbActionPerformed
+    private void AmortizationCbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AmortizationCbActionPerformed
         updateCalculations();
-    }//GEN-LAST:event_methodCbActionPerformed
+    }//GEN-LAST:event_AmortizationCbActionPerformed
+
+    private void buyBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyBtnActionPerformed
+        String method = AmortizationCb.getSelectedItem().toString();
+        String dpMethod = DPMethodCb.getSelectedItem().toString();
+
+        if (method.equals("Select Method")) {
+            JOptionPane.showMessageDialog(this, "Please select a financing method.");
+            return;
+        }
+
+        String[] terms;
+        if (method.equals("In-House Financing")) {
+            terms = new String[]{"5 Years", "10 Years"};
+        } else {
+            terms = new String[]{"5 Years", "10 Years", "15 Years", "20 Years"};
+        }
+
+        String selectedYear = (String) JOptionPane.showInputDialog(this,
+                "Choose your amortization term:", "Term Selection",
+                JOptionPane.QUESTION_MESSAGE, null, terms, terms[0]);
+
+        if (selectedYear == null) {
+            return;
+        }
+        
+        Payment paymentDetail;
+        if (dpMethod.equalsIgnoreCase("Check")) {
+            Check check = new Check();
+            check.setBankName(JOptionPane.showInputDialog(this, "Enter Issuing Bank:"));
+            paymentDetail = check;
+        } else {
+            Cash cash = new Cash();
+            cash.setReceivedBy(AuthService.getCurrentUser().getFirstName());
+            paymentDetail = cash;
+        }
+
+        String confirmMsg = String.format("""
+                                      CONFIRM TRANSACTION
+                                      Location: %s
+                                      Financing: %s
+                                      Selected Term: %s
+                                      DP Method: %s
+                                      
+                                      Proceed with this purchase?""",
+                property.getPropertyID(), method, selectedYear, dpMethod);
+
+        int confirm = JOptionPane.showConfirmDialog(this, confirmMsg, "Final Review", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            paymentDetail.processPayment();
+
+            Transaction trx = new Transaction(property, method, FinancialCalculator.RESERVATION_FEE);
+            PropertyService.finalizeSale(trx);
+
+            JOptionPane.showMessageDialog(this, "Purchase Successful!\nRef: " + paymentDetail.getReferenceNumber());
+
+            java.awt.Window ancestor = SwingUtilities.getWindowAncestor(this);
+            if (ancestor instanceof MyApp.BuyerDashboard dashboard) {
+                dashboard.showCard("overview_view");
+                dashboard.refreshCurrentPanel();
+            }
+        }
+    }//GEN-LAST:event_buyBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> AmortizationCb;
+    private javax.swing.JComboBox<String> DPMethodCb;
+    private javax.swing.JButton buyBtn;
     private javax.swing.JTable compTable;
+    private javax.swing.JComboBox<String> dpMethodCb;
     private javax.swing.JTable infoTable;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
@@ -342,8 +398,6 @@ public class FinancialPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable loanTable;
-    private javax.swing.JComboBox<String> methodCb;
+    private javax.swing.JButton reserveBtn;
     // End of variables declaration//GEN-END:variables
 }

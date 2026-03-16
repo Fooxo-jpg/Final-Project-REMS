@@ -26,6 +26,13 @@ public class LotReportTemplate extends javax.swing.JPanel {
         
         if (p.getStatus().equals("Sold")) StatusLbl.setForeground(java.awt.Color.RED);
         updateTemplateImage(type);
+        
+        if (p.getStatus().equalsIgnoreCase("SOLD")) {
+            DetailsBtn.setEnabled(false);
+            DetailsBtn.setText("UNAVAILABLE");
+
+            DetailsBtn.setToolTipText("This property has already been sold.");
+        }
     }
     
     private void updateTemplateImage(String type) {
@@ -220,6 +227,14 @@ public class LotReportTemplate extends javax.swing.JPanel {
         
         LotInformation dialog = new LotInformation(parentFrame, true, property, role);
         dialog.setVisible(true);
+        
+        if (property.getStatus().equalsIgnoreCase("SOLD")) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "This property is sold and details are no longer available for public viewing.",
+                    "Access Denied",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         if (ancestor instanceof MyApp.BuyerDashboard buyerDashboard) {
             buyerDashboard.refreshCurrentPanel();

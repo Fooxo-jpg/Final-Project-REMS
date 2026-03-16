@@ -50,6 +50,8 @@ public final class OverviewPanel extends javax.swing.JPanel {
                                 lotBtn.setBackground(java.awt.Color.YELLOW);
                             case "SOLD" ->
                                 lotBtn.setBackground(new java.awt.Color(255, 102, 102));
+                            default ->
+                                lotBtn.setBackground(Color.LIGHT_GRAY);
                         }
                     } else {
                         lotBtn.setEnabled(false);
@@ -63,23 +65,35 @@ public final class OverviewPanel extends javax.swing.JPanel {
                     selectionLabel.setText("Block " + blockNum + " Lot " + lotNum);
                     lotSizeLbl.setText("Lot Size: " + prop.getLotArea() + "sqm");
                     houseTypeLbl.setText("House Type: " + prop.getHouseType());
-                    TotalValueLbl.setText("Gross Price: PHP " + df.format(prop.calculatePricePerSqFt()));
+                    
+                    TotalValueLbl.setText("Status: " + prop.getStatus() + " | Price: PHP " + df.format(prop.calculatePricePerSqFt()));
                 });
                 
                 lotBtn.addMouseListener(new MouseAdapter() {
                     @Override
-                    public void mouseClicked(java.awt.event.MouseEvent e){
+                    public void mouseClicked(java.awt.event.MouseEvent e) {
                         if (!lotBtn.isEnabled()) {
                             return;
                         }
-                        
+
                         if (e.getClickCount() == 2) {
-                            java.awt.Frame parentFrame = (java.awt.Frame) SwingUtilities.getWindowAncestor(OverviewPanel.this);
                             String userRole = AuthService.getCurrentUser().getRole();
-                            
-                            MyLib.Dialogs.LotInformation dialog = new MyLib.Dialogs.LotInformation(parentFrame, true, prop, userRole);
-                            dialog.setVisible(true);
-                            populateLots();
+                            String status = prop.getStatus().toUpperCase();
+
+                            if (userRole.equalsIgnoreCase("Admin") || status.equals("AVAILABLE")) {
+
+                                java.awt.Frame parentFrame = (java.awt.Frame) SwingUtilities.getWindowAncestor(OverviewPanel.this);
+                                MyLib.Dialogs.LotInformation dialog = new MyLib.Dialogs.LotInformation(parentFrame, true, prop, userRole);
+                                dialog.setVisible(true);
+
+                                populateLots();
+
+                            } else {
+                                javax.swing.JOptionPane.showMessageDialog(OverviewPanel.this,
+                                        "This property is " + status + " and cannot be viewed.",
+                                        "Property Unavailable",
+                                        javax.swing.JOptionPane.WARNING_MESSAGE);
+                            }
                         }
                     }
                 });

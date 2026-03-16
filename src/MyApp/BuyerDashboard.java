@@ -47,12 +47,16 @@ public class BuyerDashboard extends javax.swing.JFrame {
     }
     
     public void refreshCurrentPanel() {
-        java.awt.Component current = mainContentPanel.getComponent(0);
-
-        switch (current) {
-            case MyLib.Panels.FavoritesPanel favoritesPanel -> favoritesPanel.loadFavorites();
-            case MyLib.Panels.SearchPanel searchPanel -> searchPanel.applyFilters();
-            default -> {
+        for (java.awt.Component comp : mainContentPanel.getComponents()) {
+            if (comp.isVisible()) {
+                if (comp instanceof MyLib.Panels.OverviewPanel overviewPanel) {
+                    overviewPanel.populateLots(); // <--- Trigger the refresh here
+                } else if (comp instanceof MyLib.Panels.FavoritesPanel favoritesPanel) {
+                    favoritesPanel.loadFavorites();
+                } else if (comp instanceof MyLib.Panels.SearchPanel searchPanel) {
+                    searchPanel.applyFilters();
+                }
+                break;
             }
         }
     }

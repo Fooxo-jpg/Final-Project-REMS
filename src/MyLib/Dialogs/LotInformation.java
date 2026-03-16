@@ -1,5 +1,6 @@
 package MyLib.Dialogs;
 
+
 import MyLib.Classes.Models.*;
 import MyLib.Classes.Services.*;
 
@@ -8,6 +9,7 @@ import java.text.DecimalFormat;
 import javax.swing.*;
 
 public class LotInformation extends javax.swing.JDialog {
+    private MyApp.BuyerDashboard buyerDashboard;
     private MyLib.Classes.Models.Property currentProperty;
     private final DecimalFormat df = new DecimalFormat("#,##0.00");
     
@@ -15,7 +17,6 @@ public class LotInformation extends javax.swing.JDialog {
     private int currentImgIndex = 1;
     private final int MAX_IMAGES = 5;
     private final String userRole;
-        
     
     // CONSTRUCTOR
     public LotInformation(java.awt.Frame parent, boolean modal, MyLib.Classes.Models.Property prop, String role) {
@@ -23,6 +24,10 @@ public class LotInformation extends javax.swing.JDialog {
         initComponents();
         toggleEditMode(false);
         updateGallery();
+        
+        if (parent instanceof MyApp.BuyerDashboard buyerDashboard1) {
+            this.buyerDashboard = buyerDashboard1;
+        }
         
         this.currentProperty = prop;
         this.userRole = role;
@@ -96,7 +101,7 @@ public class LotInformation extends javax.swing.JDialog {
             }
         
         } else if (role.equalsIgnoreCase("Guest")) {
-            btn1.setText("Contact");
+            btn1.setText("Inquire");
             btn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Contact.png")));
             btn1.setToolTipText("Register to contact Agents");
             
@@ -105,11 +110,18 @@ public class LotInformation extends javax.swing.JDialog {
             btn1.setToolTipText("Register to add to Favorites");
         
         } else { // BUYER VIEW
-            btn1.setText("Contact");
+            User currentUser = AuthService.getCurrentUser();
+
+            btn1.setText("Inquire");
             btn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Contact.png")));
 
-            btn2.setText("Add to Favorites");
-            btn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Fave_Black.png")));
+            if (currentUser != null && currentUser.getFavorites().contains(currentProperty)) {
+                btn2.setText("Favorited");
+                btn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Fave_BlackFill.png")));
+            } else {
+                btn2.setText("Add to Favorites");
+                btn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Fave_Black.png")));
+            }
         }
         
         if (!role.equalsIgnoreCase("Admin")) {
@@ -347,7 +359,8 @@ public class LotInformation extends javax.swing.JDialog {
         buyerView.add(Header1, gridBagConstraints);
 
         btn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Contact.png"))); // NOI18N
-        btn1.setText("Contact");
+        btn1.setText("Inquire");
+        btn1.setIconTextGap(10);
         btn1.addActionListener(this::btn1ActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
@@ -359,6 +372,7 @@ public class LotInformation extends javax.swing.JDialog {
 
         btn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Fave_Black.png"))); // NOI18N
         btn2.setText("Add to Favorites");
+        btn2.setIconTextGap(10);
         btn2.addActionListener(this::btn2ActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
@@ -595,7 +609,7 @@ public class LotInformation extends javax.swing.JDialog {
                 
                 // CONDITION: MUST HAVE HOUSE TYPE, DI KA NAMAN PWEDE MAGBENTA NG BAHAY KUNG WALANG BAHAY DIBA
                 // MULTO YARN?
-                if (selectedType.equals("Selecte House Type")) {
+                if (selectedType.equals("Select House Type")) {
                     JOptionPane.showMessageDialog(this,
                             "Please select a valid House Type before listing/saving.",
                             "Validation Error",
@@ -678,7 +692,20 @@ public class LotInformation extends javax.swing.JDialog {
                 }
             }
         } else if (userRole.equalsIgnoreCase("Buyer")) {
-            
+            User currentUser = AuthService.getCurrentUser();
+            if (currentUser != null) {
+                boolean isAlreadyFavorite = currentUser.getFavorites().contains(currentProperty);
+                
+                if (isAlreadyFavorite) {
+                    currentUser.getFavorites().remove(currentProperty);
+                    btn2.setText("Add to Favorites");
+                    btn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Fave_Black.png")));
+                } else {
+                    currentUser.getFavorites().add(currentProperty);
+                    btn2.setText("Favorited");
+                    btn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Fave_BlackFill.png")));
+                }
+            }
         } else if (userRole.equalsIgnoreCase("Guest")) {
             showGuestRestriction();
         }
@@ -715,8 +742,11 @@ public class LotInformation extends javax.swing.JDialog {
             }
         } else if (userRole.equalsIgnoreCase("Guest")) {
             showGuestRestriction();
-        } else {
-            // BUYER LOGIC
+        } else { // BUYER LOGIC HERE
+            if (buyerDashboard != null) {
+                buyerDashboard.showFinancialPanel(currentProperty);
+                this.dispose();
+            }
         }
     }//GEN-LAST:event_btn1ActionPerformed
 

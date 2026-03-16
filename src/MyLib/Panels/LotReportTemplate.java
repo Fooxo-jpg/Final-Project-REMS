@@ -3,12 +3,10 @@ package MyLib.Panels;
 import MyLib.Classes.Models.Property;
 import MyLib.Classes.Services.AuthService;
 import MyLib.Dialogs.LotInformation;
-import java.awt.Frame;
+import java.awt.Image;
 import java.text.DecimalFormat;
-import javax.swing.SwingUtilities;
 
 public class LotReportTemplate extends javax.swing.JPanel {
-    
     private final DecimalFormat df = new DecimalFormat("#,##0.00");
     private Property property;
     
@@ -16,13 +14,51 @@ public class LotReportTemplate extends javax.swing.JPanel {
         initComponents();
         this.property = p;
         
+        
+        String type = p.getClass().getSimpleName();
+        houseTypeLbl.setText(type);
         IDLbl.setText(p.getPropertyID());
         StatusLbl.setText(p.getStatus());
         lotAreaLbl.setText("Lot Area: " + df.format(p.getLotArea()) + " sqm");
+        floorAreaLbl.setText("Floor Area: " + (p.getFloorArea()) + " sqm");
         priceLbl.setText("PHP " + df.format(p.calculatePricePerSqFt()));
         AgentLbl.setText(p.getAssignedAgent());
         
         if (p.getStatus().equals("Sold")) StatusLbl.setForeground(java.awt.Color.RED);
+        updateTemplateImage(type);
+    }
+    
+    private void updateTemplateImage(String type) {
+        String folderName = "";
+        
+        switch (type) {
+            case "SingleAttached" ->
+                folderName = "Single-Attached";
+            case "SingleDetached" ->
+                folderName = "Single-Detached";
+            case "Townhouse" ->
+                folderName = "Townhouse";
+            case "Duplex" ->
+                folderName = "Duplex";
+            default ->
+                folderName = type;
+        }
+        
+        String path = "/MyLib/Images/" + folderName + "/1.jpg";
+        java.net.URL imgURL = getClass().getResource(path);
+
+        if (imgURL != null) {
+            javax.swing.ImageIcon icon = new javax.swing.ImageIcon(imgURL);
+            java.awt.Image img = icon.getImage();
+
+            int targetW = (imgHolder.getWidth() > 0) ? imgHolder.getWidth() : 252;
+            int targetH = (imgHolder.getHeight() > 0) ? imgHolder.getHeight() : 150;
+
+            Image scaledImg = img.getScaledInstance(targetW, targetH, java.awt.Image.SCALE_SMOOTH);
+            imgHolder.setIcon(new javax.swing.ImageIcon(scaledImg));
+        } else {
+            imgHolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Images/Logo.png")));
+        }
     }
 
     /**
@@ -35,7 +71,6 @@ public class LotReportTemplate extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        Image1 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         houseTypeLbl = new javax.swing.JLabel();
         AgentLbl = new javax.swing.JLabel();
@@ -45,22 +80,12 @@ public class LotReportTemplate extends javax.swing.JPanel {
         priceLbl = new javax.swing.JLabel();
         DetailsBtn = new javax.swing.JButton();
         lotAreaLbl = new javax.swing.JLabel();
+        imgHolder = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setMaximumSize(new java.awt.Dimension(32767, 180));
 
-        Image1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        javax.swing.GroupLayout Image1Layout = new javax.swing.GroupLayout(Image1);
-        Image1.setLayout(Image1Layout);
-        Image1Layout.setHorizontalGroup(
-            Image1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 244, Short.MAX_VALUE)
-        );
-        Image1Layout.setVerticalGroup(
-            Image1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         java.awt.GridBagLayout jPanel1Layout = new java.awt.GridBagLayout();
         jPanel1Layout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0};
         jPanel1Layout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0};
@@ -162,14 +187,16 @@ public class LotReportTemplate extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel1.add(lotAreaLbl, gridBagConstraints);
 
+        imgHolder.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(Image1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(imgHolder, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -178,16 +205,25 @@ public class LotReportTemplate extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Image1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                    .addComponent(imgHolder, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void DetailsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DetailsBtnActionPerformed
-        Frame parent = (java.awt.Frame) SwingUtilities.getWindowAncestor(this);
+        java.awt.Window ancestor = javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (!(ancestor instanceof java.awt.Frame)) return;
+        
+        java.awt.Frame parentFrame = (java.awt.Frame) ancestor;
         String role = AuthService.getCurrentUser().getRole();
-        new LotInformation(parent, true, property, role).setVisible(true);
+        
+        LotInformation dialog = new LotInformation(parentFrame, true, property, role);
+        dialog.setVisible(true);
+
+        if (ancestor instanceof MyApp.BuyerDashboard buyerDashboard) {
+            buyerDashboard.refreshCurrentPanel();
+        }
     }//GEN-LAST:event_DetailsBtnActionPerformed
 
 
@@ -195,10 +231,10 @@ public class LotReportTemplate extends javax.swing.JPanel {
     private javax.swing.JLabel AgentLbl;
     private javax.swing.JButton DetailsBtn;
     private javax.swing.JLabel IDLbl;
-    private javax.swing.JPanel Image1;
     private javax.swing.JLabel StatusLbl;
     private javax.swing.JLabel floorAreaLbl;
     private javax.swing.JLabel houseTypeLbl;
+    private javax.swing.JLabel imgHolder;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lotAreaLbl;
     private javax.swing.JLabel priceLbl;

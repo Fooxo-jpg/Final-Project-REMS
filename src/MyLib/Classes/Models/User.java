@@ -1,5 +1,7 @@
 package MyLib.Classes.Models;
 
+import java.util.*;
+
 public class User {
     protected String username;
     protected String password;
@@ -11,7 +13,20 @@ public class User {
     protected String contactNumber = "";
     protected String gender = "Select";
     
+    private List<Property> favorites = new ArrayList<>();
 
+    public List<Property> getFavorites() {
+        return favorites;
+    }
+    
+    public void toggleFavorite(Property p) {
+        if (favorites.contains(p)) {
+            favorites.remove(p);
+        } else {
+            favorites.add(p);
+        }
+    }
+    
     // CONSTRUCTOR
     public User(String username, String password, String email, String role) {
         this.username = username;

@@ -34,6 +34,27 @@ public class BuyerDashboard extends javax.swing.JFrame {
         mainContentPanel.add(Transaction, "transaction_view");
     }
     
+    public void showFinancialPanel(MyLib.Classes.Models.Property prop) {
+        FinancialPanel finPanel = new FinancialPanel(prop);
+
+        mainContentPanel.removeAll();
+        mainContentPanel.add(finPanel);
+
+        mainContentPanel.revalidate();
+        mainContentPanel.repaint();
+    }
+    
+    public void refreshCurrentPanel() {
+        java.awt.Component current = mainContentPanel.getComponent(0);
+
+        switch (current) {
+            case MyLib.Panels.FavoritesPanel favoritesPanel -> favoritesPanel.loadFavorites();
+            case MyLib.Panels.SearchPanel searchPanel -> searchPanel.applyFilters();
+            default -> {
+            }
+        }
+    }
+    
     public void showCard(String cardName){
         java.awt.CardLayout cl = (java.awt.CardLayout) mainContentPanel.getLayout();
         cl.show(mainContentPanel, cardName);

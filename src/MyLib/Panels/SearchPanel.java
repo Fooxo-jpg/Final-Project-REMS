@@ -83,6 +83,7 @@ public class SearchPanel extends javax.swing.JPanel {
                 
                 if (p.isListed()) {
                     LotReportTemplate row = new LotReportTemplate(p);
+                    row.putClientProperty("FlatLaf.style", "arc: 20");
                     reportContainer.add(row);
 
                     reportContainer.add(createRigidArea(new Dimension(0, 5)));
@@ -105,7 +106,7 @@ public class SearchPanel extends javax.swing.JPanel {
         this.repaint();
     }
     
-    private void applyFilters() {
+    public void applyFilters() {
         String query = searchPropertyTxt.getText().toLowerCase();
         double maxPrice = (double) maxPriceSlider.getValue();
         String selectedStatus = statusCb.getSelectedItem().toString();
@@ -303,7 +304,7 @@ public class SearchPanel extends javax.swing.JPanel {
 
         mainContent.setBackground(new java.awt.Color(255, 255, 255));
         mainContent.setOpaque(false);
-        mainContent.setLayout(new java.awt.BorderLayout());
+        mainContent.setLayout(new java.awt.BorderLayout(0, 20));
 
         filterSidePanel.setBackground(new java.awt.Color(36, 5, 2));
         filterSidePanel.setPreferredSize(new java.awt.Dimension(240, 442));

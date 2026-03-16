@@ -150,7 +150,8 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/MyLib/Icons/Contact.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Contact"/>
+            <Property name="text" type="java.lang.String" value="Inquire"/>
+            <Property name="iconTextGap" type="int" value="10"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn1ActionPerformed"/>
@@ -167,6 +168,7 @@
               <Image iconType="3" name="/MyLib/Icons/Fave_Black.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Add to Favorites"/>
+            <Property name="iconTextGap" type="int" value="10"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn2ActionPerformed"/>

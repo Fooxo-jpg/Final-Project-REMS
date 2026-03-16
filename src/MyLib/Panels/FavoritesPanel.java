@@ -1,9 +1,26 @@
 package MyLib.Panels;
 
+import MyLib.Classes.Models.Property;
+import MyLib.Classes.Services.AuthService;
+import java.util.List;
+
 public class FavoritesPanel extends javax.swing.JPanel {
 
+    //CONSTRUCTOR
     public FavoritesPanel() {
         initComponents();
+    }
+    
+    //HELPERS
+    public void loadFavorites() {
+        listContainer.removeAll();
+        List<Property> myFaves = AuthService.getCurrentUser().getFavorites();
+        
+        for (Property p : myFaves) {
+            LotReportTemplate item = new LotReportTemplate(p);
+            listContainer.add(item);
+            listContainer.add(javax.swing.Box.createRigidArea(new java.awt.Dimension(0, 10)));
+        }
     }
 
     /**
@@ -18,12 +35,16 @@ public class FavoritesPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         listContainer = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 25)); // NOI18N
         jLabel1.setText("FAVORITES");
 
         listContainer.setLayout(new javax.swing.BoxLayout(listContainer, javax.swing.BoxLayout.Y_AXIS));
         jScrollPane1.setViewportView(listContainer);
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        jLabel2.setText("0 Properties");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -34,7 +55,9 @@ public class FavoritesPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 655, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -43,8 +66,10 @@ public class FavoritesPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -52,6 +77,7 @@ public class FavoritesPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel listContainer;
     // End of variables declaration//GEN-END:variables

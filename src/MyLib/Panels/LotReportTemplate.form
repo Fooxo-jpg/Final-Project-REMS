@@ -36,7 +36,7 @@
               <EmptySpace min="9" pref="9" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="Image1" max="32767" attributes="0"/>
-                  <Component id="jPanel1" pref="166" max="32767" attributes="0"/>
+                  <Component id="jPanel1" pref="150" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>

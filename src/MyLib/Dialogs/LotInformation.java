@@ -1,14 +1,11 @@
 package MyLib.Dialogs;
 
 import MyLib.Classes.Models.*;
-import MyLib.Classes.Services.AuthService;
-import MyLib.Classes.Services.PropertyService;
+import MyLib.Classes.Services.*;
+
 import java.awt.event.ItemEvent;
 import java.text.DecimalFormat;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 public class LotInformation extends javax.swing.JDialog {
     private MyLib.Classes.Models.Property currentProperty;
@@ -36,21 +33,32 @@ public class LotInformation extends javax.swing.JDialog {
         setFilteredField(bedTxt, "\\d*", 5);
         setFilteredField(sizeTxt, "\\d*\\.?\\d*", 6);
         
-        if (prop instanceof SingleAttached) {
-            houseTypeCb.setSelectedItem("Single-Attached");
-        } else if (prop instanceof SingleDetached) {
-            houseTypeCb.setSelectedItem("Single-Detached");
-        } else if (prop instanceof Townhouse) {
-            houseTypeCb.setSelectedItem("Townhouse");
-        } else {
-            houseTypeCb.setSelectedItem("Select Type");
-        }
+        String typeString = "";
+        if (prop instanceof SingleAttached)
+            typeString = "Single-Attached";
+        else if (prop instanceof SingleDetached)
+            typeString = "Single-Detached";
+        else if (prop instanceof Townhouse)
+            typeString = "Townhouse";
+        else
+            typeString = "Select Type";
+        
+        houseTypeCb.setSelectedItem(typeString);
+        houseTypeLbl.setText(typeString);
+        
+        sizeTxt.setText(String.valueOf(prop.getLotArea()));
+        sizeLbl.setText(String.valueOf(prop.getLotArea() + " sqm"));
+        
+        bedTxt.setText(String.valueOf(prop.getNumBedrooms()));
+        bedLbl.setText(String.valueOf(prop.getNumBedrooms()));
+        
+        bathTxt.setText(String.valueOf(prop.getNumBathrooms()));
+        bathLbl.setText(String.valueOf(prop.getNumBathrooms()));
         
         updateGallery();
         
         locationLbl.setText(prop.getPropertyID());
         agentLbl.setText(prop.getAssignedAgent());
-        sizeTxt.setText(String.valueOf(prop.getLotArea()));
         
         pricePerSQMLbl.setText("PHP " + df.format(prop.getPricePerSQM()));
         totalValueTxt.setText("PHP " + df.format(prop.calculatePricePerSqFt()));
@@ -103,6 +111,10 @@ public class LotInformation extends javax.swing.JDialog {
             btn2.setText("Add to Favorites");
             btn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Fave_Black.png")));
         }
+        
+        if (!role.equalsIgnoreCase("Admin")) {
+            btn2.setVisible(role.equalsIgnoreCase("Buyer"));
+        }
     }
     
     //HELPERS
@@ -126,11 +138,12 @@ public class LotInformation extends javax.swing.JDialog {
     private void toggleEditMode(boolean active) {
         this.isEditing = active;
 
-        JTextField[] fields = {sizeTxt, bathTxt, bedTxt};
+        JComponent[] inputs = {houseTypeCb, sizeTxt, bedTxt, bathTxt};
+        JLabel[] labels = {houseTypeLbl, sizeLbl, bedLbl, bathLbl};
 
-        for (JTextField field : fields) {
-            field.setEnabled(active);
-            field.setBackground(active ? java.awt.Color.WHITE : new java.awt.Color(242, 242, 242));
+        for (int i = 0; i < inputs.length; i++) {
+            inputs[i].setVisible(active);
+            labels[i].setVisible(!active);
         }
 
         btn2.setText(active ? "Save Changes" : "Edit Property");
@@ -139,8 +152,10 @@ public class LotInformation extends javax.swing.JDialog {
             sizeTxt.requestFocus();
         }
 
-        btn1.setEnabled(false);
-        houseTypeCb.setEnabled(active);
+        houseTypeLbl.setText(houseTypeCb.getSelectedItem().toString());
+        sizeLbl.setText(sizeTxt.getText() + " sqm");
+        bedLbl.setText(bedTxt.getText());
+        bathLbl.setText(bathTxt.getText());
     }
 
     private void updateGallery() {
@@ -228,6 +243,10 @@ public class LotInformation extends javax.swing.JDialog {
         Buttons = new javax.swing.JPanel();
         prevBtn = new javax.swing.JButton();
         nextBtn = new javax.swing.JButton();
+        houseTypeLbl = new javax.swing.JLabel();
+        sizeLbl = new javax.swing.JLabel();
+        bathLbl = new javax.swing.JLabel();
+        bedLbl = new javax.swing.JLabel();
         logo = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
 
@@ -401,7 +420,6 @@ public class LotInformation extends javax.swing.JDialog {
         buyerView.add(Header2, gridBagConstraints);
 
         sizeTxt.setText("0 sqm");
-        sizeTxt.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 8;
@@ -410,7 +428,6 @@ public class LotInformation extends javax.swing.JDialog {
         buyerView.add(sizeTxt, gridBagConstraints);
 
         bathTxt.setText("0");
-        bathTxt.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 20;
@@ -419,7 +436,6 @@ public class LotInformation extends javax.swing.JDialog {
         buyerView.add(bathTxt, gridBagConstraints);
 
         bedTxt.setText("0");
-        bedTxt.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 22;
@@ -448,7 +464,6 @@ public class LotInformation extends javax.swing.JDialog {
         buyerView.add(totalValueTxt, gridBagConstraints);
 
         houseTypeCb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select House Type", "Single-Attached", "Single-Detached", "Townhouse" }));
-        houseTypeCb.setEnabled(false);
         houseTypeCb.addItemListener(this::houseTypeCbItemStateChanged);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
@@ -501,6 +516,34 @@ public class LotInformation extends javax.swing.JDialog {
         gridBagConstraints.gridy = 26;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         buyerView.add(Buttons, gridBagConstraints);
+
+        houseTypeLbl.setText("jLabel1");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        buyerView.add(houseTypeLbl, gridBagConstraints);
+
+        sizeLbl.setText("jLabel1");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        buyerView.add(sizeLbl, gridBagConstraints);
+
+        bathLbl.setText("jLabel2");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 20;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        buyerView.add(bathLbl, gridBagConstraints);
+
+        bedLbl.setText("jLabel3");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 22;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        buyerView.add(bedLbl, gridBagConstraints);
 
         logo.setBackground(new java.awt.Color(36, 5, 2));
 
@@ -613,6 +656,11 @@ public class LotInformation extends javax.swing.JDialog {
                         totalValueTxt.setText("PHP " + df.format(total));
                         agentLbl.setText(listerName);
                         
+                        houseTypeLbl.setText(selectedType);
+                        sizeLbl.setText(newLotArea + " sqm");
+                        bedLbl.setText(String.valueOf(newBeds));
+                        bathLbl.setText(String.valueOf(newBaths));
+                        
                         JOptionPane.showMessageDialog(this, "Property Updated. [" + currentProperty.getPropertyID() + "]");
                         toggleEditMode(false);
                         this.dispose();
@@ -683,7 +731,7 @@ public class LotInformation extends javax.swing.JDialog {
         if (currentImgIndex > 1) {
             currentImgIndex--;
         } else {
-            currentImgIndex = MAX_IMAGES; // Loop back to the last image (5)
+            currentImgIndex = MAX_IMAGES;
         }
         updateGallery();
     }//GEN-LAST:event_prevBtnActionPerformed
@@ -692,7 +740,7 @@ public class LotInformation extends javax.swing.JDialog {
         if (currentImgIndex < MAX_IMAGES) {
             currentImgIndex++;
         } else {
-            currentImgIndex = 1; // Loop back to the first image (1)
+            currentImgIndex = 1;
         }
         updateGallery();
     }//GEN-LAST:event_nextBtnActionPerformed
@@ -731,12 +779,15 @@ public class LotInformation extends javax.swing.JDialog {
     private javax.swing.JLabel Size;
     private javax.swing.JLabel TotalValue;
     private javax.swing.JLabel agentLbl;
+    private javax.swing.JLabel bathLbl;
     private javax.swing.JTextField bathTxt;
+    private javax.swing.JLabel bedLbl;
     private javax.swing.JTextField bedTxt;
     private javax.swing.JButton btn1;
     private javax.swing.JButton btn2;
     private javax.swing.JPanel buyerView;
     private javax.swing.JComboBox<String> houseTypeCb;
+    private javax.swing.JLabel houseTypeLbl;
     private javax.swing.JLabel imageLbl;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JSeparator jSeparator1;
@@ -745,6 +796,7 @@ public class LotInformation extends javax.swing.JDialog {
     private javax.swing.JButton nextBtn;
     private javax.swing.JButton prevBtn;
     private javax.swing.JLabel pricePerSQMLbl;
+    private javax.swing.JLabel sizeLbl;
     private javax.swing.JTextField sizeTxt;
     private javax.swing.JLabel totalValueTxt;
     // End of variables declaration//GEN-END:variables

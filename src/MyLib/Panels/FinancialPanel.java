@@ -401,9 +401,25 @@ public class FinancialPanel extends javax.swing.JPanel {
         if (JOptionPane.showConfirmDialog(this, confirmMsg, "Proceed?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             paymentDetail.processPayment();
 
+            double income = 0;
+            if (financingMethod.equalsIgnoreCase("In-House Financing")) {
+                String input = JOptionPane.showInputDialog(this, "In-House Financing requires Income Verification.\nPlease enter your Annual Income:");
+                if (input == null || input.trim().isEmpty()) {
+                    return;
+                }
+                try {
+                    income = Double.parseDouble(input);
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Invalid income amount.");
+                    return;
+                }
+            }
+            
             String currentUser = AuthService.getCurrentUser().getUsername();
-            Transaction trx = new Transaction(currentUser, property, financingMethod, initialPayment, paymentDetail, selectedYear, monthlyAmort);
-
+            Transaction trx = new Transaction(currentUser, property, financingMethod, 
+                                      initialPayment, paymentDetail, 
+                                      selectedYear, monthlyAmort, income);
+            
             PropertyService.finalizeSale(trx);
 
             java.awt.Frame parent = (java.awt.Frame) SwingUtilities.getWindowAncestor(this);

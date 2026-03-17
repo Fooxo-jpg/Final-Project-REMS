@@ -1,10 +1,12 @@
 package MyLib.Panels;
 
 import MyLib.Classes.Models.Property;
+import MyLib.Classes.Models.Transaction;
 import MyLib.Classes.Services.PropertyService;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -38,13 +40,110 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         });
         
         filterCb.addActionListener(e -> applyFilters(sorter));
+        
+        propertyTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int row = propertyTable.getSelectedRow();
+                if (row != -1) {
+                    String loc = propertyTable.getValueAt(row, 0).toString();
+                    // Split "B1-L5" to get block and lot
+                    String[] parts = loc.replace("B", "").replace("L", "").split("-");
+                    Property p = PropertyService.getProperty(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+                    displayPropertyDetails(p);
+                }
+            }
+        });
     }
     
     // HELPER
+    private void handleLoanApproval(Transaction trx) {
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+        
+        double monthlyIncome = trx.getAnnualIncome() / 12;
+        double amortRatio = (trx.getMonthlyAmortization() / monthlyIncome) * 100;
+
+        String warningMessage = "";
+        if (amortRatio > 40) {
+            warningMessage = "\n⚠️ WARNING: Amortization is " + df.format(amortRatio)
+                    + "% of monthly income! (High Risk)";
+        }
+        
+        String message = String.format("""
+            IN-HOUSE LOAN REQUEST
+            Buyer: %s | Property: %s
+            Monthly Income: PHP %s
+            Monthly Amortization: PHP %s
+            Ratio: %s%% of income %s
+            
+            Do you want to APPROVE this loan?""",
+                trx.getBuyerUsername(),
+                trx.getProperty().getPropertyID(),
+                df.format(monthlyIncome),
+                df.format(trx.getMonthlyAmortization()),
+                df.format(amortRatio),
+                warningMessage);
+
+        String[] options = {"Approve", "Decline", "Wait"};
+        
+        int choice = JOptionPane.showOptionDialog(this, message, "Loan Management",
+                JOptionPane.DEFAULT_OPTION, (amortRatio > 40 ? JOptionPane.WARNING_MESSAGE : JOptionPane.QUESTION_MESSAGE),
+                null, options, options[0]);
+
+        if (choice == 0) { // APPROVE
+            trx.setStatus("Finalized");
+            trx.getProperty().setStatus("Sold");
+            JOptionPane.showMessageDialog(this, "Loan Approved.");
+        } else if (choice == 1) { // DECLINE
+            trx.getProperty().setStatus("Available");
+            trx.getProperty().setReservedBy(null);
+            PropertyService.getAllTransactions().remove(trx);
+            JOptionPane.showMessageDialog(this, "Loan Declined. Property reset to Available.");
+        }
+        updateTable();
+    }
+    
+    private void displayPropertyDetails(Property p) {
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+
+        jLabel1.setText(p.getPropertyID());
+        propNameLbl.setText(p.getClass().getSimpleName());
+        lotAreaLbl.setText(p.getLotArea() + " SQM");
+        floorAreaLbl.setText(p.getFloorArea() + " SQM");
+
+        double reservationFee = MyLib.Classes.Services.FinancialCalculator.RESERVATION_FEE;
+        double tsp = MyLib.Classes.Services.FinancialCalculator.calculateNSP(p); // NSP is the base Selling Price
+        double tcp = MyLib.Classes.Services.FinancialCalculator.calculateTCP(p); // TCP includes Misc Fees
+
+        double dpPercent = 0.15;
+
+        Transaction existingTrx = null;
+        for (Transaction t : PropertyService.getAllTransactions()) {
+            if (t.getProperty().getPropertyID().equals(p.getPropertyID())) {
+                existingTrx = t;
+                break;
+            }
+        }
+
+        double downPayment;
+        if (existingTrx != null) {
+            downPayment = existingTrx.getInitialPayment();
+        } else {
+            downPayment = tcp * dpPercent;
+        }
+
+        double loanableAmount = tcp - downPayment;
+
+        tspLbl.setText("PHP " + df.format(tsp)); // Total Selling Price (Net)
+        reservationLbl.setText("PHP " + df.format(reservationFee));
+        dpLbl.setText("PHP " + df.format(downPayment));
+        loanableLbl.setText("PHP " + df.format(loanableAmount));
+        tcpLbl.setText("PHP " + df.format(tcp)); // Total Contract Price
+    }
+    
     public void updateTable() {
         DecimalFormat df = new DecimalFormat("#,##0.00");
-        String[] columns = {"Location", "House Type", "Assigned Agent", "Client Name", "Status", "Price"};
-        
+        String[] columns = {"Location", "House Type", "Assigned Agent", "Client", "Status", "Price"};
+
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -56,29 +155,16 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
             for (int lot = 1; lot <= 20; lot++) {
                 Property p = PropertyService.getProperty(block, lot);
                 
-                String agent = p.getAssignedAgent();
-                if (agent.isEmpty() || agent.equals("No Agent Assigned")) {
-                    agent = "No Agent Assigned";
-                }
-                
-                /*
-                    LOCATION
-                    HOUSE TYPE
-                    AGENT NAME/EMAIL
-                    CLIENT NAME
-                    STATUS
-                    PRICE
-                */
+                String client = (p.getReservedBy() != null) ? p.getReservedBy() : "None";
                 
                 Object[] rowData = {
                     p.getPropertyID(),
                     p.getClass().getSimpleName(),
-                    agent,
-                    "N/A",
+                    p.getAssignedAgent(),
+                    client,
                     p.getStatus(),
                     "PHP " + df.format(p.calculatePricePerSqFt())
                 };
-                
                 model.addRow(rowData);
             }
         }
@@ -105,11 +191,49 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
             sorter.setRowFilter(RowFilter.andFilter(filters));
         }
     }
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+
+    private void exportToCSV(java.io.File file) {
+        try (java.io.FileWriter fw = new java.io.FileWriter(file)) {
+            DefaultTableModel model = (DefaultTableModel) propertyTable.getModel();
+
+            for (int i = 0; i < model.getColumnCount(); i++) {
+                fw.write(model.getColumnName(i) + (i == model.getColumnCount() - 1 ? "" : ","));
+            }
+            fw.write("\n");
+
+            for (int i = 0; i < model.getRowCount(); i++) {
+                for (int j = 0; j < model.getColumnCount(); j++) {
+                    fw.write(model.getValueAt(i, j).toString().replace(",", "") + (j == model.getColumnCount() - 1 ? "" : ","));
+                }
+                fw.write("\n");
+            }
+            JOptionPane.showMessageDialog(this, "CSV Report Generated successfully!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error exporting CSV: " + e.getMessage());
+        }
+    }
+    
+    private void exportToExcel(java.io.File file) {
+        try (java.io.FileWriter fw = new java.io.FileWriter(file)) {
+            DefaultTableModel model = (DefaultTableModel) propertyTable.getModel();
+
+            for (int i = 0; i < model.getColumnCount(); i++) {
+                fw.write(model.getColumnName(i) + "\t");
+            }
+            fw.write("\n");
+
+            for (int i = 0; i < model.getRowCount(); i++) {
+                for (int j = 0; j < model.getColumnCount(); j++) {
+                    fw.write(model.getValueAt(i, j).toString() + "\t");
+                }
+                fw.write("\n");
+            }
+            JOptionPane.showMessageDialog(this, "Excel Report Generated successfully!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error exporting Excel: " + e.getMessage());
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -121,23 +245,24 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         Address = new javax.swing.JLabel();
         PropertyName = new javax.swing.JLabel();
         LotArea = new javax.swing.JLabel();
-        MiscFees = new javax.swing.JLabel();
-        Bedrooms = new javax.swing.JLabel();
-        Carports = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
-        HouseType = new javax.swing.JLabel();
+        TotalSellingPrice = new javax.swing.JLabel();
+        ReservationFee = new javax.swing.JLabel();
+        DownPayment = new javax.swing.JLabel();
+        lotAreaLbl = new javax.swing.JLabel();
+        propNameLbl = new javax.swing.JLabel();
+        tspLbl = new javax.swing.JLabel();
+        reservationLbl = new javax.swing.JLabel();
+        dpLbl = new javax.swing.JLabel();
+        LoanableAmount = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
-        jLabel21 = new javax.swing.JLabel();
-        jLabel23 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        loanableLbl = new javax.swing.JLabel();
+        tcpLbl = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        FloorArea1 = new javax.swing.JLabel();
+        floorAreaLbl = new javax.swing.JLabel();
+        FloorArea = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        reportBtn = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         searchTxt = new javax.swing.JTextField();
@@ -242,7 +367,7 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(LotArea, gridBagConstraints);
 
-        MiscFees.setText("Total Selling Price:");
+        TotalSellingPrice.setText("Total Selling Price:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 12;
@@ -252,9 +377,9 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(MiscFees, gridBagConstraints);
+        jPanel1.add(TotalSellingPrice, gridBagConstraints);
 
-        Bedrooms.setText("Reservation Fees:");
+        ReservationFee.setText("Reservation Fees:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 14;
@@ -264,9 +389,9 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(Bedrooms, gridBagConstraints);
+        jPanel1.add(ReservationFee, gridBagConstraints);
 
-        Carports.setText("Down Payment:");
+        DownPayment.setText("Down Payment:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 16;
@@ -276,9 +401,9 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(Carports, gridBagConstraints);
+        jPanel1.add(DownPayment, gridBagConstraints);
 
-        jLabel12.setText("0 SQM");
+        lotAreaLbl.setText("0 SQM");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 6;
@@ -289,9 +414,9 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jLabel12, gridBagConstraints);
+        jPanel1.add(lotAreaLbl, gridBagConstraints);
 
-        jLabel13.setText("HOUSE NAME");
+        propNameLbl.setText("HOUSE NAME");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 4;
@@ -302,9 +427,9 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jLabel13, gridBagConstraints);
+        jPanel1.add(propNameLbl, gridBagConstraints);
 
-        jLabel15.setText("PHP 0.00");
+        tspLbl.setText("PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 12;
@@ -315,9 +440,9 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jLabel15, gridBagConstraints);
+        jPanel1.add(tspLbl, gridBagConstraints);
 
-        jLabel16.setText("PHP 0.00");
+        reservationLbl.setText("PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 14;
@@ -328,9 +453,9 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jLabel16, gridBagConstraints);
+        jPanel1.add(reservationLbl, gridBagConstraints);
 
-        jLabel17.setText("PHP 0.00");
+        dpLbl.setText("PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 16;
@@ -341,9 +466,9 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jLabel17, gridBagConstraints);
+        jPanel1.add(dpLbl, gridBagConstraints);
 
-        HouseType.setText("Loanable Amount:");
+        LoanableAmount.setText("Loanable Amount:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 18;
@@ -353,7 +478,7 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(HouseType, gridBagConstraints);
+        jPanel1.add(LoanableAmount, gridBagConstraints);
 
         jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel19.setText("Total Contract Price:");
@@ -368,7 +493,7 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(jLabel19, gridBagConstraints);
 
-        jLabel21.setText("PHP 0.00");
+        loanableLbl.setText("PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 18;
@@ -379,9 +504,9 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jLabel21, gridBagConstraints);
+        jPanel1.add(loanableLbl, gridBagConstraints);
 
-        jLabel23.setText("PHP 0.00");
+        tcpLbl.setText("PHP 0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 22;
@@ -392,21 +517,7 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jLabel23, gridBagConstraints);
-
-        jButton1.setBackground(new java.awt.Color(36, 5, 2));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("View Computation Sheet");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 24;
-        gridBagConstraints.gridwidth = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.1;
-        gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jButton1, gridBagConstraints);
+        jPanel1.add(tcpLbl, gridBagConstraints);
 
         jLabel1.setText("BLOCK 0 LOT 0");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -415,7 +526,7 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.gridwidth = 3;
         jPanel1.add(jLabel1, gridBagConstraints);
 
-        jLabel18.setText("0 SQM");
+        floorAreaLbl.setText("0 SQM");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 8;
@@ -426,9 +537,9 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(jLabel18, gridBagConstraints);
+        jPanel1.add(floorAreaLbl, gridBagConstraints);
 
-        FloorArea1.setText("Floor Area:");
+        FloorArea.setText("Floor Area:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 8;
@@ -438,7 +549,44 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.1;
         gridBagConstraints.weighty = 0.1;
-        jPanel1.add(FloorArea1, gridBagConstraints);
+        jPanel1.add(FloorArea, gridBagConstraints);
+
+        jPanel2.setOpaque(false);
+        java.awt.GridBagLayout jPanel2Layout = new java.awt.GridBagLayout();
+        jPanel2Layout.columnWidths = new int[] {0, 10, 0};
+        jPanel2Layout.rowHeights = new int[] {0};
+        jPanel2.setLayout(jPanel2Layout);
+
+        jButton1.setBackground(new java.awt.Color(36, 5, 2));
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setText("Manage");
+        jButton1.setToolTipText("");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanel2.add(jButton1, gridBagConstraints);
+
+        reportBtn.setText("Generate Report");
+        reportBtn.addActionListener(this::reportBtnActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanel2.add(reportBtn, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 24;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipady = 15;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(jPanel2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 8;
@@ -446,29 +594,6 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(jPanel1, gridBagConstraints);
-
-        jPanel2.setBackground(new java.awt.Color(248, 235, 210));
-        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 256, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 8;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.gridheight = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipady = 40;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        add(jPanel2, gridBagConstraints);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(36, 5, 2));
@@ -506,34 +631,90 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         add(filterCb, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        int row = propertyTable.getSelectedRow();
+        if (row == -1) {
+            return;
+        }
+
+        String loc = propertyTable.getValueAt(row, 0).toString();
+        String[] parts = loc.replace("B", "").replace("L", "").split("-");
+        Property p = PropertyService.getProperty(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+
+        Transaction targetTrx = null;
+        for (Transaction t : PropertyService.getAllTransactions()) {
+            if (t.getProperty().getPropertyID().equals(p.getPropertyID())
+                    && t.getStatus().equals("Pending Inhouse Loan")) {
+                targetTrx = t;
+                break;
+            }
+        }
+
+        if (targetTrx != null) {
+            handleLoanApproval(targetTrx);
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "This property does not have a pending loan request.");
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void reportBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportBtnActionPerformed
+        String[] options = {"Excel (.xls)", "CSV (.csv)"};
+        int choice = JOptionPane.showOptionDialog(this,
+                "Select report format:", "Generate Report",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                null, options, options[0]);
+
+        if (choice == -1) {
+            return;
+        }
+        
+        javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+        fileChooser.setDialogTitle("Save Report");
+        String extension = (choice == 0) ? ".xls" : ".csv";
+        fileChooser.setSelectedFile(new java.io.File("Property_Report_" + System.currentTimeMillis() + extension));
+
+        int userSelection = fileChooser.showSaveDialog(this);
+
+        if (userSelection == javax.swing.JFileChooser.APPROVE_OPTION) {
+            java.io.File fileToSave = fileChooser.getSelectedFile();
+
+            if (choice == 0) {
+                exportToExcel(fileToSave);
+            } else {
+                exportToCSV(fileToSave);
+            }
+        }
+    }//GEN-LAST:event_reportBtnActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Address;
-    private javax.swing.JLabel Bedrooms;
-    private javax.swing.JLabel Carports;
-    private javax.swing.JLabel FloorArea1;
-    private javax.swing.JLabel HouseType;
+    private javax.swing.JLabel DownPayment;
+    private javax.swing.JLabel FloorArea;
+    private javax.swing.JLabel LoanableAmount;
     private javax.swing.JLabel LotArea;
-    private javax.swing.JLabel MiscFees;
     private javax.swing.JLabel PropertyName;
+    private javax.swing.JLabel ReservationFee;
+    private javax.swing.JLabel TotalSellingPrice;
+    private javax.swing.JLabel dpLbl;
     private javax.swing.JComboBox<String> filterCb;
+    private javax.swing.JLabel floorAreaLbl;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel loanableLbl;
+    private javax.swing.JLabel lotAreaLbl;
+    private javax.swing.JLabel propNameLbl;
     private javax.swing.JTable propertyTable;
+    private javax.swing.JButton reportBtn;
+    private javax.swing.JLabel reservationLbl;
     private javax.swing.JTextField searchTxt;
+    private javax.swing.JLabel tcpLbl;
+    private javax.swing.JLabel tspLbl;
     // End of variables declaration//GEN-END:variables
 }

@@ -75,7 +75,7 @@ public class TransactionPanel extends javax.swing.JPanel {
                     "PHP " + df.format(t.getMonthlyAmortization()),
                     dpMethod,
                     "PHP " + df.format(t.getInitialPayment()),
-                    "Finalized"
+                    t.getStatus()
                 });
             }
         }

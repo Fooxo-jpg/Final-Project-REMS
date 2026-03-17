@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Transaction {
     private String transactionID;
+    private String buyerUsername;
     private Property property;
     private String paymentMethod;
     private double initialPayment;
@@ -13,9 +14,11 @@ public class Transaction {
     private String loanTerm;
     private double monthlyAmortization;
     
-    public Transaction(Property property, String paymentMethod, double initialPayment,
-            Payment paymentDetail, String loanTerm, double monthlyAmortization) {
+    public Transaction(String buyerUsername, Property property, String paymentMethod,
+            double initialPayment, Payment paymentDetail,
+            String loanTerm, double monthlyAmortization) {
         this.transactionID = "TRX-" + (1000 + new java.util.Random().nextInt(9000));
+        this.buyerUsername = buyerUsername; // Save the buyer
         this.property = property;
         this.paymentMethod = paymentMethod;
         this.initialPayment = initialPayment;
@@ -33,5 +36,6 @@ public class Transaction {
     public Payment getPaymentDetail() { return paymentDetail; }
     public String getLoanTerm() { return loanTerm; }
     public double getMonthlyAmortization() { return monthlyAmortization; }
+    public String getBuyerUsername() { return buyerUsername; }
     
 }

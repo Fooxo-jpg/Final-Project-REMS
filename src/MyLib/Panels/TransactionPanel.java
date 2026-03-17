@@ -1,6 +1,7 @@
 package MyLib.Panels;
 
 import MyLib.Classes.Models.Transaction;
+import MyLib.Classes.Services.AuthService;
 import MyLib.Classes.Services.PropertyService;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -55,21 +56,28 @@ public class TransactionPanel extends javax.swing.JPanel {
         DefaultTableModel model = (DefaultTableModel) transactionTable.getModel();
         model.setRowCount(0);
 
-        for (Transaction t : PropertyService.getAllTransactions()) {
-            String dpMethod = (t.getPaymentDetail() instanceof MyLib.Classes.Models.Check) ? "Check" : "Cash";
+        String currentUser = AuthService.getCurrentUser().getUsername();
+        String userRole = AuthService.getCurrentUser().getRole();
 
-            model.addRow(new Object[]{
-                t.getTransactionID(),
-                sdf.format(t.getDate()),
-                t.getProperty().getPropertyID(),
-                t.getProperty().getClass().getSimpleName(),
-                t.getPaymentMethod(),
-                t.getLoanTerm(),
-                "PHP " + df.format(t.getMonthlyAmortization()), // Now dynamic!
-                dpMethod,
-                "PHP " + df.format(t.getInitialPayment()),
-                "Finalized"
-            });
+        for (Transaction t : PropertyService.getAllTransactions()) {
+
+            if (userRole.equalsIgnoreCase("Admin") || t.getBuyerUsername().equals(currentUser)) {
+
+                String dpMethod = (t.getPaymentDetail() instanceof MyLib.Classes.Models.Check) ? "Check" : "Cash";
+
+                model.addRow(new Object[]{
+                    t.getTransactionID(),
+                    sdf.format(t.getDate()),
+                    t.getProperty().getPropertyID(),
+                    t.getProperty().getClass().getSimpleName(),
+                    t.getPaymentMethod(),
+                    t.getLoanTerm(),
+                    "PHP " + df.format(t.getMonthlyAmortization()),
+                    dpMethod,
+                    "PHP " + df.format(t.getInitialPayment()),
+                    "Finalized"
+                });
+            }
         }
     }
 

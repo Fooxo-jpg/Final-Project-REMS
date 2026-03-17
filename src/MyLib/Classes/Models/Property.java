@@ -1,5 +1,8 @@
 package MyLib.Classes.Models;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class Property {
     protected String propertyID;
     protected String houseType = "Generic";
@@ -13,6 +16,10 @@ public class Property {
     protected double netSellingPrice;
     protected int numBedrooms;
     protected int numBathrooms;
+    
+    protected String reservedBy;
+    protected Date reservationDate;
+    protected Date reservationExpiry;
     
     // CONSTRUCTORS
     public Property(String propertyID, String status) {
@@ -34,30 +41,96 @@ public class Property {
     public double getPricePerSQM() { return pricePerSQM; }
     public String getHouseType() { return houseType; }
     
+    public String getReservedBy() { return reservedBy; }
+    public Date getReservationDate() { return reservationDate; }
+    public Date getReservationExpiry() { return reservationExpiry; }
+    
     // SETTERS
-    public void setPropertyID(String propertyID) { this.propertyID = propertyID; }
-    public void setAddress(String address) { this.address = address; }
-    public void setStatus(String status) { this.status = status; }
-    public void setAssignedAgent(String assignedAgent) { this.assignedAgent = assignedAgent; }
-    public void setLotArea(double lotArea) { this.lotArea = lotArea; }
-    public void setFloorArea(double floorArea) { this.floorArea = floorArea; }
-    public void setNetSellingPrice(double netSellingPrice) { this.netSellingPrice = netSellingPrice; }
-    public void setNumBedrooms(int numBedrooms) { this.numBedrooms = numBedrooms; }
-    public void setNumBathrooms(int numBathrooms) { this.numBathrooms = numBathrooms; }
-    public void setListed(boolean isListed) { this.isListed = isListed; }
-    public void setPricePerSQM(double pricePerSQM) { this.pricePerSQM = pricePerSQM; }
-    public void setHouseType(String houseType) { this.houseType = houseType; }
+    public void setPropertyID(String propertyID) {
+        this.propertyID = propertyID;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setAssignedAgent(String assignedAgent) {
+        this.assignedAgent = assignedAgent;
+    }
+
+    public void setLotArea(double lotArea) {
+        this.lotArea = lotArea;
+    }
+
+    public void setFloorArea(double floorArea) {
+        this.floorArea = floorArea;
+    }
+
+    public void setNetSellingPrice(double netSellingPrice) {
+        this.netSellingPrice = netSellingPrice;
+    }
+
+    public void setNumBedrooms(int numBedrooms) {
+        this.numBedrooms = numBedrooms;
+    }
+
+    public void setNumBathrooms(int numBathrooms) {
+        this.numBathrooms = numBathrooms;
+    }
+
+    public void setListed(boolean isListed) {
+        this.isListed = isListed;
+    }
+
+    public void setPricePerSQM(double pricePerSQM) {
+        this.pricePerSQM = pricePerSQM;
+    }
+
+    public void setHouseType(String houseType) {
+        this.houseType = houseType;
+    }
+
+    public void setReservedBy(String reservedBy) {
+        this.reservedBy = reservedBy;
+    }
+
+    public void setReservationExpiry(Date reservationExpiry) {
+        this.reservationExpiry = reservationExpiry;
+    }
     
     // METHODS
     public double calculatePricePerSqFt() {
         return this.lotArea * this.pricePerSQM;
     }
     
-    public void updateStatus(){
-        
+    public void updateStatus(String newStatus) {
+        this.status = newStatus;
+
+        if (newStatus.equalsIgnoreCase("Available")) {
+            this.reservedBy = null;
+            this.reservationDate = null;
+            this.reservationExpiry = null;
+        }
     }
     
-    public void reserveProperty(){
-        
+    /**
+     * UML Method: Logic to reserve property for 30 days
+     *
+     * @param username The buyer reserving the property
+     */
+    
+    public void reserveProperty(String username) {
+        this.status = "Reserved";
+        this.reservedBy = username;
+        this.reservationDate = new Date();
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(this.reservationDate);
+        cal.add(Calendar.DAY_OF_MONTH, 30);
+        this.reservationExpiry = cal.getTime();
     }
 }

@@ -48,26 +48,40 @@ public class AnalyticsPanel extends javax.swing.JPanel {
         // Map to store Agent Name -> Total Profit
         Map<String, Double> agentProfits = new HashMap<>();
 
-        // Iterate through all transactions to calculate profit per agent
-        for (Transaction t : PropertyService.getAllTransactions()) {
-            if (t.getStatus().equalsIgnoreCase("Sold") || t.getStatus().equalsIgnoreCase("Loan Approved") || t.getStatus().equalsIgnoreCase("Finalized")) {
-                String agent = t.getProperty().getAssignedAgent();
-
-                // If "No Agent Assigned", we skip or group them
-                if (agent == null || agent.equals("No Agent Assigned")) {
-                    continue;
+        // Find EVERY agent that exists in the subdivision map
+        for (int block = 1; block <= 5; block++) {
+            for (int lot = 1; lot <= 20; lot++) {
+                Property p = PropertyService.getProperty(block, lot);
+                if (p != null) {
+                    String agent = p.getAssignedAgent();
+                    // Initialize them with 0 profit if they aren't "No Agent Assigned"
+                    if (agent != null && !agent.equals("No Agent Assigned")) {
+                        agentProfits.putIfAbsent(agent, 0.0);
+                    }
                 }
-
-                double propertyPrice = t.getProperty().calculatePricePerSqFt();
-                agentProfits.put(agent, agentProfits.getOrDefault(agent, 0.0) + propertyPrice);
             }
         }
 
+        // Calculate actual profits from successful transactions
+        for (Transaction t : PropertyService.getAllTransactions()) {
+            String status = t.getStatus();
+            if (status.equalsIgnoreCase("Sold") || status.equalsIgnoreCase("Loan Approved") || status.equalsIgnoreCase("Finalized")) {
+                String agentName = t.getProperty().getAssignedAgent();
+
+                if (agentName != null && agentProfits.containsKey(agentName)) {
+                    double propertyPrice = t.getProperty().calculatePricePerSqFt();
+                    agentProfits.put(agentName, agentProfits.get(agentName) + propertyPrice);
+                }
+            }
+        }
+
+        // Sort by Profit (Highest to Lowest)
         List<Map.Entry<String, Double>> sortedAgents = agentProfits.entrySet()
                 .stream()
                 .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
                 .collect(Collectors.toList());
 
+        // Populate Table
         for (Map.Entry<String, Double> entry : sortedAgents) {
             model.addRow(new Object[]{
                 entry.getKey(),
@@ -75,6 +89,7 @@ public class AnalyticsPanel extends javax.swing.JPanel {
             });
         }
 
+        // Update summary cards
         updateSummaryStats(agentProfits);
     }
 
@@ -123,14 +138,14 @@ public class AnalyticsPanel extends javax.swing.JPanel {
         layout1.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0};
         setLayout(layout1);
 
-        ClientsPanel.setBackground(new java.awt.Color(255, 102, 102));
+        ClientsPanel.setBackground(new java.awt.Color(36, 5, 2));
         java.awt.GridBagLayout jPanel1Layout = new java.awt.GridBagLayout();
         jPanel1Layout.columnWidths = new int[] {0, 10, 0, 10, 0};
         jPanel1Layout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0};
         ClientsPanel.setLayout(jPanel1Layout);
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setForeground(new java.awt.Color(255, 200, 102));
         jLabel6.setText("Total Clients:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -159,15 +174,19 @@ public class AnalyticsPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(ClientsPanel, gridBagConstraints);
 
-        topContribPanel.setBackground(new java.awt.Color(204, 204, 204));
-        topContribPanel.setLayout(new java.awt.GridBagLayout());
+        topContribPanel.setBackground(new java.awt.Color(36, 5, 2));
+        java.awt.GridBagLayout topContribPanelLayout = new java.awt.GridBagLayout();
+        topContribPanelLayout.columnWidths = new int[] {0, 10, 0, 10, 0};
+        topContribPanelLayout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0};
+        topContribPanel.setLayout(topContribPanelLayout);
 
+        jLabel4.setBackground(new java.awt.Color(36, 5, 2));
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 200, 102));
         jLabel4.setText("TOP CONTRIBUTORS");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipady = 20;
         gridBagConstraints.weightx = 1.0;
@@ -190,14 +209,12 @@ public class AnalyticsPanel extends javax.swing.JPanel {
             }
         });
         jTable1.setFocusable(false);
-        jTable1.setOpaque(false);
         jTable1.setRowHeight(50);
         jScrollPane1.setViewportView(jTable1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -214,7 +231,7 @@ public class AnalyticsPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(topContribPanel, gridBagConstraints);
 
-        jPanel7.setBackground(new java.awt.Color(153, 255, 204));
+        jPanel7.setBackground(new java.awt.Color(255, 200, 102));
 
         jButton1.setText("Export PDF");
 
@@ -238,7 +255,7 @@ public class AnalyticsPanel extends javax.swing.JPanel {
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(280, Short.MAX_VALUE))
+                .addContainerGap(310, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -275,7 +292,7 @@ public class AnalyticsPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(jPanel8, gridBagConstraints);
 
-        PropertySoldPanel.setBackground(new java.awt.Color(255, 102, 102));
+        PropertySoldPanel.setBackground(new java.awt.Color(36, 5, 2));
         java.awt.GridBagLayout jPanel3Layout = new java.awt.GridBagLayout();
         jPanel3Layout.columnWidths = new int[] {0, 10, 0, 10, 0};
         jPanel3Layout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0};
@@ -294,7 +311,7 @@ public class AnalyticsPanel extends javax.swing.JPanel {
         PropertySoldPanel.add(propSoldLbl, gridBagConstraints);
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel9.setForeground(new java.awt.Color(255, 200, 102));
         jLabel9.setText("Property Sold:");
         jLabel9.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -313,7 +330,7 @@ public class AnalyticsPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(PropertySoldPanel, gridBagConstraints);
 
-        SalesPanel.setBackground(new java.awt.Color(255, 102, 102));
+        SalesPanel.setBackground(new java.awt.Color(36, 5, 2));
         java.awt.GridBagLayout jPanel9Layout = new java.awt.GridBagLayout();
         jPanel9Layout.columnWidths = new int[] {0, 10, 0, 10, 0};
         jPanel9Layout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0};
@@ -331,7 +348,7 @@ public class AnalyticsPanel extends javax.swing.JPanel {
         SalesPanel.add(totSalesLbl, gridBagConstraints);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setForeground(new java.awt.Color(255, 200, 102));
         jLabel3.setText("Total Sales:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -349,14 +366,14 @@ public class AnalyticsPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(SalesPanel, gridBagConstraints);
 
-        ProfitPanel.setBackground(new java.awt.Color(255, 102, 102));
+        ProfitPanel.setBackground(new java.awt.Color(36, 5, 2));
         java.awt.GridBagLayout jPanel10Layout = new java.awt.GridBagLayout();
         jPanel10Layout.columnWidths = new int[] {0, 10, 0, 10, 0};
         jPanel10Layout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0};
         ProfitPanel.setLayout(jPanel10Layout);
 
         TotalProfit.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        TotalProfit.setForeground(new java.awt.Color(255, 255, 255));
+        TotalProfit.setForeground(new java.awt.Color(255, 200, 102));
         TotalProfit.setText("Total Profit:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;

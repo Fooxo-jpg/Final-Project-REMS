@@ -54,15 +54,10 @@ public class SearchPanel extends javax.swing.JPanel {
             applyFilters();
         });
         
-        ActionListener toggleListener = e -> applyFilters();
-        AbstractButton[] allToggles = {bed1, bed2, bed3, bed4, bath1, bath2, bath3, bath4};
-        for (javax.swing.AbstractButton b : allToggles) {
-            b.addActionListener(toggleListener);
-        }
-        
         bedGroup = new javax.swing.ButtonGroup();
         bathGroup = new javax.swing.ButtonGroup();
-
+        houseTypeGroup = new javax.swing.ButtonGroup();
+        
         bedGroup.add(bed1);
         bedGroup.add(bed2);
         bedGroup.add(bed3);
@@ -72,6 +67,17 @@ public class SearchPanel extends javax.swing.JPanel {
         bathGroup.add(bath2);
         bathGroup.add(bath3);
         bathGroup.add(bath4);
+        
+        ActionListener toggleListener = e -> applyFilters();
+        AbstractButton[] allToggles = {bed1, bed2, bed3, bed4, bath1, bath2, bath3, bath4};
+        for (javax.swing.AbstractButton b : allToggles) {
+            b.addActionListener(toggleListener);
+        }
+        
+        ActionListener houseTypeListener = e -> applyFilters();
+        sAttachedBtn.addActionListener(houseTypeListener);
+        sDetachedBtn.addActionListener(houseTypeListener);
+        townhouseBtn.addActionListener(houseTypeListener);
         
         filterSidePanel.setVisible(false);
         hotbar.putClientProperty("FlatLaf.style", "arc: 20");
@@ -138,15 +144,26 @@ public class SearchPanel extends javax.swing.JPanel {
             for (int lot = 1; lot <= 20; lot++) {
                 Property p = PropertyService.getProperty(block, lot);
 
-                if (!p.isListed()) continue;
-                
+                if (p == null || !p.isListed()) {
+                    continue;
+                }
+
+                boolean matchesType = true;
+                if (sAttachedBtn.isSelected()) {
+                    matchesType = p instanceof MyLib.Classes.Models.SingleAttached;
+                } else if (sDetachedBtn.isSelected()) {
+                    matchesType = p instanceof MyLib.Classes.Models.SingleDetached;
+                } else if (townhouseBtn.isSelected()) {
+                    matchesType = p instanceof MyLib.Classes.Models.Townhouse;
+                }
+
                 boolean matchesSearch = p.getPropertyID().toLowerCase().contains(query);
                 boolean matchesPrice = p.calculatePricePerSqFt() <= maxPrice;
                 boolean matchesStatus = selectedStatus.equals("Show All") || p.getStatus().equalsIgnoreCase(selectedStatus);
                 boolean matchesBeds = (beds == 0) || (p.getNumBedrooms() >= beds);
                 boolean matchesBaths = (baths == 0) || (p.getNumBathrooms() >= baths);
 
-                if (matchesSearch && matchesPrice && matchesStatus && matchesBeds && matchesBaths) {
+                if (matchesType && matchesSearch && matchesPrice && matchesStatus && matchesBeds && matchesBaths) {
                     filteredList.add(p);
                 }
             }
@@ -154,25 +171,25 @@ public class SearchPanel extends javax.swing.JPanel {
 
         boolean isDescending = sortOrderBtn.isSelected();
         filteredList.sort((p1, p2) -> {
-            double val1 = p1.calculatePricePerSqFt();
-            double val2 = p2.calculatePricePerSqFt();
-            return isDescending ? Double.compare(val2, val1) : Double.compare(val1, val2);
+            double v1 = p1.calculatePricePerSqFt();
+            double v2 = p2.calculatePricePerSqFt();
+            return isDescending ? Double.compare(v2, v1) : Double.compare(v1, v2);
         });
 
-        reportContainer.removeAll();
-        
-        if (filteredList.isEmpty()) {
-            JLabel noResultsLbl = new JLabel("No properties match your criteria.");
-            noResultsLbl.setFont(new java.awt.Font("Segoe UI", 1, 16));
-            noResultsLbl.setForeground(java.awt.Color.GRAY);
-            noResultsLbl.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        reportContainer.removeAll(); // Clear current items
 
+        if (filteredList.isEmpty()) {
+            JLabel noResults = new JLabel("No properties found matching your filters.");
+            noResults.setForeground(java.awt.Color.GRAY);
+            noResults.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
             reportContainer.add(javax.swing.Box.createVerticalGlue());
-            reportContainer.add(noResultsLbl);
+            reportContainer.add(noResults);
             reportContainer.add(javax.swing.Box.createVerticalGlue());
         } else {
             for (Property p : filteredList) {
-                reportContainer.add(new LotReportTemplate(p));
+                LotReportTemplate row = new LotReportTemplate(p);
+                row.putClientProperty("FlatLaf.style", "arc: 20");
+                reportContainer.add(row);
                 reportContainer.add(javax.swing.Box.createRigidArea(new Dimension(0, 5)));
             }
         }
@@ -199,13 +216,14 @@ public class SearchPanel extends javax.swing.JPanel {
 
         bedGroup = new javax.swing.ButtonGroup();
         bathGroup = new javax.swing.ButtonGroup();
+        houseTypeGroup = new javax.swing.ButtonGroup();
         hotbar = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         filterBtn = new javax.swing.JButton();
         searchPropertyTxt = new javax.swing.JTextField();
         filterBtn1 = new javax.swing.JButton();
+        sAttachedBtn = new javax.swing.JToggleButton();
+        sDetachedBtn = new javax.swing.JToggleButton();
+        townhouseBtn = new javax.swing.JToggleButton();
         mainContent = new javax.swing.JPanel();
         filterSidePanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -235,48 +253,6 @@ public class SearchPanel extends javax.swing.JPanel {
         jPanel1Layout.columnWidths = new int[] {0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0};
         jPanel1Layout.rowHeights = new int[] {0, 10, 0, 10, 0};
         hotbar.setLayout(jPanel1Layout);
-
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Single-Attached.png"))); // NOI18N
-        jButton1.setText("Single-Attached");
-        jButton1.setContentAreaFilled(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
-        hotbar.add(jButton1, gridBagConstraints);
-
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Single-Detached.png"))); // NOI18N
-        jButton2.setText("Single-Detached");
-        jButton2.setContentAreaFilled(false);
-        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
-        hotbar.add(jButton2, gridBagConstraints);
-
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Townhouse.png"))); // NOI18N
-        jButton3.setText("Townhouse");
-        jButton3.setContentAreaFilled(false);
-        jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
-        hotbar.add(jButton3, gridBagConstraints);
 
         filterBtn.setBackground(new java.awt.Color(36, 5, 2));
         filterBtn.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
@@ -315,6 +291,42 @@ public class SearchPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 0.3;
         hotbar.add(filterBtn1, gridBagConstraints);
 
+        houseTypeGroup.add(sAttachedBtn);
+        sAttachedBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Single-Attached.png"))); // NOI18N
+        sAttachedBtn.setText("Single-Attached");
+        sAttachedBtn.setBorder(null);
+        sAttachedBtn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        sAttachedBtn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.weightx = 1.0;
+        hotbar.add(sAttachedBtn, gridBagConstraints);
+
+        houseTypeGroup.add(sDetachedBtn);
+        sDetachedBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Single-Detached.png"))); // NOI18N
+        sDetachedBtn.setText("Single-Detached");
+        sDetachedBtn.setBorder(null);
+        sDetachedBtn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        sDetachedBtn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.weightx = 1.0;
+        hotbar.add(sDetachedBtn, gridBagConstraints);
+
+        houseTypeGroup.add(townhouseBtn);
+        townhouseBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/MyLib/Icons/Townhouse.png"))); // NOI18N
+        townhouseBtn.setText("Townhouse");
+        townhouseBtn.setBorder(null);
+        townhouseBtn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        townhouseBtn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.weightx = 1.0;
+        hotbar.add(townhouseBtn, gridBagConstraints);
+
         mainContent.setBackground(new java.awt.Color(255, 255, 255));
         mainContent.setOpaque(false);
         mainContent.setLayout(new java.awt.BorderLayout(0, 20));
@@ -329,7 +341,7 @@ public class SearchPanel extends javax.swing.JPanel {
 
         maxPriceLbl.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         maxPriceLbl.setForeground(new java.awt.Color(255, 255, 255));
-        maxPriceLbl.setText("Max Price: PHP 0");
+        maxPriceLbl.setText("Max Price: PHP 10,000,000");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
@@ -351,6 +363,7 @@ public class SearchPanel extends javax.swing.JPanel {
         jPanel2Layout.rowHeights = new int[] {0};
         jPanel2.setLayout(jPanel2Layout);
 
+        bathGroup.add(bath1);
         bath1.setText("1");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -361,6 +374,7 @@ public class SearchPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel2.add(bath1, gridBagConstraints);
 
+        bathGroup.add(bath2);
         bath2.setText("2");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -371,6 +385,7 @@ public class SearchPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel2.add(bath2, gridBagConstraints);
 
+        bathGroup.add(bath3);
         bath3.setText("3");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
@@ -381,6 +396,7 @@ public class SearchPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel2.add(bath3, gridBagConstraints);
 
+        bathGroup.add(bath4);
         bath4.setText("4+");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
@@ -408,6 +424,7 @@ public class SearchPanel extends javax.swing.JPanel {
         jPanel4.setOpaque(false);
         jPanel4.setLayout(new java.awt.GridBagLayout());
 
+        bedGroup.add(bed1);
         bed1.setText("1");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -418,6 +435,7 @@ public class SearchPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel4.add(bed1, gridBagConstraints);
 
+        bedGroup.add(bed2);
         bed2.setText("2");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -428,6 +446,7 @@ public class SearchPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel4.add(bed2, gridBagConstraints);
 
+        bedGroup.add(bed3);
         bed3.setText("3");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
@@ -438,6 +457,7 @@ public class SearchPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel4.add(bed3, gridBagConstraints);
 
+        bedGroup.add(bed4);
         bed4.setText("4+");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
@@ -513,7 +533,7 @@ public class SearchPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(mainContent, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(hotbar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE))
+                    .addComponent(hotbar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -534,6 +554,7 @@ public class SearchPanel extends javax.swing.JPanel {
         
         bedGroup.clearSelection();
         bathGroup.clearSelection();
+        houseTypeGroup.clearSelection();
         
         javax.swing.AbstractButton[] allToggles = {bed1, bed2, bed3, bed4, bath1, bath2, bath3, bath4};
         for (javax.swing.AbstractButton b : allToggles) {
@@ -572,9 +593,7 @@ public class SearchPanel extends javax.swing.JPanel {
     private javax.swing.JButton filterBtn1;
     private javax.swing.JPanel filterSidePanel;
     private javax.swing.JPanel hotbar;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.ButtonGroup houseTypeGroup;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -586,8 +605,11 @@ public class SearchPanel extends javax.swing.JPanel {
     private javax.swing.JLabel maxPriceLbl;
     private javax.swing.JSlider maxPriceSlider;
     private javax.swing.JPanel reportContainer;
+    private javax.swing.JToggleButton sAttachedBtn;
+    private javax.swing.JToggleButton sDetachedBtn;
     private javax.swing.JTextField searchPropertyTxt;
     private javax.swing.JToggleButton sortOrderBtn;
     private javax.swing.JComboBox<String> statusCb;
+    private javax.swing.JToggleButton townhouseBtn;
     // End of variables declaration//GEN-END:variables
 }

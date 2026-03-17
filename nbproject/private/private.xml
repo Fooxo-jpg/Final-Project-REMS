@@ -3,11 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/ymnis/Documents/NetBeansProjects/CSS122P_Final%20Project/src/MyLib/Dialogs/LotInformation.java</file>
-            <file>file:/C:/Users/ymnis/Documents/NetBeansProjects/CSS122P_Final%20Project/src/MyLib/Panels/LotReportTemplate.java</file>
-            <file>file:/C:/Users/ymnis/Documents/NetBeansProjects/CSS122P_Final%20Project/src/MyLib/Panels/OverviewPanel.java</file>
+            <file>file:/C:/Users/ymnis/Documents/NetBeansProjects/CSS122P_Final%20Project/src/MyLib/Panels/AnalyticsPanel.java</file>
             <file>file:/C:/Users/ymnis/Documents/NetBeansProjects/CSS122P_Final%20Project/src/MyLib/Panels/AdminDashboardPanel.java</file>
-            <file>file:/C:/Users/ymnis/Documents/NetBeansProjects/CSS122P_Final%20Project/src/MyLib/Dialogs/ComputationSheet.java</file>
+            <file>file:/C:/Users/ymnis/Documents/NetBeansProjects/CSS122P_Final%20Project/src/MyLib/Panels/SearchPanel.java</file>
         </group>
     </open-files>
 </project-private>

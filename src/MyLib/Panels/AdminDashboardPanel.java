@@ -207,25 +207,47 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
                 return false;
             }
         };
-        
+
         for (int block = 1; block <= 5; block++) {
             for (int lot = 1; lot <= 20; lot++) {
                 Property p = PropertyService.getProperty(block, lot);
-                
-                String client = (p.getReservedBy() != null) ? p.getReservedBy() : "None";
-                
+                if (p == null) {
+                    continue;
+                }
+
+                // --- LOGIC TO FIND CLIENT EMAIL ---
+                String client = "None";
+                String status = p.getStatus();
+
+                if (status.equalsIgnoreCase("Reserved")) {
+                    // Pull directly from the property model
+                    client = (p.getReservedBy() != null) ? p.getReservedBy() : "Pending";
+                } else if (status.equalsIgnoreCase("Sold") || status.contains("Loan")) {
+                    // Look into Transaction history to find the buyer's email
+                    client = findBuyerEmail(p.getPropertyID());
+                }
+
                 Object[] rowData = {
                     p.getPropertyID(),
                     p.getClass().getSimpleName(),
                     p.getAssignedAgent(),
-                    client,
-                    p.getStatus(),
+                    client, // Now correctly shows the Email
+                    status,
                     "PHP " + df.format(p.calculatePricePerSqFt())
                 };
                 model.addRow(rowData);
             }
         }
         propertyTable.setModel(model);
+    }
+    
+    private String findBuyerEmail(String propertyID) {
+        for (Transaction t : PropertyService.getAllTransactions()) {
+            if (t.getProperty().getPropertyID().equals(propertyID)) {
+                return t.getBuyerUsername(); // This field stores the email
+            }
+        }
+        return "N/A";
     }
     
     private void applyFilters(TableRowSorter<DefaultTableModel> sorter) {
@@ -605,6 +627,9 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(FloorArea, gridBagConstraints);
 
+        reportBtn.setBackground(new java.awt.Color(36, 5, 2));
+        reportBtn.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        reportBtn.setForeground(new java.awt.Color(255, 255, 255));
         reportBtn.setText("Generate Report");
         reportBtn.addActionListener(this::reportBtnActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();

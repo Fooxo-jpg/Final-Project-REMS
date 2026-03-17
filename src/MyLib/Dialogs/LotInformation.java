@@ -193,16 +193,23 @@ public class LotInformation extends javax.swing.JDialog {
         }
 
         btn2.setText(active ? "Save Changes" : "Edit Property");
+        
+        if (!active) {
+            houseTypeLbl.setText(houseTypeCb.getSelectedItem().toString());
 
-        if (active) {
+            String cleanSize = sizeTxt.getText().replaceAll("[^\\d.]", "");
+            String cleanFloor = floorSizeTxt.getText().replaceAll("[^\\d.]", "");
+
+            sizeLbl.setText(cleanSize + " sqm");
+            floorSizeLbl.setText(cleanFloor + " sqm");
+            bedLbl.setText(bedTxt.getText());
+            bathLbl.setText(bathTxt.getText());
+
+            sizeTxt.setText(cleanSize);
+            floorSizeTxt.setText(cleanFloor);
+        } else {
             floorSizeTxt.requestFocus();
         }
-
-        houseTypeLbl.setText(houseTypeCb.getSelectedItem().toString());
-        sizeLbl.setText(sizeTxt.getText() + " sqm");
-        floorSizeLbl.setText(floorSizeTxt.getText() + " sqm");
-        bedLbl.setText(bedTxt.getText());
-        bathLbl.setText(bathTxt.getText());
     }
 
     private void updateGallery() {
@@ -683,10 +690,7 @@ public class LotInformation extends javax.swing.JDialog {
                 // CONDITION: MUST HAVE HOUSE TYPE, DI KA NAMAN PWEDE MAGBENTA NG BAHAY KUNG WALANG BAHAY DIBA
                 // MULTO YARN?
                 if (selectedType.equals("Select House Type")) {
-                    JOptionPane.showMessageDialog(this,
-                            "Please select a valid House Type before listing/saving.",
-                            "Validation Error",
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Please select a valid House Type.", "Validation Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 
@@ -700,67 +704,68 @@ public class LotInformation extends javax.swing.JDialog {
                 
                 if (n == 0) { // SAVE CHANGES
                     try {
-                        double newLotArea = Double.parseDouble(sizeTxt.getText());
-                        double newFloorArea = Double.parseDouble(floorSizeTxt.getText());
-                        int newBaths = Integer.parseInt(bathTxt.getText());
-                        int newBeds = Integer.parseInt(bedTxt.getText());
-                        
+                        // FIX: Always pull from the TextFields, not the Labels. 
+                        // Use replaceAll to strip anything that isn't a digit or a decimal point.
+                        String rawSize = sizeTxt.getText().replaceAll("[^\\d.]", "");
+                        String rawFloor = floorSizeTxt.getText().replaceAll("[^\\d.]", "");
+                        String rawBaths = bathTxt.getText().trim();
+                        String rawBeds = bedTxt.getText().trim();
+
+                        // Validation for empty strings
+                        if (rawSize.isEmpty() || rawFloor.isEmpty() || rawBaths.isEmpty() || rawBeds.isEmpty()) {
+                            throw new NumberFormatException("Empty fields");
+                        }
+
+                        double newLotArea = Double.parseDouble(rawSize);
+                        double newFloorArea = Double.parseDouble(rawFloor);
+                        int newBaths = Integer.parseInt(rawBaths);
+                        int newBeds = Integer.parseInt(rawBeds);
+
                         if (newFloorArea > newLotArea) {
                             JOptionPane.showMessageDialog(this, "Floor size cannot be larger than the Lot size.");
                             return;
                         }
-                        
-                        if (sizeLbl.getText().isEmpty() || Double.parseDouble(sizeLbl.getText()) <= 0) {
+
+                        if (newLotArea <= 0) {
                             JOptionPane.showMessageDialog(this, "Lot Size must be greater than zero.");
                             return;
                         }
 
-                        if (bathTxt.getText().isEmpty() || bedTxt.getText().isEmpty()) {
-                            JOptionPane.showMessageDialog(this, "Please specify the number of rooms.");
-                            return;
-                        }
-                        
+                        // Update the property object
                         Property newProp;
                         switch (selectedType) {
-                            case "Single-Attached" -> newProp = new SingleAttached(currentProperty.getPropertyID(), currentProperty.getStatus());
-                            case "Single-Detached" -> newProp = new SingleDetached(currentProperty.getPropertyID(), currentProperty.getStatus());
-                            case "Townhouse" -> newProp = new Townhouse(currentProperty.getPropertyID(), currentProperty.getStatus());
-                            default -> {
+                            case "Single-Attached" ->
+                                newProp = new SingleAttached(currentProperty.getPropertyID(), currentProperty.getStatus());
+                            case "Single-Detached" ->
+                                newProp = new SingleDetached(currentProperty.getPropertyID(), currentProperty.getStatus());
+                            case "Townhouse" ->
+                                newProp = new Townhouse(currentProperty.getPropertyID(), currentProperty.getStatus());
+                            default ->
                                 newProp = new Property(currentProperty.getPropertyID(), "Available");
-                            }
                         }
-                        
+
                         newProp.setLotArea(newLotArea);
                         newProp.setFloorArea(newFloorArea);
                         newProp.setNumBathrooms(newBaths);
                         newProp.setNumBedrooms(newBeds);
-                        
+
                         String listerName = AuthService.getCurrentUser().getFirstName();
                         if (listerName == null || listerName.isEmpty()) {
                             listerName = AuthService.getCurrentUser().getEmail();
                         }
-                        
+
                         newProp.setAssignedAgent(listerName);
                         newProp.setListed(true);
-                        
+
                         PropertyService.updateProperty(newProp);
                         this.currentProperty = newProp;
-                        
-                        double total = currentProperty.calculatePricePerSqFt();
-                        totalValueTxt.setText("PHP " + df.format(total));
-                        agentLbl.setText(listerName);
-                        
-                        houseTypeLbl.setText(selectedType);
-                        floorSizeLbl.setText(newLotArea + " sqm");
-                        bedLbl.setText(String.valueOf(newBeds));
-                        bathLbl.setText(String.valueOf(newBaths));
-                        
-                        JOptionPane.showMessageDialog(this, "Property Updated. [" + currentProperty.getPropertyID() + "]");
+
+                        JOptionPane.showMessageDialog(this, "Property Updated Successfully.");
                         toggleEditMode(false);
                         this.dispose();
-                        
+
                     } catch (NumberFormatException e) {
-                        JOptionPane.showMessageDialog(this, "ERROR: Enter Valid Numbers.");
+                        JOptionPane.showMessageDialog(this, "ERROR: Please enter valid numeric values for all fields.");
                     }
                 } else { // CANCEL CHANGES
                     floorSizeTxt.setText(String.valueOf(currentProperty.getLotArea()));

@@ -55,4 +55,8 @@ public class Check extends Payment {
     public void setCheckDate(Date checkDate) {
         this.checkDate = checkDate;
     }
+
+    public void setReferenceNumber(int referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
 }

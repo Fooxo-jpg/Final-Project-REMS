@@ -51,5 +51,6 @@ public class Transaction {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
     public double getAnnualIncome() { return annualIncome; }
-    
+
+    public void setTransactionID(String transactionID) { this.transactionID = transactionID; }
 }

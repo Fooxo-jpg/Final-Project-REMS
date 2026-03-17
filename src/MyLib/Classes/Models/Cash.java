@@ -46,4 +46,8 @@ public class Cash extends Payment {
     public void setFullPaymentDate(Date fullPaymentDate) {
         this.fullPaymentDate = fullPaymentDate;
     }
+
+    public void setReferenceNumber(int referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
 }

@@ -13,8 +13,9 @@ public class AuthService {
     private static User currentUser = null;
     
     static { // Pre-made data for testing;
-        userList.add(new User("admin", "admin123", "admin@realestate.com", "Admin"));
-        userList.add(new User("buyer", "buyer123", "buyer@gmail.com", "Buyer"));
+        userList.add(new User("admin", "1234", "admin@realestate.com", "Admin"));
+        userList.add(new User("admin", "1234", "admin2@realestate.com", "Admin"));
+        userList.add(new User("buyer", "1234", "buyer@gmail.com", "Buyer"));
     }
 
     public static User getCurrentUser() {

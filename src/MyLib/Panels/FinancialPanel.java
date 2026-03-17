@@ -404,11 +404,13 @@ public class FinancialPanel extends javax.swing.JPanel {
             }
 
             check.setBankName(bank);
-            check.setCheckNo(1000 + new java.util.Random().nextInt(9000));
+            check.setCheckNo(IDGenerator.generateCheckNumber());
+            check.setReferenceNumber(IDGenerator.generateReferenceNumber()); // Set the reference for the payment
+
             paymentDetail = check;
         } else {
             Cash cash = new Cash();
-            cash.setReceivedBy(AuthService.getCurrentUser().getFirstName());
+            cash.setReferenceNumber(IDGenerator.generateReferenceNumber());
             paymentDetail = cash;
         }
 
@@ -439,6 +441,8 @@ public class FinancialPanel extends javax.swing.JPanel {
                     monthlyAmort,
                     income
             );
+            
+            trx.setTransactionID(IDGenerator.generateTransactionID());
             
             PropertyService.finalizeSale(trx);
 

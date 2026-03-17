@@ -90,8 +90,21 @@ public class PropertyService {
     public static void finalizeSale(Transaction trx) {
         Property p = trx.getProperty();
         p.setStatus("Sold");
+        
         inventory.put(p.getPropertyID(), p);
         transactionHistory.add(trx);
+        
         System.out.println("Sale Finalized: " + trx.getTransactionID());
+    }
+    
+    public static List<Transaction> getAllTransactions() {
+        return new ArrayList<>(transactionHistory);
+    }
+    
+    public static Transaction findTransactionByID(String id) {
+        return transactionHistory.stream()
+                .filter(t -> t.getTransactionID().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 }

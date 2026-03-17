@@ -1,8 +1,10 @@
 package MyLib.Dialogs;
 
 import MyLib.Classes.Models.*;
+import MyLib.Classes.Services.FinancialCalculator;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import javax.swing.table.DefaultTableModel;
 
 public class TransactionReceipt extends javax.swing.JDialog {
     private final DecimalFormat df = new DecimalFormat("#,##0.00");
@@ -22,12 +24,14 @@ public class TransactionReceipt extends javax.swing.JDialog {
     
     private void displayReceipt(Transaction trx, Payment payment) {
         Property p = trx.getProperty();
+        
         // TRANSACTION DETAILS
         RefNumLbl.setText(String.valueOf(payment.getReferenceNumber()));
         dateLbl.setText(String.valueOf(sdf.format(trx.getDate())));
+        
         // PROPERTY DETAILS
         locLbl.setText(p.getPropertyID());
-        financingLbl.setText(p.getClass().getSimpleName());
+        houseTypeLbl.setText(p.getClass().getSimpleName());
         
         // DOWNPAYMENT DETAILS
         if (payment instanceof Check check) {
@@ -49,8 +53,50 @@ public class TransactionReceipt extends javax.swing.JDialog {
         
         //FINANCING DETAILS:
         financingLbl.setText(String.valueOf(trx.getPaymentMethod()));
+        setupAmortizationTable(trx);
     }
+    
+    private void setupAmortizationTable(Transaction trx) {
+        DefaultTableModel model = (DefaultTableModel) amortTable.getModel();
+        model.setRowCount(0);
 
+        int totalYears = Integer.parseInt(trx.getLoanTerm().split(" ")[0]);
+        double monthlyPayment = trx.getMonthlyAmortization();
+        double annualPayment = monthlyPayment * 12;
+        double tcp = FinancialCalculator.calculateTCP(trx.getProperty());
+        
+        String method = trx.getPaymentMethod();
+        double dpPercent = 0.15; // Default fallback
+
+        if (method.contains("BDO")) {
+            dpPercent = FinancialCalculator.BDO_DP_PERCENT;
+        } else if (method.contains("RCBC")) {
+            dpPercent = FinancialCalculator.RCBC_DP_PERCENT;
+        } else if (method.contains("In-House")) {
+            dpPercent = FinancialCalculator.INHOUSE_DP_PERCENT;
+        }
+
+        double totalDP = tcp * dpPercent;
+        double balance = tcp - totalDP;
+
+        for (int year = 1; year <= totalYears; year++) {
+            double principalReduction = annualPayment * 0.65;
+            balance -= principalReduction;
+
+            if (balance < 0) {
+                balance = 0;
+            }
+
+            model.addRow(new Object[]{
+                "Year " + year,
+                "PHP " + df.format(annualPayment),
+                "PHP " + df.format(balance)
+            });
+
+            if (balance <= 0) break; 
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -69,7 +115,7 @@ public class TransactionReceipt extends javax.swing.JDialog {
         Header1 = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
         HouseType2 = new javax.swing.JLabel();
-        houseTypeLbl2 = new javax.swing.JLabel();
+        houseTypeLbl = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jSeparator4 = new javax.swing.JSeparator();
         jPanel3 = new javax.swing.JPanel();
@@ -96,6 +142,8 @@ public class TransactionReceipt extends javax.swing.JDialog {
         Header3 = new javax.swing.JLabel();
         jSeparator5 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        amortTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -228,7 +276,7 @@ public class TransactionReceipt extends javax.swing.JDialog {
         gridBagConstraints.weightx = 1.0;
         jPanel2.add(HouseType2, gridBagConstraints);
 
-        houseTypeLbl2.setText("-----");
+        houseTypeLbl.setText("-----");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 16;
@@ -237,7 +285,7 @@ public class TransactionReceipt extends javax.swing.JDialog {
         gridBagConstraints.ipady = 10;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        jPanel2.add(houseTypeLbl2, gridBagConstraints);
+        jPanel2.add(houseTypeLbl, gridBagConstraints);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(222, 177, 97));
@@ -484,18 +532,49 @@ public class TransactionReceipt extends javax.swing.JDialog {
 
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
+        amortTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Year", "Payment", "Balance"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        amortTable.setRowHeight(30);
+        amortTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(amortTable);
+        if (amortTable.getColumnModel().getColumnCount() > 0) {
+            amortTable.getColumnModel().getColumn(0).setResizable(false);
+            amortTable.getColumnModel().getColumn(0).setPreferredWidth(5);
+            amortTable.getColumnModel().getColumn(1).setResizable(false);
+            amortTable.getColumnModel().getColumn(2).setResizable(false);
+        }
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane2))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -503,10 +582,12 @@ public class TransactionReceipt extends javax.swing.JDialog {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(jSeparator2))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -555,18 +636,20 @@ public class TransactionReceipt extends javax.swing.JDialog {
     private javax.swing.JLabel Reference;
     private javax.swing.JLabel TotalAmount;
     private javax.swing.JLabel TotalAmount1;
+    private javax.swing.JTable amortTable;
     private javax.swing.JLabel checkAccLbl;
     private javax.swing.JLabel checkAmtLbl;
     private javax.swing.JLabel checkBankLbl;
     private javax.swing.JLabel checkNoLbl;
     private javax.swing.JLabel dateLbl;
     private javax.swing.JLabel financingLbl;
-    private javax.swing.JLabel houseTypeLbl2;
+    private javax.swing.JLabel houseTypeLbl;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;

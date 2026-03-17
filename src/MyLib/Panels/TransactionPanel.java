@@ -56,13 +56,19 @@ public class TransactionPanel extends javax.swing.JPanel {
         model.setRowCount(0);
 
         for (Transaction t : PropertyService.getAllTransactions()) {
+            String dpMethod = (t.getPaymentDetail() instanceof MyLib.Classes.Models.Check) ? "Check" : "Cash";
+
             model.addRow(new Object[]{
                 t.getTransactionID(),
                 sdf.format(t.getDate()),
                 t.getProperty().getPropertyID(),
                 t.getProperty().getClass().getSimpleName(),
                 t.getPaymentMethod(),
-                "PHP " + df.format(t.getInitialPayment())
+                t.getLoanTerm(),
+                "PHP " + df.format(t.getMonthlyAmortization()), // Now dynamic!
+                dpMethod,
+                "PHP " + df.format(t.getInitialPayment()),
+                "Finalized"
             });
         }
     }
@@ -80,20 +86,20 @@ public class TransactionPanel extends javax.swing.JPanel {
 
         transactionTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Transaction ID", "Date | Time", "Location", "Property Type", "Payment Method", "Initial Payment"
+                "Transaction ID", "Date | Time", "Location", "Property Type", "Loan Method", "Loan Terms", "Monthly Amortization", "Downpayment Method", "Initial Payment", "Status"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -105,6 +111,7 @@ public class TransactionPanel extends javax.swing.JPanel {
             }
         });
         transactionTable.setRowHeight(30);
+        transactionTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(transactionTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

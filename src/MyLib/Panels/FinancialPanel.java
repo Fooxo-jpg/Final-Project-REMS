@@ -333,32 +333,37 @@ public class FinancialPanel extends javax.swing.JPanel {
 
         double tcp = FinancialCalculator.calculateTCP(property);
         double dpPercent = switch (financingMethod) {
-            case "Bank - BDO" ->
-                FinancialCalculator.BDO_DP_PERCENT;
-            case "Bank - RCBC" ->
-                FinancialCalculator.RCBC_DP_PERCENT;
-            case "In-House Financing" ->
-                FinancialCalculator.INHOUSE_DP_PERCENT;
-            default ->
-                0.15;
+            case "Bank - BDO" -> FinancialCalculator.BDO_DP_PERCENT;
+            case "Bank - RCBC" -> FinancialCalculator.RCBC_DP_PERCENT;
+            case "In-House Financing" -> FinancialCalculator.INHOUSE_DP_PERCENT;
+            default -> 0.15;
+        };
+        
+        double interestRate = switch (financingMethod) {
+            case "Bank - BDO" -> FinancialCalculator.BDO_INTEREST;
+            case "Bank - RCBC" -> FinancialCalculator.RCBC_INTEREST;
+            case "In-House Financing" -> FinancialCalculator.INHOUSE_INTEREST;
+            default -> 0.07;
         };
 
         double totalDP = tcp * dpPercent;
+        double loanAmount = tcp - totalDP;
         double initialPayment;
 
         if (dpPlan.equals("Spot Downpayment")) {
-            initialPayment = totalDP + FinancialCalculator.RESERVATION_FEE;
+            initialPayment = totalDP;
         } else {
             initialPayment = totalDP / 18;
         }
+        
+        int years = Integer.parseInt(selectedYear.split(" ")[0]);
+        double monthlyAmort = calculateCustomAmortization(loanAmount, interestRate, years);
 
         Payment paymentDetail;
         if (payInstrument.equalsIgnoreCase("Check")) {
             Check check = new Check();
             String bank = JOptionPane.showInputDialog(this, "Enter Issuing Bank Name:");
-            if (bank == null || bank.trim().isEmpty()) {
-                return;
-            }
+            if (bank == null || bank.trim().isEmpty()) return;
 
             check.setBankName(bank);
             check.setCheckNo(1000 + new java.util.Random().nextInt(9000));
@@ -371,26 +376,29 @@ public class FinancialPanel extends javax.swing.JPanel {
         }
 
         String confirmMsg = String.format("""
-                                      FINAL CONFIRMATION
-                                      Property: %s
-                                      Financing: %s (%s)
-                                      
-                                      Total DP Due: PHP %s
-                                      1st Monthly DP: PHP %s
-                                      ------------------------------
-                                      TOTAL INITIAL PAYMENT: PHP %s
-                                      
-                                      Proceed with transaction?""",
+                                          FINAL CONFIRMATION
+                                          Property: %s
+                                          Financing: %s (%s)
+                                          
+                                          Total DP Due: PHP %s
+                                          1st Monthly DP Installment: PHP %s
+                                          ------------------------------
+                                          TOTAL INITIAL PAYMENT: PHP %s
+                                          MONTHLY AMORTIZATION: PHP %s
+                                          
+                                          Proceed with transaction?""",
                 property.getPropertyID(), financingMethod, selectedYear,
                 df.format(totalDP), df.format(totalDP / 18),
-                df.format(initialPayment));
+                df.format(initialPayment), df.format(monthlyAmort));
 
         int confirm = JOptionPane.showConfirmDialog(this, confirmMsg, "Purchase Verification", JOptionPane.YES_NO_OPTION);
         
         if (confirm == JOptionPane.YES_OPTION) {
             paymentDetail.processPayment();
 
-            Transaction trx = new Transaction(property, financingMethod, initialPayment, paymentDetail);
+            Transaction trx = new Transaction(property, financingMethod, initialPayment,
+                    paymentDetail, selectedYear, monthlyAmort);
+
             PropertyService.finalizeSale(trx);
 
             java.awt.Frame parent = (java.awt.Frame) SwingUtilities.getWindowAncestor(this);

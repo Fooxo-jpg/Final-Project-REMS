@@ -10,12 +10,18 @@ public class Transaction {
     private Payment paymentDetail;
     private Date date;
     
-    public Transaction(Property property, String paymentMethod, double initialPayment, Payment paymentDetail) {
+    private String loanTerm;
+    private double monthlyAmortization;
+    
+    public Transaction(Property property, String paymentMethod, double initialPayment,
+            Payment paymentDetail, String loanTerm, double monthlyAmortization) {
         this.transactionID = "TRX-" + (1000 + new java.util.Random().nextInt(9000));
         this.property = property;
         this.paymentMethod = paymentMethod;
         this.initialPayment = initialPayment;
-        this.paymentDetail = paymentDetail; // Store the UML object
+        this.paymentDetail = paymentDetail;
+        this.loanTerm = loanTerm;
+        this.monthlyAmortization = monthlyAmortization;
         this.date = new java.util.Date();
     }
 
@@ -25,5 +31,7 @@ public class Transaction {
     public double getInitialPayment() { return initialPayment; }
     public Date getDate() { return date; }
     public Payment getPaymentDetail() { return paymentDetail; }
+    public String getLoanTerm() { return loanTerm; }
+    public double getMonthlyAmortization() { return monthlyAmortization; }
     
 }

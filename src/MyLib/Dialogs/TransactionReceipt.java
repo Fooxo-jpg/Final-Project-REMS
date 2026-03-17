@@ -24,34 +24,44 @@ public class TransactionReceipt extends javax.swing.JDialog {
     
     private void displayReceipt(Transaction trx, Payment payment) {
         Property p = trx.getProperty();
-        
+
         // TRANSACTION DETAILS
         RefNumLbl.setText(String.valueOf(payment.getReferenceNumber()));
         dateLbl.setText(String.valueOf(sdf.format(trx.getDate())));
-        
+
         // PROPERTY DETAILS
         locLbl.setText(p.getPropertyID());
         houseTypeLbl.setText(p.getClass().getSimpleName());
-        
+
         // DOWNPAYMENT DETAILS
-        if (payment instanceof Check check) {
-            methodLbl.setText("CHECK");
-            CheckPanel.setVisible(true);
-            
-            checkBankLbl.setText(check.getBankName());
-            checkNoLbl.setText(String.valueOf(check.getCheckNo()));
-            checkAccLbl.setText(String.valueOf(check.getAccNo()));
-            checkAmtLbl.setText(df.format(trx.getInitialPayment()));
-            
-        } else if (payment instanceof Cash cash) {
-            methodLbl.setText("CASH");
-            CashPanel.setVisible(true);
-            
-            recByLbl.setText(trx.getProperty().getAssignedAgent());
-            totAmtLbl.setText(df.format(trx.getInitialPayment()));
+        switch (payment) {
+            case Check check -> {
+                methodLbl.setText("CHECK");
+                CheckPanel.setVisible(true);
+                CashPanel.setVisible(false);
+                
+                checkBankLbl.setText(check.getBankName());
+                checkNoLbl.setText(String.valueOf(check.getCheckNo()));
+                
+                checkAccLbl.setText(String.valueOf(check.getAccNo()));
+                
+                checkAmtLbl.setText("PHP " + df.format(trx.getInitialPayment()));
+                
+            }
+            case Cash cash -> {
+                methodLbl.setText("CASH");
+                CashPanel.setVisible(true);
+                CheckPanel.setVisible(false);
+                
+                // Use the buyer name or agent name depending on your preference
+                recByLbl.setText(trx.getProperty().getAssignedAgent());
+                totAmtLbl.setText("PHP " + df.format(trx.getInitialPayment()));
+            }
+            default -> {
+            }
         }
-        
-        //FINANCING DETAILS:
+
+        // FINANCING DETAILS
         statusLbl.setText(trx.getStatus());
         financingLbl.setText(String.valueOf(trx.getPaymentMethod()));
         setupAmortizationTable(trx);

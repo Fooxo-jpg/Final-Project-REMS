@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -19,9 +19,8 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" pref="782" max="32767" attributes="0"/>
-                  <Component id="pagination" alignment="0" max="32767" attributes="0"/>
-                  <Component id="pagination1" alignment="0" max="32767" attributes="0"/>
+                  <Component id="header" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -31,194 +30,17 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-              <Component id="pagination1" min="-2" max="-2" attributes="0"/>
+              <Component id="header" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="456" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="pagination" min="-2" max="-2" attributes="0"/>
+              <Component id="jScrollPane2" pref="547" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
-      <AuxValues>
-        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-      </AuxValues>
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+    <Container class="javax.swing.JPanel" name="header">
       <SubComponents>
-        <Component class="javax.swing.JTable" name="jTable1">
-          <Properties>
-            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="5" rowCount="5">
-                <Column editable="false" title="Client Email" type="java.lang.Object">
-                  <Data value="dwane@gmail.com"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                </Column>
-                <Column editable="false" title="Property" type="java.lang.Object">
-                  <Data value="Townhouse"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                </Column>
-                <Column editable="false" title="Location" type="java.lang.Object">
-                  <Data value="Block 1 Lot 15"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                </Column>
-                <Column editable="false" title="Status" type="java.lang.Object">
-                  <Data value="Viewing"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                </Column>
-                <Column editable="true" title="Action" type="java.lang.Object">
-                  <Data value="..."/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                </Column>
-              </Table>
-            </Property>
-            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
-              <TableColumnModel selectionModel="0">
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title/>
-                  <Editor/>
-                  <Renderer/>
-                </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title/>
-                  <Editor/>
-                  <Renderer/>
-                </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title/>
-                  <Editor/>
-                  <Renderer/>
-                </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title/>
-                  <Editor/>
-                  <Renderer/>
-                </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title/>
-                  <Editor/>
-                  <Renderer/>
-                </Column>
-              </TableColumnModel>
-            </Property>
-            <Property name="rowHeight" type="int" value="40"/>
-            <Property name="showGrid" type="boolean" value="false"/>
-            <Property name="showHorizontalLines" type="boolean" value="true"/>
-            <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-              <TableHeader reorderingAllowed="false" resizingAllowed="false"/>
-            </Property>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="JButton actionBtn = new JButton(&quot;...&quot;);&#xd;&#xa;jTable1.getColumnModel().getColumn(4).setCellRenderer(new TableComponentRenderer(actionBtn));&#xd;&#xa;jTable1.getColumnModel().getColumn(4).setCellEditor(new ButtonEditor(new JCheckBox()));"/>
-          </AuxValues>
-        </Component>
-      </SubComponents>
-    </Container>
-    <Container class="javax.swing.JPanel" name="pagination">
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
-                  <Component id="jButton4" min="-2" max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jButton4" pref="33" max="32767" attributes="0"/>
-                      <Component id="jButton1" max="32767" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-      <SubComponents>
-        <Component class="javax.swing.JButton" name="jButton1">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Previous"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="jButton4">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Next"/>
-          </Properties>
-        </Component>
-      </SubComponents>
-    </Container>
-    <Container class="javax.swing.JPanel" name="pagination1">
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
-                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="jComboBox1" min="-2" pref="60" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jButton7" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jButton6" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jButton7" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jButton6" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jComboBox1" alignment="3" max="32767" attributes="0"/>
-                              <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      </Group>
-                      <Component id="jLabel1" alignment="1" max="32767" attributes="0"/>
-                  </Group>
-              </Group>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-      <SubComponents>
-        <Component class="javax.swing.JButton" name="jButton6">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/MyLib/Icons/Export_Black.png"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Export"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -226,30 +48,218 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Clients"/>
           </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="18" weightX="1.0" weightY="0.0"/>
+            </Constraint>
+          </Constraints>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton7">
+      </SubComponents>
+      <LayoutCode>
+        <CodeStatement>
+          <CodeExpression id="1_headerLayout">
+            <CodeVariable name="headerLayout" type="4096" declaredType="java.awt.GridBagLayout"/>
+            <ExpressionOrigin>
+              <ExpressionProvider type="CodeConstructor">
+                <CodeConstructor class="java.awt.GridBagLayout" parameterTypes=""/>
+              </ExpressionProvider>
+            </ExpressionOrigin>
+          </CodeExpression>
+          <StatementProvider type="CodeExpression">
+            <CodeExpression id="1_headerLayout"/>
+          </StatementProvider>
+        </CodeStatement>
+        <CodeStatement>
+          <CodeExpression id="1_headerLayout"/>
+          <StatementProvider type="CodeField">
+            <CodeField name="columnWidths" class="java.awt.GridBagLayout"/>
+          </StatementProvider>
+          <Parameters>
+            <CodeExpression id="2">
+              <ExpressionOrigin>
+                <Value type="[I" editor="org.netbeans.modules.form.layoutsupport.delegates.GridBagLayoutSupport$IntArrayPropertyEditor">
+                  <PropertyValue value="[0, 10, 0, 10, 0, 10, 0, 10, 0]"/>
+                </Value>
+              </ExpressionOrigin>
+            </CodeExpression>
+          </Parameters>
+        </CodeStatement>
+        <CodeStatement>
+          <CodeExpression id="1_headerLayout"/>
+          <StatementProvider type="CodeField">
+            <CodeField name="rowHeights" class="java.awt.GridBagLayout"/>
+          </StatementProvider>
+          <Parameters>
+            <CodeExpression id="3">
+              <ExpressionOrigin>
+                <Value type="[I" editor="org.netbeans.modules.form.layoutsupport.delegates.GridBagLayoutSupport$IntArrayPropertyEditor">
+                  <PropertyValue value="[0]"/>
+                </Value>
+              </ExpressionOrigin>
+            </CodeExpression>
+          </Parameters>
+        </CodeStatement>
+        <CodeStatement>
+          <CodeExpression id="4_header">
+            <CodeVariable name="header" type="8194" declaredType="javax.swing.JPanel"/>
+            <ExpressionOrigin>
+              <ExpressionProvider type="ComponentRef">
+                <ComponentRef name="header"/>
+              </ExpressionProvider>
+            </ExpressionOrigin>
+          </CodeExpression>
+          <StatementProvider type="CodeMethod">
+            <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
+          </StatementProvider>
+          <Parameters>
+            <CodeExpression id="1_headerLayout"/>
+          </Parameters>
+        </CodeStatement>
+        <CodeStatement>
+          <CodeExpression id="5_gridBagConstraints">
+            <CodeVariable name="gridBagConstraints" type="20480" declaredType="java.awt.GridBagConstraints"/>
+            <ExpressionOrigin>
+              <ExpressionProvider type="CodeConstructor">
+                <CodeConstructor class="java.awt.GridBagConstraints" parameterTypes=""/>
+              </ExpressionProvider>
+            </ExpressionOrigin>
+          </CodeExpression>
+          <StatementProvider type="CodeExpression">
+            <CodeExpression id="5_gridBagConstraints"/>
+          </StatementProvider>
+        </CodeStatement>
+        <CodeStatement>
+          <CodeExpression id="5_gridBagConstraints"/>
+          <StatementProvider type="CodeField">
+            <CodeField name="gridx" class="java.awt.GridBagConstraints"/>
+          </StatementProvider>
+          <Parameters>
+            <CodeExpression id="6">
+              <ExpressionOrigin>
+                <Value type="int" value="0"/>
+              </ExpressionOrigin>
+            </CodeExpression>
+          </Parameters>
+        </CodeStatement>
+        <CodeStatement>
+          <CodeExpression id="5_gridBagConstraints"/>
+          <StatementProvider type="CodeField">
+            <CodeField name="gridy" class="java.awt.GridBagConstraints"/>
+          </StatementProvider>
+          <Parameters>
+            <CodeExpression id="7">
+              <ExpressionOrigin>
+                <Value type="int" value="0"/>
+              </ExpressionOrigin>
+            </CodeExpression>
+          </Parameters>
+        </CodeStatement>
+        <CodeStatement>
+          <CodeExpression id="5_gridBagConstraints"/>
+          <StatementProvider type="CodeField">
+            <CodeField name="fill" class="java.awt.GridBagConstraints"/>
+          </StatementProvider>
+          <Parameters>
+            <CodeExpression id="8">
+              <ExpressionOrigin>
+                <Value type="int" value="1"/>
+              </ExpressionOrigin>
+            </CodeExpression>
+          </Parameters>
+        </CodeStatement>
+        <CodeStatement>
+          <CodeExpression id="5_gridBagConstraints"/>
+          <StatementProvider type="CodeField">
+            <CodeField name="anchor" class="java.awt.GridBagConstraints"/>
+          </StatementProvider>
+          <Parameters>
+            <CodeExpression id="9">
+              <ExpressionOrigin>
+                <Value type="int" value="18"/>
+              </ExpressionOrigin>
+            </CodeExpression>
+          </Parameters>
+        </CodeStatement>
+        <CodeStatement>
+          <CodeExpression id="5_gridBagConstraints"/>
+          <StatementProvider type="CodeField">
+            <CodeField name="weightx" class="java.awt.GridBagConstraints"/>
+          </StatementProvider>
+          <Parameters>
+            <CodeExpression id="10">
+              <ExpressionOrigin>
+                <Value type="double" value="1.0"/>
+              </ExpressionOrigin>
+            </CodeExpression>
+          </Parameters>
+        </CodeStatement>
+        <CodeStatement>
+          <CodeExpression id="4_header"/>
+          <StatementProvider type="CodeMethod">
+            <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
+          </StatementProvider>
+          <Parameters>
+            <CodeExpression id="11_jLabel1">
+              <CodeVariable name="jLabel1" type="8194" declaredType="javax.swing.JLabel"/>
+              <ExpressionOrigin>
+                <ExpressionProvider type="ComponentRef">
+                  <ComponentRef name="jLabel1"/>
+                </ExpressionProvider>
+              </ExpressionOrigin>
+            </CodeExpression>
+            <CodeExpression id="5_gridBagConstraints"/>
+          </Parameters>
+        </CodeStatement>
+      </LayoutCode>
+    </Container>
+    <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+      <AuxValues>
+        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JTable" name="clientTable">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/MyLib/Icons/Filter_Black.png"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="14" style="0"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Filter"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JComboBox" name="jComboBox1">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="1">
-                <StringItem index="0" value="10"/>
-              </StringArray>
+            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+              <Table columnCount="4" rowCount="0">
+                <Column editable="false" title="Location" type="java.lang.Object"/>
+                <Column editable="false" title="Client Email" type="java.lang.Object"/>
+                <Column editable="false" title="Property Type" type="java.lang.Object"/>
+                <Column editable="false" title="Status" type="java.lang.Object"/>
+              </Table>
             </Property>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Showing"/>
+            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+              <TableColumnModel selectionModel="0">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+                  <Title/>
+                  <Editor/>
+                  <Renderer/>
+                </Column>
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+                  <Title/>
+                  <Editor/>
+                  <Renderer/>
+                </Column>
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+                  <Title/>
+                  <Editor/>
+                  <Renderer/>
+                </Column>
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+                  <Title/>
+                  <Editor/>
+                  <Renderer/>
+                </Column>
+              </TableColumnModel>
+            </Property>
+            <Property name="rowHeight" type="int" value="30"/>
+            <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+              <TableHeader reorderingAllowed="false" resizingAllowed="false"/>
+            </Property>
           </Properties>
         </Component>
       </SubComponents>

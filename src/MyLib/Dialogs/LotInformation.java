@@ -91,16 +91,37 @@ public class LotInformation extends javax.swing.JDialog {
                 currentLogin = AuthService.getCurrentUser().getEmail();
             }
             
-            if (!prop.getAssignedAgent().equals("No Agent Assigned") && !prop.getAssignedAgent().equals(currentLogin)){
-                btn1.setEnabled(false);
-                btn2.setEnabled(false);
-                btn1.setToolTipText("Only the Admin who listed this (" + prop.getAssignedAgent() + ") can edit it.");
-                btn2.setToolTipText("Only the Admin who listed this (" + prop.getAssignedAgent() + ") can edit it.");
-            } else {
+            // Permission logic:
+            // - If status is SOLD -> BLOCKED (handled at bottom of constructor)
+            // - If Assigned Agent is "No Agent Assigned" -> ALLOW (it's a fresh lot)
+            // - If Assigned Agent matches current admin -> ALLOW
+            // - Otherwise -> BLOCK (someone else's listing)
+            
+            boolean isAssignedToMe = prop.getAssignedAgent().equals("No Agent Assigned")
+                    || prop.getAssignedAgent().equalsIgnoreCase(currentLogin);
+
+            // Logic: Admin can edit if (Assigned to them OR lot is unassigned) AND (Not Reserved/Sold)
+            String status = prop.getStatus();
+            if (isAssignedToMe && status.equalsIgnoreCase("Available")) {
                 btn1.setEnabled(true);
                 btn2.setEnabled(true);
                 btn1.setToolTipText(null);
                 btn2.setToolTipText(null);
+            } else {
+                btn1.setEnabled(false);
+                btn2.setEnabled(false);
+
+                if (status.equalsIgnoreCase("Sold")) {
+                    btn1.setToolTipText("Sold properties are finalized and cannot be modified.");
+                    Header1.setText("HOUSE INFORMATION (SOLD - LOCKED)");
+                    Header1.setForeground(java.awt.Color.RED);
+                } else if (status.equalsIgnoreCase("Reserved")) {
+                    btn1.setToolTipText("Property is currently Reserved and locked for the client.");
+                    Header1.setText("HOUSE INFORMATION (RESERVED)");
+                    Header1.setForeground(java.awt.Color.ORANGE);
+                } else {
+                    btn1.setToolTipText("Only the assigned agent (" + prop.getAssignedAgent() + ") can modify this.");
+                }
             }
         
         } else if (role.equalsIgnoreCase("Guest")) {
@@ -129,6 +150,16 @@ public class LotInformation extends javax.swing.JDialog {
         
         if (!role.equalsIgnoreCase("Admin")) {
             btn2.setVisible(role.equalsIgnoreCase("Buyer"));
+        }
+        
+        if (prop.getStatus().equalsIgnoreCase("Sold")) {
+            btn1.setEnabled(false);
+            btn2.setEnabled(false);
+            btn1.setToolTipText("Sold properties cannot be unlisted.");
+            btn2.setToolTipText("Sold properties cannot be edited.");
+
+            Header1.setText("HOUSE INFORMATION (SOLD - LOCKED)");
+            Header1.setForeground(java.awt.Color.RED);
         }
     }
     
@@ -639,6 +670,11 @@ public class LotInformation extends javax.swing.JDialog {
     // ADMIN [EDIT PROPERTY] || BUYER [ADD TO FAVORITES]
     private void btn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn2ActionPerformed
         if (userRole.equalsIgnoreCase("Admin")) {
+            if (currentProperty.getStatus().equalsIgnoreCase("Sold")) {
+                JOptionPane.showMessageDialog(this, "This property is already SOLD and cannot be edited.", "Action Denied", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
             if (!isEditing) {
                 toggleEditMode(true);
             } else {
@@ -768,6 +804,11 @@ public class LotInformation extends javax.swing.JDialog {
     // ADMIN [LIST] || BUYER [CONTACT]
     private void btn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn1ActionPerformed
         if (userRole.equalsIgnoreCase("Admin")) {
+            if (currentProperty.getStatus().equalsIgnoreCase("Sold")) {
+                JOptionPane.showMessageDialog(this, "This property is already SOLD and cannot be unlisted.", "Action Denied", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
             boolean currentStatus = currentProperty.isListed();
             
             if (!currentStatus) { // LISTING THE PROPERTY

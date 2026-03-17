@@ -34,11 +34,15 @@ public final class OverviewPanel extends javax.swing.JPanel {
                 JButton lotBtn = new JButton("L" + lot);
                 
                 if (role.equalsIgnoreCase("Admin")) {
-                    lotBtn.setEnabled(true);
-                    if (prop.isListed()) {
-                        lotBtn.setBackground(new java.awt.Color(144, 238, 144)); // Listed (Green)
-                    } else {
-                        lotBtn.setBackground(Color.LIGHT_GRAY);
+                    if (role.equalsIgnoreCase("Admin")) {
+                        lotBtn.setEnabled(true);
+                        if (prop.getStatus().equalsIgnoreCase("Sold")) {
+                            lotBtn.setBackground(new java.awt.Color(255, 102, 102)); // Keep it Red for Admin too
+                        } else if (prop.isListed()) {
+                            lotBtn.setBackground(new java.awt.Color(144, 238, 144)); // Listed (Green)
+                        } else {
+                            lotBtn.setBackground(Color.LIGHT_GRAY);
+                        }
                     }
                 } else {
                     if (prop.isListed()) {
@@ -78,11 +82,10 @@ public final class OverviewPanel extends javax.swing.JPanel {
 
                         if (e.getClickCount() == 2) {
                             String userRole = AuthService.getCurrentUser().getRole();
-                            String currentUser = AuthService.getCurrentUser().getUsername();
+                            String currentUser = AuthService.getCurrentUser().getEmail();
                             String status = prop.getStatus().toUpperCase();
                             java.awt.Frame parentFrame = (java.awt.Frame) SwingUtilities.getWindowAncestor(OverviewPanel.this);
 
-                            // 1. EXPIRY CHECK: If Reserved, check if it has expired
                             if (status.equals("RESERVED") && prop.getReservationExpiry() != null) {
                                 if (new java.util.Date().after(prop.getReservationExpiry())) {
                                     prop.setStatus("Available");
@@ -93,10 +96,9 @@ public final class OverviewPanel extends javax.swing.JPanel {
                                 }
                             }
 
-                            // 2. LOGIC FOR RESERVED PROPERTIES
                             if (status.equals("RESERVED")) {
                                 // Access Control: Only the User who reserved it or an Admin can manage it
-                                if (prop.getReservedBy().equals(currentUser) || userRole.equalsIgnoreCase("Admin")) {
+                                if (prop.getReservedBy().equals(currentUser)) {
 
                                     String expiryStr = new java.text.SimpleDateFormat("MMMM dd, yyyy").format(prop.getReservationExpiry());
                                     String[] options = {"Continue Purchase", "Cancel Reservation", "Close"};
@@ -109,7 +111,6 @@ public final class OverviewPanel extends javax.swing.JPanel {
                                             null, options, options[0]);
 
                                     if (action == 0) { // Continue Purchase
-                                        // Open Lot Info -> User can then click "Buy" in Financial Panel
                                         MyLib.Dialogs.LotInformation dialog = new MyLib.Dialogs.LotInformation(parentFrame, true, prop, userRole);
                                         dialog.setVisible(true);
                                         populateLots();
@@ -127,11 +128,16 @@ public final class OverviewPanel extends javax.swing.JPanel {
                                         }
                                     }
                                 } else {
-                                    // Property is reserved by someone else
-                                    javax.swing.JOptionPane.showMessageDialog(OverviewPanel.this,
-                                            "This property is currently reserved by another client.",
-                                            "Property Unavailable",
-                                            javax.swing.JOptionPane.WARNING_MESSAGE);
+                                    if (userRole.equalsIgnoreCase("Admin")) {
+                                        MyLib.Dialogs.LotInformation dialog = new MyLib.Dialogs.LotInformation(parentFrame, true, prop, userRole);
+                                        dialog.setVisible(true);
+                                        populateLots();
+                                    } else {
+                                        javax.swing.JOptionPane.showMessageDialog(OverviewPanel.this,
+                                                "This property is currently reserved by another client (" + prop.getReservedBy() + ").",
+                                                "Property Unavailable",
+                                                javax.swing.JOptionPane.WARNING_MESSAGE);
+                                    }
                                 }
                             } // 3. LOGIC FOR AVAILABLE PROPERTIES
                             else if (status.equals("AVAILABLE") || userRole.equalsIgnoreCase("Admin")) {

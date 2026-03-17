@@ -1,20 +1,12 @@
 package MyLib.Panels;
 
-import MyLib.Classes.Models.Property;
-import MyLib.Classes.Models.Transaction;
-import MyLib.Classes.Services.PropertyService;
+import MyLib.Classes.Models.*;
+import MyLib.Classes.Services.*;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JOptionPane;
-import javax.swing.RowFilter;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.table.*;
 
-/**
- *
- * @author ymnis
- */
 public class AdminDashboardPanel extends javax.swing.JPanel {
 
     public AdminDashboardPanel() {
@@ -26,16 +18,35 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         propertyTable.setRowSorter(sorter);
         
         searchTxt.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
                 applyFilters(sorter);
             }
 
+            @Override
             public void removeUpdate(javax.swing.event.DocumentEvent e) {
                 applyFilters(sorter);
             }
 
+            @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 applyFilters(sorter);
+            }
+        });
+        
+        // AUTO REFRESH LISTENER
+        this.addAncestorListener(new javax.swing.event.AncestorListener() {
+            @Override
+            public void ancestorAdded(javax.swing.event.AncestorEvent e) {
+                updateTable();
+            }
+
+            @Override
+            public void ancestorRemoved(javax.swing.event.AncestorEvent e) {
+            }
+
+            @Override
+            public void ancestorMoved(javax.swing.event.AncestorEvent e) {
             }
         });
         
@@ -53,12 +64,44 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
                 }
             }
         });
+        
+        propertyTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = propertyTable.getSelectedRow();
+                    if (row == -1) {
+                        return;
+                    }
+
+                    String loc = propertyTable.getValueAt(row, 0).toString();
+                    String[] parts = loc.replace("B", "").replace("L", "").split("-");
+                    Property p = PropertyService.getProperty(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+
+                    Transaction targetTrx = null;
+                    for (Transaction t : PropertyService.getAllTransactions()) {
+                        if (t.getProperty().getPropertyID().equals(p.getPropertyID())
+                                && t.getStatus().equalsIgnoreCase("Pending Inhouse Loan")) {
+                            targetTrx = t;
+                            break;
+                        }
+                    }
+
+                    if (targetTrx != null) {
+                        handleLoanApproval(targetTrx);
+                    } else {
+                        JOptionPane.showMessageDialog(AdminDashboardPanel.this,
+                                "This property does not have a pending loan request to manage.");
+                    }
+                }
+            }
+        });
     }
     
     // HELPER
     private void handleLoanApproval(Transaction trx) {
         DecimalFormat df = new DecimalFormat("#,##0.00");
-        
+
         double monthlyIncome = trx.getAnnualIncome() / 12;
         double amortRatio = (trx.getMonthlyAmortization() / monthlyIncome) * 100;
 
@@ -67,15 +110,15 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
             warningMessage = "\n⚠️ WARNING: Amortization is " + df.format(amortRatio)
                     + "% of monthly income! (High Risk)";
         }
-        
+
         String message = String.format("""
-            IN-HOUSE LOAN REQUEST
-            Buyer: %s | Property: %s
-            Monthly Income: PHP %s
-            Monthly Amortization: PHP %s
-            Ratio: %s%% of income %s
-            
-            Do you want to APPROVE this loan?""",
+        IN-HOUSE LOAN REQUEST
+        Buyer: %s | Property: %s
+        Monthly Income: PHP %s
+        Monthly Amortization: PHP %s
+        Ratio: %s%% of income %s
+        
+        Do you want to APPROVE this loan?""",
                 trx.getBuyerUsername(),
                 trx.getProperty().getPropertyID(),
                 df.format(monthlyIncome),
@@ -84,38 +127,48 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
                 warningMessage);
 
         String[] options = {"Approve", "Decline", "Wait"};
-        
+
         int choice = JOptionPane.showOptionDialog(this, message, "Loan Management",
                 JOptionPane.DEFAULT_OPTION, (amortRatio > 40 ? JOptionPane.WARNING_MESSAGE : JOptionPane.QUESTION_MESSAGE),
                 null, options, options[0]);
 
         if (choice == 0) { // APPROVE
-            trx.setStatus("Finalized");
+            // Update Transaction Status
+            trx.setStatus("Loan Approved");
+            // Update Property Status
             trx.getProperty().setStatus("Sold");
-            JOptionPane.showMessageDialog(this, "Loan Approved.");
+
+            JOptionPane.showMessageDialog(this, "Loan Approved. Transaction Finalized.");
+
         } else if (choice == 1) { // DECLINE
+            trx.setStatus("Loan Rejected");
+
             trx.getProperty().setStatus("Available");
             trx.getProperty().setReservedBy(null);
-            PropertyService.getAllTransactions().remove(trx);
-            JOptionPane.showMessageDialog(this, "Loan Declined. Property reset to Available.");
+            trx.getProperty().setReservationExpiry(null);
+
+            JOptionPane.showMessageDialog(this, "Loan Rejected. Property is now Available again.");
         }
+
         updateTable();
+        displayPropertyDetails(trx.getProperty());
     }
     
     private void displayPropertyDetails(Property p) {
         DecimalFormat df = new DecimalFormat("#,##0.00");
 
+        // Basic Info
         jLabel1.setText(p.getPropertyID());
-        propNameLbl.setText(p.getClass().getSimpleName());
+        propNameLbl.setText(p.getHouseType());
         lotAreaLbl.setText(p.getLotArea() + " SQM");
         floorAreaLbl.setText(p.getFloorArea() + " SQM");
 
+        // Pricing Logic
         double reservationFee = MyLib.Classes.Services.FinancialCalculator.RESERVATION_FEE;
-        double tsp = MyLib.Classes.Services.FinancialCalculator.calculateNSP(p); // NSP is the base Selling Price
-        double tcp = MyLib.Classes.Services.FinancialCalculator.calculateTCP(p); // TCP includes Misc Fees
+        double tsp = MyLib.Classes.Services.FinancialCalculator.calculateNSP(p); // Total Selling Price
+        double tcp = MyLib.Classes.Services.FinancialCalculator.calculateTCP(p); // Total Contract Price (TSP + Fees)
 
-        double dpPercent = 0.15;
-
+        // Check for actual transaction data
         Transaction existingTrx = null;
         for (Transaction t : PropertyService.getAllTransactions()) {
             if (t.getProperty().getPropertyID().equals(p.getPropertyID())) {
@@ -126,18 +179,22 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
 
         double downPayment;
         if (existingTrx != null) {
+            // If Sold/Reserved, use the actual initial payment recorded
             downPayment = existingTrx.getInitialPayment();
         } else {
-            downPayment = tcp * dpPercent;
+            // If Available, show the standard 15% requirement
+            downPayment = tcp * 0.15;
         }
 
+        // Loanable Amount = Total Contract Price - Down Payment
         double loanableAmount = tcp - downPayment;
 
-        tspLbl.setText("PHP " + df.format(tsp)); // Total Selling Price (Net)
+        // Set Labels
+        tspLbl.setText("PHP " + df.format(tsp));
         reservationLbl.setText("PHP " + df.format(reservationFee));
         dpLbl.setText("PHP " + df.format(downPayment));
         loanableLbl.setText("PHP " + df.format(loanableAmount));
-        tcpLbl.setText("PHP " + df.format(tcp)); // Total Contract Price
+        tcpLbl.setText("PHP " + df.format(tcp));
     }
     
     public void updateTable() {
@@ -260,8 +317,6 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         floorAreaLbl = new javax.swing.JLabel();
         FloorArea = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
         reportBtn = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -305,11 +360,10 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
             }
         });
         propertyTable.setFocusable(false);
-        propertyTable.setGridColor(new java.awt.Color(248, 235, 210));
+        propertyTable.setGridColor(new java.awt.Color(0, 0, 0));
         propertyTable.setName(""); // NOI18N
         propertyTable.setRowHeight(30);
         propertyTable.setSelectionBackground(new java.awt.Color(248, 235, 210));
-        propertyTable.setSelectionForeground(new java.awt.Color(239, 215, 176));
         propertyTable.setShowGrid(false);
         propertyTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(propertyTable);
@@ -551,42 +605,16 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         jPanel1.add(FloorArea, gridBagConstraints);
 
-        jPanel2.setOpaque(false);
-        java.awt.GridBagLayout jPanel2Layout = new java.awt.GridBagLayout();
-        jPanel2Layout.columnWidths = new int[] {0, 10, 0};
-        jPanel2Layout.rowHeights = new int[] {0};
-        jPanel2.setLayout(jPanel2Layout);
-
-        jButton1.setBackground(new java.awt.Color(36, 5, 2));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Manage");
-        jButton1.setToolTipText("");
-        jButton1.addActionListener(this::jButton1ActionPerformed);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        jPanel2.add(jButton1, gridBagConstraints);
-
         reportBtn.setText("Generate Report");
         reportBtn.addActionListener(this::reportBtnActionPerformed);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        jPanel2.add(reportBtn, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 24;
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipady = 15;
+        gridBagConstraints.ipady = 10;
         gridBagConstraints.weightx = 1.0;
-        jPanel1.add(jPanel2, gridBagConstraints);
+        jPanel1.add(reportBtn, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 8;
@@ -631,32 +659,6 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
         add(filterCb, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        int row = propertyTable.getSelectedRow();
-        if (row == -1) {
-            return;
-        }
-
-        String loc = propertyTable.getValueAt(row, 0).toString();
-        String[] parts = loc.replace("B", "").replace("L", "").split("-");
-        Property p = PropertyService.getProperty(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
-
-        Transaction targetTrx = null;
-        for (Transaction t : PropertyService.getAllTransactions()) {
-            if (t.getProperty().getPropertyID().equals(p.getPropertyID())
-                    && t.getStatus().equals("Pending Inhouse Loan")) {
-                targetTrx = t;
-                break;
-            }
-        }
-
-        if (targetTrx != null) {
-            handleLoanApproval(targetTrx);
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "This property does not have a pending loan request.");
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     private void reportBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportBtnActionPerformed
         String[] options = {"Excel (.xls)", "CSV (.csv)"};
         int choice = JOptionPane.showOptionDialog(this,
@@ -699,13 +701,11 @@ public class AdminDashboardPanel extends javax.swing.JPanel {
     private javax.swing.JLabel dpLbl;
     private javax.swing.JComboBox<String> filterCb;
     private javax.swing.JLabel floorAreaLbl;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel loanableLbl;
     private javax.swing.JLabel lotAreaLbl;

@@ -325,9 +325,7 @@ public class FinancialPanel extends javax.swing.JPanel {
 
         String[] terms = financingMethod.equals("In-House Financing") ? new String[]{"5 Years", "10 Years"} : new String[]{"5 Years", "10 Years", "15 Years", "20 Years"};
         String selectedYear = (String) JOptionPane.showInputDialog(this, "Choose Amortization Term:", "Plan Selection", JOptionPane.QUESTION_MESSAGE, null, terms, terms[0]);
-        if (selectedYear == null) {
-            return;
-        }
+        if (selectedYear == null) return;
 
         double tcp = FinancialCalculator.calculateTCP(property);
         double dpPercent = switch (financingMethod) {
@@ -355,7 +353,6 @@ public class FinancialPanel extends javax.swing.JPanel {
         double totalDP = tcp * dpPercent;
         double loanAmount = tcp - totalDP;
         double initialPayment;
-
         double reservationDeduction = property.getStatus().equalsIgnoreCase("Reserved") ? FinancialCalculator.RESERVATION_FEE : 0;
 
         if (dpPlan.equals("Spot Downpayment")) {
@@ -367,16 +364,47 @@ public class FinancialPanel extends javax.swing.JPanel {
         int years = Integer.parseInt(selectedYear.split(" ")[0]);
         double monthlyAmort = calculateCustomAmortization(loanAmount, interestRate, years);
 
+        // IN-HOUSE LOAN INPUTS (Income & Account Check) ---
+        double income = 0;
+        if (financingMethod.equalsIgnoreCase("In-House Financing")) {
+            String incomeInput = JOptionPane.showInputDialog(this, "In-House Financing requires Income Verification.\nPlease enter your Annual Income:");
+            if (incomeInput == null || incomeInput.trim().isEmpty()) {
+                return;
+            }
+            try {
+                income = Double.parseDouble(incomeInput);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Invalid income amount.");
+                return;
+            }
+        }
+        
         Payment paymentDetail;
         if (payInstrument.equalsIgnoreCase("Check")) {
             Check check = new Check();
+
+            // Ask for Bank Name
             String bank = JOptionPane.showInputDialog(this, "Enter Issuing Bank Name:");
             if (bank == null || bank.trim().isEmpty()) {
                 return;
             }
+
+            // Ask for Account Number
+            String accInput = JOptionPane.showInputDialog(this, "Enter Check Account Number:");
+            if (accInput == null || accInput.trim().isEmpty()) {
+                return;
+            }
+
+            try {
+                long accNo = Long.parseLong(accInput.trim());
+                check.setAccNo((int) accNo);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Invalid Account Number. Please enter digits only.");
+                return;
+            }
+
             check.setBankName(bank);
             check.setCheckNo(1000 + new java.util.Random().nextInt(9000));
-            check.setAccNo(123456789);
             paymentDetail = check;
         } else {
             Cash cash = new Cash();
@@ -385,40 +413,32 @@ public class FinancialPanel extends javax.swing.JPanel {
         }
 
         String confirmMsg = String.format("""
-                                          FINAL PURCHASE CONFIRMATION
-                                          Property: %s
-                                          
-                                          Total DP: PHP %s
-                                          %s
-                                          ------------------------------
-                                          INITIAL PAYMENT DUE: PHP %s
-                                          MONTHLY AMORTIZATION: PHP %s
-                                          """,
+                                      FINAL PURCHASE CONFIRMATION
+                                      Property: %s
+                                      
+                                      Total DP: PHP %s
+                                      %s
+                                      MONTHLY AMORTIZATION: PHP %s
+                                      ------------------------------
+                                      INITIAL PAYMENT DUE: PHP %s
+                                      """,
                 property.getPropertyID(), df.format(totalDP),
                 (reservationDeduction > 0 ? "Less Reservation: -PHP " + df.format(reservationDeduction) : ""),
-                df.format(initialPayment), df.format(monthlyAmort));
+                df.format(monthlyAmort), df.format(initialPayment));
 
         if (JOptionPane.showConfirmDialog(this, confirmMsg, "Proceed?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             paymentDetail.processPayment();
-
-            double income = 0;
-            if (financingMethod.equalsIgnoreCase("In-House Financing")) {
-                String input = JOptionPane.showInputDialog(this, "In-House Financing requires Income Verification.\nPlease enter your Annual Income:");
-                if (input == null || input.trim().isEmpty()) {
-                    return;
-                }
-                try {
-                    income = Double.parseDouble(input);
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(this, "Invalid income amount.");
-                    return;
-                }
-            }
             
-            String currentUser = AuthService.getCurrentUser().getUsername();
-            Transaction trx = new Transaction(currentUser, property, financingMethod, 
-                                      initialPayment, paymentDetail, 
-                                      selectedYear, monthlyAmort, income);
+            Transaction trx = new Transaction(
+                    AuthService.getCurrentUser().getEmail(),
+                    property,
+                    financingMethod,
+                    initialPayment,
+                    paymentDetail,
+                    selectedYear,
+                    monthlyAmort,
+                    income
+            );
             
             PropertyService.finalizeSale(trx);
 
@@ -447,7 +467,7 @@ public class FinancialPanel extends javax.swing.JPanel {
             return;
         }
         
-        property.reserveProperty(AuthService.getCurrentUser().getUsername());
+        property.reserveProperty(AuthService.getCurrentUser().getEmail());
         JOptionPane.showMessageDialog(this, "Property " + property.getPropertyID() + " is now RESERVED for you.\nReservation expires in 30 days.");
 
         java.awt.Window ancestor = SwingUtilities.getWindowAncestor(this);

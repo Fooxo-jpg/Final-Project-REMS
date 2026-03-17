@@ -56,15 +56,19 @@ public class TransactionPanel extends javax.swing.JPanel {
         DefaultTableModel model = (DefaultTableModel) transactionTable.getModel();
         model.setRowCount(0);
 
-        String currentUser = AuthService.getCurrentUser().getUsername();
-        String userRole = AuthService.getCurrentUser().getRole();
-
+        var user = AuthService.getCurrentUser();
+        String currentEmail = user.getEmail();
+        String currentUsername = user.getUsername();
+        String userRole = user.getRole();
+        
         for (Transaction t : PropertyService.getAllTransactions()) {
 
-            if (userRole.equalsIgnoreCase("Admin") || t.getBuyerUsername().equals(currentUser)) {
-
+            // CHECK: Does the stored ID match either the email OR the username?
+            boolean isOwner = t.getBuyerUsername().equalsIgnoreCase(currentEmail)
+                    || t.getBuyerUsername().equalsIgnoreCase(currentUsername);
+            
+            if (userRole.equalsIgnoreCase("Admin") || isOwner) {
                 String dpMethod = (t.getPaymentDetail() instanceof MyLib.Classes.Models.Check) ? "Check" : "Cash";
-
                 model.addRow(new Object[]{
                     t.getTransactionID(),
                     sdf.format(t.getDate()),

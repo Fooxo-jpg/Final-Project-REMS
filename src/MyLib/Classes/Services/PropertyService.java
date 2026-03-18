@@ -36,35 +36,50 @@ public class PropertyService {
 
         switch (lot) {
             case 1, 2, 3, 19, 20 -> {
-                p = new SingleDetached(id, "Available");
+                SingleDetached sd = new SingleDetached(id, "Available");
+                sd.setGardenArea(Math.round((20 + (30 * random.nextDouble())) * 100.0) / 100.0);
+                sd.setBankDistance(Math.round((0.5 + (4.5 * random.nextDouble())) * 10.0) / 10.0);
+
+                p = sd;
                 p.setLotArea(150 + (50 * random.nextDouble()));
-                p.setNumBedrooms(random.nextInt(3) + 4); // 4 to 6
-                p.setNumBathrooms(random.nextInt(3) + 3); // 3 to 5
+                p.setNumBedrooms(random.nextInt(3) + 4);
+                p.setNumBathrooms(random.nextInt(3) + 3);
             }
-            
+
             case 6, 8, 12, 13, 14, 15 -> {
-                p = new SingleAttached(id, "Available");
-                p.setLotArea(110 + (40 * random.nextDouble())); // 110 to 150
-                p.setNumBedrooms(random.nextInt(3) + 2); // 2 to 4
-                p.setNumBathrooms(random.nextInt(2) + 2); // 2 to 3
+                SingleAttached sa = new SingleAttached(id, "Available");
+                String[] sides = {"Left", "Right"};
+                sa.setSharedWallSide(sides[random.nextInt(2)]);
+                sa.setFireWall(random.nextBoolean());
+
+                p = sa;
+                p.setLotArea(110 + (40 * random.nextDouble()));
+                p.setNumBedrooms(random.nextInt(3) + 2);
+                p.setNumBathrooms(random.nextInt(2) + 2);
             }
-            
+
             default -> {
-                p = new Townhouse(id, "Available");
-                p.setLotArea(80 + (30 * random.nextDouble()));// 80 to 110
-                p.setNumBedrooms(random.nextInt(2) + 1); //1 to 2
+                Townhouse th = new Townhouse(id, "Available");
+                String[] positions = {"Inner Unit", "End Unit", "Corner Unit"};
+                th.setUnitPosition(positions[random.nextInt(3)]);
+                th.setNumFloors(random.nextInt(2) + 2);
+
+                p = th;
+                p.setLotArea(80 + (30 * random.nextDouble()));
+                p.setNumBedrooms(random.nextInt(2) + 1);
                 p.setNumBathrooms(1);
             }
         }
-        
+
+        // Global property calculations
         p.setLotArea(Math.round(p.getLotArea() * 100.0) / 100.0);
-        
         double multiplier = 0.6 + (0.3 * random.nextDouble());
         double floorArea = p.getLotArea() * multiplier;
-        
         p.setFloorArea(Math.round(floorArea * 100.0) / 100.0);
+
         p.setListed(false);
-        
+        p.setAssignedAgent("No Agent Assigned"); // Ensure clean state
+
         return p;
     }
     

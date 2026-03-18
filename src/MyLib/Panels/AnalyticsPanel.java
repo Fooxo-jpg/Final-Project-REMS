@@ -6,6 +6,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class AnalyticsPanel extends javax.swing.JPanel {
@@ -119,8 +121,8 @@ public class AnalyticsPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel7 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        exportExclBtn = new javax.swing.JButton();
+        exportCSVBtn = new javax.swing.JButton();
         jPanel8 = new javax.swing.JPanel();
         dateLbl = new javax.swing.JLabel();
         PropertySoldPanel = new javax.swing.JPanel();
@@ -233,9 +235,11 @@ public class AnalyticsPanel extends javax.swing.JPanel {
 
         jPanel7.setBackground(new java.awt.Color(255, 200, 102));
 
-        jButton1.setText("Export PDF");
+        exportExclBtn.setText("Export Excel");
+        exportExclBtn.addActionListener(this::exportExclBtnActionPerformed);
 
-        jButton3.setText("Export CSV");
+        exportCSVBtn.setText("Export CSV");
+        exportCSVBtn.addActionListener(this::exportCSVBtnActionPerformed);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -244,17 +248,17 @@ public class AnalyticsPanel extends javax.swing.JPanel {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(exportExclBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                    .addComponent(exportCSVBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(exportExclBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(exportCSVBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(310, Short.MAX_VALUE))
         );
 
@@ -403,6 +407,112 @@ public class AnalyticsPanel extends javax.swing.JPanel {
         add(ProfitPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void exportExclBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportExclBtnActionPerformed
+        // Re-purposing the "Export Excel" button to generate a clean text report summary
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Export Analytics Summary");
+        if (fileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        java.io.File file = fileChooser.getSelectedFile();
+        try (java.io.PrintWriter pw = new java.io.PrintWriter(file)) {
+            pw.println("==================================================");
+            pw.println("    CORNERSTONE ESTATE - EXECUTIVE SUMMARY       ");
+            pw.println("    Date Generated: " + sdf.format(new Date()));
+            pw.println("==================================================");
+            pw.println();
+            pw.println("FINANCIAL SUMMARY:");
+            pw.println("Gross Sales Revenue:    " + totSalesLbl.getText());
+            pw.println("Total Company Profit:   " + totProfitLbl.getText());
+            pw.println("Inventory Sold:         " + propSoldLbl.getText() + " Units");
+            pw.println("Active Client Base:     " + ClientsLbl.getText());
+            pw.println();
+            pw.println("AGENT PERFORMANCE RANKING:");
+            pw.println(String.format("%-25s | %-20s", "Staff Name", "Total Contribution"));
+            pw.println("--------------------------------------------------");
+
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            for (int i = 0; i < model.getRowCount(); i++) {
+                pw.println(String.format("%-25s | %-20s",
+                        model.getValueAt(i, 0).toString(),
+                        model.getValueAt(i, 1).toString()));
+            }
+
+            pw.println();
+            pw.println("FOOTER: Generated via Admin Analytics Panel.");
+            JOptionPane.showMessageDialog(this, "Executive Summary Generated!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Export Error: " + e.getMessage());
+        }
+    }//GEN-LAST:event_exportExclBtnActionPerformed
+
+    private void exportCSVBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportCSVBtnActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Export All Data (CSV)");
+        if (fileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        java.io.File file = fileChooser.getSelectedFile();
+        if (!file.getName().endsWith(".csv")) {
+            file = new java.io.File(file.getAbsolutePath() + ".csv");
+        }
+
+        try (java.io.PrintWriter pw = new java.io.PrintWriter(file)) {
+            // 1. COMPREHENSIVE HEADERS
+            pw.println("--- PROPERTY SPECIFICATIONS ---,--- STATUS & ASSIGNMENT ---,--- TRANSACTION DETAILS ---,--- LOAN DATA ---");
+            pw.println("Location,House Type,Lot Area (sqm),Floor Area (sqm),Bedrooms,Bathrooms,Price,Status,Listed,Assigned Agent,Client Email,Transaction ID,Date,Loan Term,Monthly Amort,Annual Income");
+
+            for (int block = 1; block <= 5; block++) {
+                for (int lot = 1; lot <= 20; lot++) {
+                    Property p = PropertyService.getProperty(block, lot);
+                    if (p == null) {
+                        continue;
+                    }
+
+                    // Find matching transaction
+                    Transaction trx = PropertyService.getAllTransactions().stream()
+                            .filter(t -> t.getProperty().getPropertyID().equals(p.getPropertyID()))
+                            .findFirst().orElse(null);
+
+                    StringBuilder sb = new StringBuilder();
+
+                    // Property Specs
+                    sb.append(p.getPropertyID()).append(",");
+                    sb.append(p.getClass().getSimpleName()).append(",");
+                    sb.append(p.getLotArea()).append(",");
+                    sb.append(p.getFloorArea()).append(",");
+                    sb.append(p.getNumBedrooms()).append(",");
+                    sb.append(p.getNumBathrooms()).append(",");
+                    sb.append(p.calculatePricePerSqFt()).append(",");
+
+                    // Status & Assignment
+                    sb.append(p.getStatus()).append(",");
+                    sb.append(p.isListed() ? "Yes" : "No").append(",");
+                    sb.append(p.getAssignedAgent()).append(",");
+                    sb.append(p.getReservedBy() != null ? p.getReservedBy() : "None").append(",");
+
+                    // Transaction & Loan Data
+                    if (trx != null) {
+                        sb.append(trx.getTransactionID()).append(",");
+                        sb.append(new SimpleDateFormat("yyyy-MM-dd").format(trx.getDate())).append(",");
+                        sb.append(trx.getLoanTerm()).append(",");
+                        sb.append(trx.getMonthlyAmortization()).append(",");
+                        sb.append(trx.getAnnualIncome());
+                    } else {
+                        sb.append("N/A,N/A,N/A,0.00,0.00");
+                    }
+
+                    pw.println(sb.toString());
+                }
+            }
+            JOptionPane.showMessageDialog(this, "Master Data (CSV) exported successfully!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Export Error: " + e.getMessage());
+        }
+    }//GEN-LAST:event_exportCSVBtnActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ClientsLbl;
@@ -412,8 +522,8 @@ public class AnalyticsPanel extends javax.swing.JPanel {
     private javax.swing.JPanel SalesPanel;
     private javax.swing.JLabel TotalProfit;
     private javax.swing.JLabel dateLbl;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton exportCSVBtn;
+    private javax.swing.JButton exportExclBtn;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;

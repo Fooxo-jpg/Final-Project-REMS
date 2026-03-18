@@ -24,10 +24,27 @@ public class FinancialPanel extends javax.swing.JPanel {
     private void setupInfoTable() {
         DefaultTableModel model = (DefaultTableModel) infoTable.getModel();
         model.setRowCount(0);
+
+        // --- STANDARD DATA ---
         model.addRow(new Object[]{"Location", property.getPropertyID()});
+        model.addRow(new Object[]{"Model Type", property.getClass().getSimpleName()});
         model.addRow(new Object[]{"Lot Area", property.getLotArea() + " sqm"});
         model.addRow(new Object[]{"Floor Area", property.getFloorArea() + " sqm"});
-        model.addRow(new Object[]{"Model Type", property.getClass().getSimpleName()});
+        model.addRow(new Object[]{"Bedrooms", property.getNumBedrooms()});
+        model.addRow(new Object[]{"Bathrooms", property.getNumBathrooms()});
+
+        // --- SPECIAL SUBCLASS DATA ---
+        if (property instanceof SingleDetached sd) {
+            model.addRow(new Object[]{"Garden Area", sd.getGardenArea() + " sqm"});
+            model.addRow(new Object[]{"Bank Distance", sd.getBankDistance() + " km"});
+        } else if (property instanceof SingleAttached sa) {
+            model.addRow(new Object[]{"Shared Wall Side", sa.getSharedWallSide()});
+            model.addRow(new Object[]{"Firewall Status", sa.HasFireWall() ? "Installed" : "None"});
+        } else if (property instanceof Townhouse th) {
+            model.addRow(new Object[]{"Unit Position", th.getUnitPosition()});
+            model.addRow(new Object[]{"Total Floors", th.getNumFloors()});
+        }
+
         model.addRow(new Object[]{"Status", property.getStatus()});
     }
     

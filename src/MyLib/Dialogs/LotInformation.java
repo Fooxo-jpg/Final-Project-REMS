@@ -6,6 +6,7 @@ import MyLib.Classes.Services.*;
 
 import java.awt.event.ItemEvent;
 import java.text.DecimalFormat;
+import java.util.Random;
 import javax.swing.*;
 
 public class LotInformation extends javax.swing.JDialog {
@@ -62,8 +63,6 @@ public class LotInformation extends javax.swing.JDialog {
         
         bathTxt.setText(String.valueOf(prop.getNumBathrooms()));
         bathLbl.setText(String.valueOf(prop.getNumBathrooms()));
-        
-        updateGallery();
         
         locationLbl.setText(prop.getPropertyID());
         agentLbl.setText(prop.getAssignedAgent());
@@ -161,9 +160,39 @@ public class LotInformation extends javax.swing.JDialog {
             Header1.setText("HOUSE INFORMATION (SOLD - LOCKED)");
             Header1.setForeground(java.awt.Color.RED);
         }
+        
+        updateGallery();
+        updateTooltips();
+        
+        houseTypeLbl.setOpaque(false);
+        houseTypeLbl.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }
     
     //HELPERS
+    private void updateTooltips() {
+        if (currentProperty == null) {
+            return;
+        }
+
+        StringBuilder tooltip = new StringBuilder("<html><b>Property Details:</b><br>");
+
+        if (currentProperty instanceof SingleDetached sd) {
+            tooltip.append("Garden Area: ").append(sd.getGardenArea()).append(" sqm<br>");
+            tooltip.append("Bank Distance: ").append(sd.getBankDistance()).append(" km");
+        } else if (currentProperty instanceof SingleAttached sa) {
+            tooltip.append("Shared Wall: ").append(sa.getSharedWallSide()).append(" Side<br>");
+            tooltip.append("Firewall: ").append(sa.HasFireWall() ? "Installed" : "None");
+        } else if (currentProperty instanceof Townhouse th) {
+            tooltip.append("Unit Position: ").append(th.getUnitPosition()).append("<br>");
+            tooltip.append("Total Floors: ").append(th.getNumFloors());
+        } else {
+            tooltip.append("Standard Residential Plot");
+        }
+        tooltip.append("</html>");
+
+        houseTypeLbl.setToolTipText(tooltip.toString());
+    }
+    
     public void showGuestRestriction(){
         Object[] options = {"Cancel", "Register"};
         int selection = javax.swing.JOptionPane.showOptionDialog(this,
@@ -207,6 +236,10 @@ public class LotInformation extends javax.swing.JDialog {
 
             sizeTxt.setText(cleanSize);
             floorSizeTxt.setText(cleanFloor);
+            
+            updateTooltips();
+            this.revalidate();
+            this.repaint();
         } else {
             floorSizeTxt.requestFocus();
         }
@@ -733,13 +766,44 @@ public class LotInformation extends javax.swing.JDialog {
 
                         // Update the property object
                         Property newProp;
+                        boolean typeChanged = !currentProperty.getClass().getSimpleName()
+                                .equalsIgnoreCase(selectedType.replace("-", ""));
+
+                        // Create the new instance
                         switch (selectedType) {
-                            case "Single-Attached" ->
-                                newProp = new SingleAttached(currentProperty.getPropertyID(), currentProperty.getStatus());
-                            case "Single-Detached" ->
-                                newProp = new SingleDetached(currentProperty.getPropertyID(), currentProperty.getStatus());
-                            case "Townhouse" ->
-                                newProp = new Townhouse(currentProperty.getPropertyID(), currentProperty.getStatus());
+                            case "Single-Attached" -> {
+                                SingleAttached sa = new SingleAttached(currentProperty.getPropertyID(), currentProperty.getStatus());
+                                if (typeChanged) { // Randomize unique fields if type is new
+                                    sa.setSharedWallSide(new Random().nextBoolean() ? "Left" : "Right");
+                                    sa.setFireWall(new Random().nextBoolean());
+                                } else if (currentProperty instanceof SingleAttached old) {
+                                    sa.setSharedWallSide(old.getSharedWallSide());
+                                    sa.setFireWall(old.HasFireWall());
+                                }
+                                newProp = sa;
+                            }
+                            case "Single-Detached" -> {
+                                SingleDetached sd = new SingleDetached(currentProperty.getPropertyID(), currentProperty.getStatus());
+                                if (typeChanged) {
+                                    sd.setGardenArea(20 + new Random().nextInt(30));
+                                    sd.setBankDistance(0.5 + (new Random().nextDouble() * 4));
+                                } else if (currentProperty instanceof SingleDetached old) {
+                                    sd.setGardenArea(old.getGardenArea());
+                                    sd.setBankDistance(old.getBankDistance());
+                                }
+                                newProp = sd;
+                            }
+                            case "Townhouse" -> {
+                                Townhouse th = new Townhouse(currentProperty.getPropertyID(), currentProperty.getStatus());
+                                if (typeChanged) {
+                                    th.setUnitPosition(new String[]{"Inner", "End", "Corner"}[new Random().nextInt(3)]);
+                                    th.setNumFloors(new Random().nextInt(2) + 2);
+                                } else if (currentProperty instanceof Townhouse old) {
+                                    th.setUnitPosition(old.getUnitPosition());
+                                    th.setNumFloors(old.getNumFloors());
+                                }
+                                newProp = th;
+                            }
                             default ->
                                 newProp = new Property(currentProperty.getPropertyID(), "Available");
                         }
@@ -759,6 +823,7 @@ public class LotInformation extends javax.swing.JDialog {
 
                         PropertyService.updateProperty(newProp);
                         this.currentProperty = newProp;
+                        updateTooltips();
 
                         JOptionPane.showMessageDialog(this, "Property Updated Successfully.");
                         toggleEditMode(false);
